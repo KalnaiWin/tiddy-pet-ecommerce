@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "dev": "tsx watch index.ts",
+    "dev": "ts-node-dev --file index.ts",
     "start": "tsx index.ts"
   },
   "keywords": [],
