@@ -18,7 +18,7 @@ export const authorizeJWT = async (
 
     const decoded = verifyToken(token);
 
-    const user = await User.findById(decoded.userId).select("-password");
+    const user = await User.findById(decoded).select("-password");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

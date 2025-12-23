@@ -1,9 +1,11 @@
 import express from "express";
-import { ENV } from "./config/env.ts";
 import path from "path";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { connectDB } from "./config/db.ts";
+
+import { ENV } from "./config/env.js";
+import { connectDB } from "./config/db.js";
+import authRoute from "./routes/auth.route.js";
 
 const app = express();
 const __dirname = path.resolve();
@@ -11,6 +13,8 @@ const __dirname = path.resolve();
 app.use(express.json());
 app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
 app.use(cookieParser());
+
+app.use("/auth", authRoute);
 
 if (ENV.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));

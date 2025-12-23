@@ -1,6 +1,7 @@
 import { isSpoofedBot } from "@arcjet/inspect";
-import aj from "../config/arcjet.ts";
-import { NextFunction, Request, Response } from "express";
+import aj from "../config/arcjet.js";
+import type { NextFunction, Request, Response } from "express";
+import type { ArcjetNodeRequest } from "@arcjet/node";
 
 export const arcjetProtection = async (
   req: Request,
@@ -8,7 +9,8 @@ export const arcjetProtection = async (
   next: NextFunction
 ) => {
   try {
-    const decision = await aj.protect(req);
+    const ip = req.ip || req.socket.remoteAddress || "0.0.0.0";
+    const decision = await aj.protect(req as ArcjetNodeRequest, { ip });
 
     if (decision.isDenied()) {
       if (decision.reason.isRateLimit()) {
