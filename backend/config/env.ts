@@ -1,5 +1,10 @@
 import "dotenv/config";
 
 export const ENV = {
-  PORT: parseInt(process.env.PORT ?? "8080", 10),
+  PORT: process.env.PORT,
+  JWT_SECRET: String(process.env.JWT_SECRET),
+  MONGO_URI: String(process.env.MONGO_URI),
+  NODE_ENV: process.env.NODE_ENV,
+  ARCJET_KEY: String(process.env.ARCJET_KEY),
+  CLIENT_URL: String(process.env.CLIENT_URL),
 };
