@@ -44,9 +44,9 @@ export const addNewProduct = async (req: Request, res: Response) => {
     const parsed = createProductSchema.parse(req.body);
 
     const product = new Product(parsed);
-    const savedProduct = await product.save();
+    await product.save();
 
-    return res.status(201).json(savedProduct);
+    return res.status(201).json({ productId: product.id, parsed });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({ errors: error.message });
@@ -55,6 +55,42 @@ export const addNewProduct = async (req: Request, res: Response) => {
   }
 };
 
-export const EditProduct = async (req: Request, res: Response) => {};
+export const EditProduct = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const existingProduct = await Product.findById(id);
+    if (!existingProduct)
+      return res.status(400).json({ message: "This product is not found" });
 
-export const DeleteProduct = async (req: Request, res: Response) => {};
+    const parsed = createProductSchema.parse(req.body);
+
+    const updatedProduct = await Product.findByIdAndUpdate(id, parsed, {
+      new: true,
+      runValidators: true,
+    });
+
+    return res
+      .status(200)
+      .json({ productId: existingProduct.id, updatedProduct });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({ errors: error.message });
+    }
+    console.error("Error editing product:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const DeleteProduct = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const existingProduct = await Product.findByIdAndDelete(id);
+    if (!existingProduct)
+      return res.status(400).json({ message: "This product is not found" });
+
+    return res.status(200).json({ message: "Deleted product successfully" });
+  } catch (error) {
+    console.error("Error editing product:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
