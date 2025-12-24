@@ -15,10 +15,8 @@ export const authorizeJWT = async (
         message: "Unauthorized - No token provided",
       });
     }
-
     const decoded = verifyToken(token);
-
-    const user = await User.findById(decoded).select("-password");
+    const user = await User.findById(decoded.userId).select("-password");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -31,7 +29,7 @@ export const authorizeJWT = async (
   }
 };
 
-export const authorizeRole = async (role: string) => {
+export const authorizeRole = (role: string) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const user = req?.user;
 
