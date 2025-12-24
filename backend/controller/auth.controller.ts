@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import User from "../model/User.js";
 import bcrypt from "bcryptjs";
 import { generateToken, type UserPayload } from "../utils/jwt.js";
+import { userAuthResponse } from "../schema/user.schema.js";
 
 export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password, role } = req.body;
@@ -40,15 +41,16 @@ export const registerUser = async (req: Request, res: Response) => {
       password: hashedPassword,
       role,
     });
+    const response = userAuthResponse.parse(newUser);
 
     if (newUser) {
-      const savedUser = await newUser.save();
+      await newUser.save();
       const userPayLoad: UserPayload = {
-        userId: savedUser.id,
-        role: savedUser.role,
+        userId: newUser.id,
+        role: newUser.role,
       };
       generateToken(userPayLoad, res);
-      res.status(200).json(savedUser);
+      res.status(200).json(response);
     }
   } catch (error) {
     console.log("Error in signup controller: ", error);
@@ -75,7 +77,8 @@ export const loginUser = async (req: Request, res: Response) => {
       role: user.role,
     };
     generateToken(userPayLoad, res);
-    res.status(200).json(user);
+    const response = userAuthResponse.parse(user);
+    res.status(200).json(response);
   } catch (error) {
     console.error("Error in login controller: ", error);
     res.status(500).json({ message: "Internal Server Error" });

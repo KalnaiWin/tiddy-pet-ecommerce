@@ -1,9 +1,5 @@
 import mongoose from "mongoose";
 import "./Category.js";
-import type {
-  InAdminProductResponse,
-  InNewProductResponse,
-} from "../interface/product.interface.js";
 
 const productSchema = new mongoose.Schema(
   {
@@ -107,30 +103,3 @@ const productSchema = new mongoose.Schema(
 const Product = mongoose.model("Product", productSchema);
 export default Product;
 
-export const toAdminProduct = (product: any): InAdminProductResponse => {
-  return {
-    name: product.name,
-    imageProduct: product.imageProduct,
-    total: product.total,
-    sold: product.sold,
-    rating: product.rating,
-    minPrice: product.minPrice,
-    maxPrice: product.maxPrice,
-    brand: product.brand,
-    discount: product.discount,
-    status: product.status,
-  };
-};
-
-export const toNewProduct = (product: any): InNewProductResponse => {
-  return {
-    name: product.name,
-    description: product.description,
-    total: product.total,
-    minPrice: product.minPrice,
-    maxPrice: product.maxPrice,
-    brand: product.brand,
-    status: product.status,
-    discount: product.discount,
-  };
-};
