@@ -21,6 +21,10 @@ export const authorizeJWT = async (
       return res.status(404).json({ message: "User not found" });
     }
 
+    if (decoded.sessionId !== user.activeSessionId) {
+      return res.status(401).json({ message: "Session expired" });
+    }
+
     req.user = user;
     next();
   } catch (error) {

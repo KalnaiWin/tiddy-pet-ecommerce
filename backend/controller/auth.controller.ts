@@ -1,8 +1,10 @@
 import type { Request, Response } from "express";
 import User from "../model/User.js";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { generateToken, type UserPayload } from "../utils/jwt.js";
 import { userAuthResponse } from "../schema/user.schema.js";
+import { string } from "zod";
 
 export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password, role } = req.body;
@@ -41,13 +43,17 @@ export const registerUser = async (req: Request, res: Response) => {
       password: hashedPassword,
       role,
     });
-    const response = userAuthResponse.parse(newUser);
+    const response = userAuthResponse.parse(newUser.toObject());
+
+    const sessionId = crypto.randomUUID();
+    newUser.activeSessionId = sessionId;
 
     if (newUser) {
       await newUser.save();
       const userPayLoad: UserPayload = {
         userId: newUser.id,
         role: newUser.role,
+        sessionId,
       };
       generateToken(userPayLoad, res);
       res.status(200).json(response);
@@ -66,15 +72,28 @@ export const loginUser = async (req: Request, res: Response) => {
         .status(400)
         .json({ message: "Email and password are required" });
     }
+
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "Invalid Credential" });
+
+    if (user.activeSessionId) {
+      return res.status(403).json({
+        message: "User already logged in somewhere else. Logout first.",
+      });
+    }
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect)
       return res.status(400).json({ message: "Invalid Creadentials" });
+
+    const sessionId = crypto.randomUUID();
+    user.activeSessionId = sessionId;
+    await user.save();
+
     const userPayLoad: UserPayload = {
       userId: user.id,
       role: user.role,
+      sessionId,
     };
     generateToken(userPayLoad, res);
     const response = userAuthResponse.parse(user);
@@ -85,7 +104,13 @@ export const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-export const logoutUser = (req: Request, res: Response) => {
-  res.cookie("jwt", "", { maxAge: 0 });
+export const logoutUser = async (req: Request, res: Response) => {
+  const user = await User.findById(req.user.id);
+  if (user) {
+    user.activeSessionId = null;
+    await user.save();
+  }
+
+  res.clearCookie("jwt");
   res.status(200).json({ message: "Logged out successfully." });
 };

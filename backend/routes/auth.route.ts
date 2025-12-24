@@ -13,7 +13,7 @@ router.use(arcjetProtection);
 
 router.post("/login", loginUser);
 router.post("/register", registerUser);
-router.post("/logout", logoutUser);
+router.post("/logout", authorizeJWT, logoutUser);
 router.get("/", authorizeJWT, (req, res) => {
   res.status(200).json(req.user);
 });
