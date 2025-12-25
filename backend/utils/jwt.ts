@@ -5,6 +5,10 @@ import type { Response } from "express";
 export interface UserPayload {
   userId: string;
   role: string;
+<<<<<<< HEAD
+=======
+  sessionId: string;
+>>>>>>> 88ca4dc (style: navbar and connect backend authentication function)
 }
 
 export const generateToken = (payload: UserPayload, res: Response) => {

@@ -14,7 +14,12 @@ app.use(express.json());
 app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
 app.use(cookieParser());
 
+<<<<<<< HEAD
 app.use("/auth", authRoute);
+=======
+app.use("/api/auth", authRoute);
+app.use("/api/product", productRoute);
+>>>>>>> 88ca4dc (style: navbar and connect backend authentication function)
 
 if (ENV.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
