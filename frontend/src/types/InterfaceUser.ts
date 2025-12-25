@@ -1,4 +1,14 @@
-import { Shield, ShoppingBag, Truck } from "lucide-react";
+import {
+  Beef,
+  Heart,
+  History,
+  Pill,
+  Shapes,
+  Shield,
+  ShoppingBag,
+  Store,
+  Truck,
+} from "lucide-react";
 
 export type UserRole = "CUSTOMER" | "ADMIN" | "SHIPPER";
 
@@ -7,6 +17,7 @@ export interface User {
   email: string;
   password: string;
   role: UserRole;
+  imageProfile: String;
 }
 
 export const roles: { id: UserRole; label: string; icon: any; desc: string }[] =
@@ -20,3 +31,39 @@ export const roles: { id: UserRole; label: string; icon: any; desc: string }[] =
     { id: "ADMIN", label: "Admin", icon: Shield, desc: "Manage inventory" },
     { id: "SHIPPER", label: "Shipper", icon: Truck, desc: "Handle deliveries" },
   ];
+
+export const pathCategorySelects = [
+  {
+    name: "All products",
+    icon: Store,
+    path: "/store",
+  },
+  {
+    name: "Vitaim & Nutrition",
+    icon: Pill,
+    path: "/store/nutrition",
+  },
+  {
+    name: "Yummy Food",
+    icon: Beef,
+    path: "/store/food",
+  },
+  {
+    name: "Toys",
+    icon: Shapes,
+    path: "/store/toy",
+  },
+];
+
+export const pathUserSelect = [
+  {
+    name: "Order History",
+    icon: History,
+    path: "/order",
+  },
+  {
+    name: "Wishlist",
+    icon: Heart,
+    path: "/wishlist",
+  },
+];
