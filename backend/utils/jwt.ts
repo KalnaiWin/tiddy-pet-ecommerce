@@ -5,7 +5,7 @@ import type { Response } from "express";
 export interface UserPayload {
   userId: string;
   role: string;
-  sessionId: string,
+  sessionId: string;
 }
 
 export const generateToken = (payload: UserPayload, res: Response) => {

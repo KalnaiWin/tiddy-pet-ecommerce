@@ -15,8 +15,8 @@ app.use(express.json());
 app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
 app.use(cookieParser());
 
-app.use("/auth", authRoute);
-app.use("/product", productRoute);
+app.use("/api/auth", authRoute);
+app.use("/api/product", productRoute);
 
 if (ENV.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
