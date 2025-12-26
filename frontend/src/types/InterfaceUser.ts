@@ -1,7 +1,15 @@
 import {
+  BadgeCheck,
   Beef,
+  ChartColumn,
+  ChartLine,
+  ClipboardList,
   Heart,
   History,
+  Home,
+  Layers,
+  LucideUser2,
+  Package,
   Pill,
   Shapes,
   Shield,
@@ -65,5 +73,54 @@ export const pathUserSelect = [
     name: "Wishlist",
     icon: Heart,
     path: "/wishlist",
+  },
+];
+
+export const pathAdminSelect = [
+  {
+    name: "Dashboard",
+    icon: BadgeCheck,
+    path: "/admin/dashboard",
+  },
+];
+
+export const pathShipperSelect = [
+  {
+    name: "Orders",
+    icon: ClipboardList,
+    path: "/shipper",
+  },
+  {
+    name: "Static",
+    icon: ChartLine,
+    path: "/shipper/static",
+  },
+];
+
+export const adminNavBarSelect = [
+  {
+    name: "Dashboard",
+    icon: Home,
+    path: "/admin/dashboard",
+  },
+  {
+    name: "Analytic",
+    icon: ChartColumn,
+    path: "/admin/analytic",
+  },
+  {
+    name: "Account",
+    icon: LucideUser2,
+    path: "/admin/account",
+  },
+  {
+    name: "Store",
+    icon: Layers,
+    path: "admin/store",
+  },
+  {
+    name: "Order",
+    icon: Package,
+    path: "/admin/order",
   },
 ];
