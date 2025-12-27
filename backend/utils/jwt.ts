@@ -1,4 +1,4 @@
-import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { ENV } from "../config/env.js";
 import type { Request, Response } from "express";
 
@@ -19,6 +19,13 @@ export const generateToken = (payload: UserPayload, res: Response) => {
     expiresIn: "7d",
   });
 
+  res.cookie("access_token", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 15 * 60 * 1000,
+  });
+
   res.cookie("refresh_token", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -29,14 +36,14 @@ export const generateToken = (payload: UserPayload, res: Response) => {
   return accessToken;
 };
 
-export const verifyAccessToken = (token: string): UserPayload => {
+export const verifyAccessToken = (token: string) => {
   try {
     return jwt.verify(token, ENV.JWT_ACCESS_SECRET) as UserPayload;
   } catch (err) {
-    if (err instanceof TokenExpiredError) {
+    if (err instanceof jwt.TokenExpiredError) {
       throw new Error("Access token expired");
     }
-    if (err instanceof JsonWebTokenError) {
+    if (err instanceof jwt.JsonWebTokenError) {
       throw new Error("Invalid access token");
     }
     throw err;
@@ -47,11 +54,11 @@ export const verifyRefreshToken = (token: string): UserPayload => {
   try {
     return jwt.verify(token, ENV.JWT_REFRESH_SECRET) as UserPayload;
   } catch (err) {
-    if (err instanceof TokenExpiredError) {
+    if (err instanceof jwt.TokenExpiredError) {
       throw new Error("Refresh token expired");
     }
 
-    if (err instanceof JsonWebTokenError) {
+    if (err instanceof jwt.JsonWebTokenError) {
       throw new Error("Invalid refresh token");
     }
     throw err;

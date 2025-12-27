@@ -8,20 +8,17 @@ export const authorizeJWT = async (
   next: NextFunction
 ) => {
   try {
-    const authHeader = req.headers.authorization;
+    const accessToken = req.cookies.access_token;
 
-    if (!authHeader?.startsWith("Bearer ")) {
-      throw new Error("Unauthorized");
+    if (!accessToken) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const token = String(authHeader.split(" ")[1]);
-    const decoded = verifyAccessToken(token);
-
-    const user = await authRepository.findUserById(decoded.userId);
+    const decoded = verifyAccessToken(accessToken);
+    const user = await authRepository.findUserById(decoded.userId.toString());
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
     req.user = user;
     next();
   } catch (error) {
