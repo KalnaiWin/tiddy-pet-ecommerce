@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
-import User from "../model/User.js";
-import { verifyToken } from "../utils/jwt.js";
+import { verifyAccessToken } from "../utils/jwt.js";
+import { authRepository } from "../repository/auth.repository.js";
 
 export const authorizeJWT = async (
   req: Request,
@@ -8,21 +8,18 @@ export const authorizeJWT = async (
   next: NextFunction
 ) => {
   try {
-    const token = req.cookies?.jwt;
+    const authHeader = req.headers.authorization;
 
-    if (!token) {
-      return res.status(401).json({
-        message: "Unauthorized - No token provided",
-      });
+    if (!authHeader?.startsWith("Bearer ")) {
+      throw new Error("Unauthorized");
     }
-    const decoded = verifyToken(token);
-    const user = await User.findById(decoded.userId).select("-password");
+
+    const token = String(authHeader.split(" ")[1]);
+    const decoded = verifyAccessToken(token);
+
+    const user = await authRepository.findUserById(decoded.userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
-    }
-
-    if (decoded.sessionId !== user.activeSessionId) {
-      return res.status(401).json({ message: "Session expired" });
     }
 
     req.user = user;
