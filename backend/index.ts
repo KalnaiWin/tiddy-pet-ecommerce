@@ -7,6 +7,8 @@ import { ENV } from "./config/env.js";
 import { connectDB } from "./config/db.js";
 import authRoute from "./routes/auth.route.js";
 import productRoute from "./routes/product.route.js";
+import accountRoute from "./routes/account.route.js";
+import { initRedis } from "./config/redis.js";
 
 const app = express();
 const __dirname = path.resolve();
@@ -17,6 +19,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoute);
 app.use("/api/product", productRoute);
+app.use("/api/account", accountRoute);
 
 if (ENV.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
@@ -25,8 +28,11 @@ if (ENV.NODE_ENV === "production") {
   });
 }
 
+
+
 connectDB()
-  .then(() => {
+  .then( async () => {
+    await initRedis();
     app.listen(ENV.PORT, () => {
       console.log("Server running on port: ", ENV.PORT);
     });
