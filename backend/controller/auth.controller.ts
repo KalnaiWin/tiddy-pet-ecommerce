@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { generateToken, type UserPayload } from "../utils/jwt.js";
-import { userAuthResponse } from "../model/user.model.js";
+import { userAuthResponse } from "../model/account.model.js";
 import { authService } from "../service/auth.service.js";
 
 export const registerUser = async (req: Request, res: Response) => {

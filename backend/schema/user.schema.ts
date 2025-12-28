@@ -1,10 +1,84 @@
-import { z } from "zod";
+import mongoose from "mongoose"; 
 
-export const userAuthResponse = z.object({
-  name: z.string(),
-  email: z.string(),
-  password: z.string(),
-  role: z.string(),
-});
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      minlength: 2,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      minlength: 6,
+      required: true,
+      trim: true,
+    },
+    image_profile: {
+      type: String,
+      default: "",
+    },
+    phone: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    address: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    shipper_info: {
+      vehicle_type: {
+        type: String,
+        enum: ["BIKE", "MOTORBIKE", "CAR"],
+        default: "BIKE",
+      },
+      license_number: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+      verification_status: {
+        type: String,
+        enum: ["PENDING", "APPROVED", "REJECTED"],
+        default: "PENDING",
+      },
+    },
+    role: {
+      type: String,
+      enum: ["CUSTOMER", "ADMIN", "SHIPPER"],
+      default: "CUSTOMER",
+    },
+    status: {
+      type: String,
+      enum: ["INACTIVE", "ACTIVE", "BANNED", "BUSY"],
+      default: "INACTIVE",
+    },
+    totalSpend: {
+      type: Number,
+      default: 0,
+    },
+    token: {
+      type: Number,
+      default: 5,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-export type UserAuthResponse = z.infer<typeof userAuthResponse>;
+const User = mongoose.model("User", userSchema);
+export default User;
+
+export interface InUser {
+  id: string;
+  role: string;
+}
