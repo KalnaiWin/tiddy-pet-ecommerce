@@ -1,33 +1,104 @@
-import { z } from "zod";
+import mongoose from "mongoose";
+import "./category.schema.js";
 
-export const createProductSchema = z.object({
-  name: z.string().min(1).max(200),
-  description: z.string().min(1),
-  total: z.number().min(0).max(1000),
-  minPrice: z.number().min(0),
-  maxPrice: z.number().min(0),
-  imageProduct: z.array(z.string().url()).min(1),
-  category: z.array(z.string()),
-  brand: z.string().optional(),
-  discount: z.number().min(0).max(100).optional(),
-  status: z.enum(["Available", "Out of stock", "Draft"]).optional(),
-});
+const productSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 200,
+    },
+    description: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    total: {
+      type: Number,
+      required: true,
+      min: 0,
+      max: 1000,
+      default: 0,
+    },
+    sold: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+    rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      default: 0,
+    },
+    numReviews: {
+      type: Number,
+      default: 0,
+    },
+    minPrice: {
+      type: Number,
+      min: 0,
+    },
+    maxPrice: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    imageProduct: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
 
-export type CreateProductInput = z.infer<typeof createProductSchema>;
-
-export const getAllAdminProductSchema = z.array(
-  z.object({
-    name: z.string().min(2).max(200),
-    imageProduct: z.array(z.string()),
-    total: z.number().min(0).max(1000),
-    sold: z.number().min(0),
-    rating: z.number().min(0).max(5),
-    minPrice: z.number().min(0),
-    maxPrice: z.number().min(0),
-    brand: z.string(),
-    discount: z.number().min(0),
-    status: z.enum(["Available", "Out of stock", "Draft"]).optional(),
-  })
+    childProduct: [
+      {
+        name: {
+          type: String,
+          required: true,
+          maxlength: 100,
+        },
+        price: {
+          type: Number,
+          min: 0,
+        },
+        image: {
+          type: String,
+          required: true,
+        },
+        stock: {
+          type: Number,
+          min: 0,
+        },
+      },
+    ],
+    category: [
+      {
+        type: mongoose.Schema.Types.String,
+        ref: "Category",
+      },
+    ],
+    brand: {
+      type: mongoose.Schema.Types.String,
+      ref: "Brand",
+    },
+    discount: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 0,
+    },
+    status: {
+      type: String,
+      enum: ["Available", "Out of stock", "Draft"],
+      default: "Draft",
+    },
+  },
+  {
+    timestamps: true,
+  }
 );
 
-export type GetAllAdminProductSchema = z.infer<typeof getAllAdminProductSchema>;
+const Product = mongoose.model("Product", productSchema);
+export default Product;

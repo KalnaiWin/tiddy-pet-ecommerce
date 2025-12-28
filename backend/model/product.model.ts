@@ -1,0 +1,41 @@
+import { z } from "zod";
+
+export const childProduct = z.array(
+  z.object({
+    name: z.string().max(100),
+    price: z.number().min(0),
+    image: z.string().url(),
+    stock: z.number().min(0),
+  })
+);
+
+export const createProductSchema = z.object({
+  name: z.string().min(1).max(200),
+  description: z.string().min(1),
+  total: z.number().min(0).max(1000),
+  minPrice: z.number().min(0).optional(),
+  maxPrice: z.number().min(0),
+  imageProduct: z.array(z.string().url()).min(1),
+  childProduct: childProduct,
+  category: z.array(z.string()),
+  brand: z.string(),
+  discount: z.number().min(0).max(100).optional(),
+  status: z.enum(["Available", "Out of stock", "Draft"]),
+});
+
+export const getAllAdminProductSchema = z.array(
+  z.object({
+    name: z.string().min(2).max(200),
+    imageProduct: z.array(z.string()),
+    total: z.number().min(0).max(1000),
+    sold: z.number().min(0),
+    rating: z.number().min(0).max(5),
+    minPrice: z.number().min(0),
+    maxPrice: z.number().min(0),
+    brand: z.string(),
+    discount: z.number().min(0),
+    status: z.enum(["Available", "Out of stock", "Draft"]),
+  })
+);
+
+export type GetAllAdminProductSchema = z.infer<typeof getAllAdminProductSchema>;

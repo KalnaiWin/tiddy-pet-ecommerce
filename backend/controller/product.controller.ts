@@ -1,96 +1,92 @@
 import type { Request, Response } from "express";
-import Product from "../model/Product.js";
-import {
-  createProductSchema,
-  getAllAdminProductSchema,
-} from "../schema/product.schema.js";
+import { createProductSchema } from "../model/product.model.js";
 import { ZodError } from "zod";
+import Product from "../schema/product.schema.js";
+import { productService } from "../service/product.service.js";
 
 export const getAllProducts = async (req: Request, res: Response) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 10;
   try {
-    if (page < 1 || limit < 1)
-      return res
-        .status(400)
-        .json({ message: "\nIncorrect page and limit number\n" });
-
-    const skip = (page - 1) * limit;
-
-    const allProducts = await Product.find({})
-      .populate("category", "slug")
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
-
-    const products = getAllAdminProductSchema.parse(allProducts);
-
+    if (page < 1 || limit < 1) {
+      return res.status(400).json({
+        message: "Incorrect page or limit number",
+      });
+    }
+    const products = await productService.getAllProducts(page, limit);
     res.status(200).json(products);
   } catch (error) {
-    console.log("\nError at get all products: ", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        errors: error.message,
+      });
+    }
+
+    return res.status(500).json({
+      message: error instanceof Error ? error.message : "Internal Server Error",
+    });
   }
 };
 
-export const getAllProductsByCategory = async (
-  req: Request,
-  res: Response
-) => {};
-
-export const getAllProductsByBrand = async (req: Request, res: Response) => {};
-
 export const addNewProduct = async (req: Request, res: Response) => {
   try {
-    const parsed = createProductSchema.parse(req.body);
+    const product = await productService.addNewProduct(req.body);
 
-    const product = new Product(parsed);
-    await product.save();
-
-    return res.status(201).json({ productId: product.id, parsed });
+    const response = createProductSchema.parse(product);
+    // return res.status(201).json({ productId: productid, product });
+    return res.status(201).json({ id: product._id, response });
   } catch (error) {
     if (error instanceof ZodError) {
-      return res.status(400).json({ errors: error.message });
+      return res.status(400).json({
+        errors: error.message,
+      });
     }
-    return res.status(500).json({ message: "Internal Server Error" });
+
+    return res.status(500).json({
+      message: error instanceof Error ? error.message : "Internal Server Error",
+    });
   }
 };
 
 export const EditProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const existingProduct = await Product.findById(id);
-    if (!existingProduct)
-      return res.status(400).json({ message: "This product is not found" });
+    if (!id) return res.status(404).json({ message: "Id not found" });
 
-    const parsed = createProductSchema.parse(req.body);
+    const editedProduct = await productService.editOldProduct(id, req.body);
 
-    const updatedProduct = await Product.findByIdAndUpdate(id, parsed, {
-      new: true,
-      runValidators: true,
-    });
+    const response = createProductSchema.parse(editedProduct);
 
-    return res
-      .status(200)
-      .json({ productId: existingProduct.id, updatedProduct });
+    return res.status(200).json({ id: editedProduct?._id, response });
   } catch (error) {
     if (error instanceof ZodError) {
-      return res.status(400).json({ errors: error.message });
+      return res.status(400).json({
+        errors: error.message,
+      });
     }
-    console.error("Error editing product:", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({
+      message: error instanceof Error ? error.message : "Internal Server Error",
+    });
   }
 };
 
 export const DeleteProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const existingProduct = await Product.findByIdAndDelete(id);
-    if (!existingProduct)
-      return res.status(400).json({ message: "This product is not found" });
-
-    return res.status(200).json({ message: "Deleted product successfully" });
+    if (!id) return res.status(404).json({ message: "Id not found" });
+    const result = await productService.deleteOldProduct(id);
+    if (result)
+      return res.status(200).json({ message: "Deleted product successfully" });
+    else
+      return res.status(400).json({ message: "Deleted product failed" });
   } catch (error) {
-    console.error("Error editing product:", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        errors: error.message,
+      });
+    }
+    return res.status(500).json({
+      message: error instanceof Error ? error.message : "Internal Server Error",
+    });
   }
 };
