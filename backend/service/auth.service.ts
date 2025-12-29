@@ -1,10 +1,19 @@
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import type {
   authLoginInterface,
   authRegisterInterface,
 } from "../interface/auth.interface.js";
 import { authRepository } from "../repository/auth.repository.js";
 import { authRegisterForm } from "../model/auth.model.js";
+import {
+  generateToken,
+  signAccessToken,
+  signRefreshToken,
+  verifyRefreshToken,
+  type UserPayload,
+} from "../utils/jwt.js";
+import { de } from "zod/locales";
 
 export const authService = {
   register: async (data: authRegisterInterface) => {
@@ -25,7 +34,7 @@ export const authService = {
     if (existingUser) {
       throw new Error("This email has been already used.");
     }
-    
+
     const hashedPassword = await bcrypt.hash(password, 10); // hash password
     const infoNewUser = authRegisterForm.parse({
       name,
@@ -52,5 +61,21 @@ export const authService = {
     if (!isPasswordCorrect) throw new Error("Invalid password");
 
     return exsitingUser;
+  },
+
+  refreshNewAccessToken: async (refreshToken: string) => {
+    if (!refreshToken) throw new Error("Missing refresh token");
+    const decoded = verifyRefreshToken(refreshToken);
+    if (!decoded) throw new Error("Invalid token");
+    const newAccessToken = signAccessToken({
+      userId: decoded.userId,
+      role: decoded.role,
+    });
+    const newRefreshToken = signRefreshToken({
+      userId: decoded.userId,
+      role: decoded.role,
+    });
+    console.log("Successfully in cookie");
+    return { newAccessToken, newRefreshToken };
   },
 };

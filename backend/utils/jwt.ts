@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { ENV } from "../config/env.js";
-import type { Request, Response } from "express";
+import type { Response } from "express";
 
 export interface UserPayload {
   userId: string;
@@ -65,22 +65,16 @@ export const verifyRefreshToken = (token: string): UserPayload => {
   }
 };
 
-export const refreshAcessToken = async (req: Request, res: Response) => {
-  const refreshToken = req.cookies.refresh_token;
-  if (!refreshToken) throw new Error("Missing refresh token");
+export const signAccessToken = (payload: UserPayload) => {
+  console.log("Called access sign");
+  return jwt.sign(payload, ENV.JWT_ACCESS_SECRET, {
+    expiresIn: "15m",
+  });
+};
 
-  const decoded = verifyRefreshToken(refreshToken);
-
-  if (!decoded) throw new Error("Invalid token");
-
-  const newAccessToken = jwt.sign(
-    {
-      userId: decoded.userId,
-      role: decoded.role,
-    },
-    ENV.JWT_ACCESS_SECRET,
-    { expiresIn: "15m" }
-  );
-
-  res.status(200).json({ accessToken: newAccessToken });
+export const signRefreshToken = (payload: UserPayload) => {
+  console.log("Called refresh sign");
+  return jwt.sign(payload, ENV.JWT_REFRESH_SECRET, {
+    expiresIn: "7d",
+  });
 };

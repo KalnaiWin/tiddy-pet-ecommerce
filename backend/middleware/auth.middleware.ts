@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { verifyAccessToken } from "../utils/jwt.js";
 import { authRepository } from "../repository/auth.repository.js";
+import jwt from "jsonwebtoken";
 
 export const authorizeJWT = async (
   req: Request,
@@ -10,9 +11,7 @@ export const authorizeJWT = async (
   try {
     const accessToken = req.cookies.access_token;
 
-    if (!accessToken) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    if (!accessToken) return res.status(401).json({ message: "Unauthorized" });
 
     const decoded = verifyAccessToken(accessToken);
     const user = await authRepository.findUserById(decoded.userId.toString());
@@ -22,8 +21,14 @@ export const authorizeJWT = async (
     req.user = user;
     next();
   } catch (error) {
-    console.log("Error in protecteRoute middleware: ", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    if (error instanceof jwt.TokenExpiredError)
+      return res.status(401).json({ message: "Access token expired" });
+
+    if (error instanceof jwt.JsonWebTokenError)
+      return res.status(401).json({ message: "Invalid token" });
+
+    console.error("authorizeJWT error:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
