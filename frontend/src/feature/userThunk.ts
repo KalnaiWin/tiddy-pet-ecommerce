@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../lib/axios";
 import toast from "react-hot-toast";
-import type { User } from "../types/InterfaceUser";
+import type { User, UserInfo } from "../types/InterfaceUser";
 
 export const fetchUser = createAsyncThunk(
   "user/fetchUser",
@@ -22,6 +22,7 @@ export const registerUser = createAsyncThunk<
 >("user/registerUser", async (data, { rejectWithValue }) => {
   try {
     const res = await axiosInstance.post("/auth/register", data);
+    toast.success("Register successfully. Greeting !");
     return res.data;
   } catch (error: any) {
     toast.error("Register failed");
@@ -49,10 +50,54 @@ export const logoutUser = createAsyncThunk<void, void, { rejectValue: string }>(
   async (_, { rejectWithValue }) => {
     try {
       await axiosInstance.post("/auth/logout");
-      toast.error("Logout successfully. See you later !");
+      toast.success("Logout successfully. See you later !");
     } catch (error: any) {
       toast.error("Logout failed");
       return rejectWithValue(error.response?.data);
+    }
+  }
+);
+
+export const getAllUsers = createAsyncThunk<
+  UserInfo[],
+  { page: number; limit: number; email?: string },
+  { rejectValue: string }
+>(
+  "account/getAllUsers",
+  async ({ page, limit, email }, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get(`/account/user`, {
+        params: {
+          page,
+          limit,
+          email,
+        },
+      });
+      return res.data;
+    } catch (error) {
+      return rejectWithValue("Cannot fetch users");
+    }
+  }
+);
+
+export const getAllShippers = createAsyncThunk<
+  UserInfo[],
+  { page: number; limit: number; email?: string },
+  { rejectValue: string }
+>(
+  "account/getAllShippers",
+  async ({ page, limit, email }, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get(`/account/shipper`, {
+        params: {
+          page,
+          limit,
+          email,
+        },
+      });
+      return res.data;
+    } catch (error) {
+      return rejectWithValue("Cannot fetch users");
     }
   }
 );

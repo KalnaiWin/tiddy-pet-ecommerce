@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import type { RootState } from "../store";
 import { ArrowRight } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 export const HomePage = () => {
   const { currentUser } = useSelector((state: RootState) => state.user);
@@ -28,13 +29,34 @@ export const HomePage = () => {
               {currentUser.email}
             </span>
           </p>
-          <button
-            type="submit"
-            className="bg-green-100 w-fit text-xs text-green-700 md:px-2 m:py-1 p-1.5 py-0.5 rounded-2xl font-bold shadow-lg hover:bg-green-700 hover:text-green-100 hover:-translate-y-0.5 transition-all flex items-center gap-1 mt-2 group cursor-pointer"
-          >
-            Explore Category Now
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </button>
+          {currentUser?.role === "CUSTOMER" ? (
+            <NavLink
+              to={"/store"}
+              type="submit"
+              className="bg-green-100 w-fit text-xs text-green-700 md:px-2 m:py-1 p-1.5 py-0.5 rounded-2xl font-bold shadow-lg hover:bg-green-700 hover:text-green-100 hover:-translate-y-0.5 transition-all flex items-center gap-1 mt-2 group cursor-pointer"
+            >
+              Explore Category Now
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </NavLink>
+          ) : currentUser?.role === "ADMIN" ? (
+            <NavLink
+              to={"/admin/dashboard"}
+              type="submit"
+              className="bg-green-100 w-fit text-xs text-green-700 md:px-2 m:py-1 p-1.5 py-0.5 rounded-2xl font-bold shadow-lg hover:bg-green-700 hover:text-green-100 hover:-translate-y-0.5 transition-all flex items-center gap-1 mt-2 group cursor-pointer"
+            >
+              Check information
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </NavLink>
+          ) : (
+            <NavLink
+              to={"/shipper"}
+              type="submit"
+              className="bg-green-100 w-fit text-xs text-green-700 md:px-2 m:py-1 p-1.5 py-0.5 rounded-2xl font-bold shadow-lg hover:bg-green-700 hover:text-green-100 hover:-translate-y-0.5 transition-all flex items-center gap-1 mt-2 group cursor-pointer"
+            >
+              Finding orders
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </NavLink>
+          )}
         </div>
         {currentUser.role === "CUSTOMER" ? (
           <img

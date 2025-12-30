@@ -12,8 +12,9 @@ import { ZodError } from "zod";
 export const getAllUsers = async (req: Request, res: Response) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 10;
+  const email = String(req.query.email) || "";
   try {
-    const users = await AccountService.getAllCustomer(page, limit);
+    const users = await AccountService.getAllCustomer(page, limit, email);
     const allUsers = listUserInfoResponse.parse(users);
     if (!allUsers)
       return res
@@ -35,8 +36,9 @@ export const getAllUsers = async (req: Request, res: Response) => {
 export const getAllShippers = async (req: Request, res: Response) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 10;
+  const email = String(req.query.email) || "";
   try {
-    const users = await AccountService.getAllShipper(page, limit);
+    const users = await AccountService.getAllShipper(page, limit, email);
     const allUsers = lisShipperInfo.parse(users);
     if (!allUsers)
       return res

@@ -7,7 +7,7 @@ const AdminLayout = () => {
       <div className="md:w-1/4 md:min-h-screen w-full">
         <AdminNavBar />
       </div>
-      <div className="w-3/4">
+      <div className="md:w-3/4 w-full">
         <Outlet />
       </div>
     </div>

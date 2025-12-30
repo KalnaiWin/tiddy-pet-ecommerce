@@ -6,7 +6,7 @@ import type {
 import { AccountRepository } from "../repository/account.repository.js";
 
 export const AccountService = {
-  getAllCustomer: async (page: number, limit: number) => {
+  getAllCustomer: async (page: number, limit: number, email: string) => {
     if (page < 1 || limit < 1)
       throw new Error("Incorrect page and limit number");
 
@@ -14,13 +14,14 @@ export const AccountService = {
     const users = await AccountRepository.findAccountByRole(
       "CUSTOMER",
       skip,
-      limit
+      limit,
+      email
     );
 
     return users;
   },
 
-  getAllShipper: async (page: number, limit: number) => {
+  getAllShipper: async (page: number, limit: number, email: string) => {
     if (page < 1 || limit < 1)
       throw new Error("Incorrect page and limit number");
 
@@ -28,7 +29,8 @@ export const AccountService = {
     const users = await AccountRepository.findAccountByRole(
       "SHIPPER",
       skip,
-      limit
+      limit,
+      email
     );
 
     return users;
@@ -43,7 +45,7 @@ export const AccountService = {
 
     return exsistingUser;
   },
-  
+
   verifyAccountShipper: async (verify: VerifyStatus, id: string) => {
     const exsistingShipper = await AccountRepository.findUserById(id);
     if (!exsistingShipper) throw new Error("User is not found");
@@ -60,7 +62,7 @@ export const AccountService = {
     }
     exsistingShipper.shipper_info.verification_status = verify;
     await exsistingShipper.save();
-    
+
     return exsistingShipper;
   },
 };

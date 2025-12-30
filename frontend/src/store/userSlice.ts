@@ -4,24 +4,22 @@ import {
   isPending,
   isRejected,
 } from "@reduxjs/toolkit";
-import type { User } from "../types/InterfaceUser";
+import type { UserState } from "../types/InterfaceUser";
 import {
   fetchUser,
+  getAllShippers,
+  getAllUsers,
   loginUser,
   logoutUser,
   registerUser,
 } from "../feature/userThunk";
 
-interface UserState {
-  currentUser: User | null;
-  status: "idle" | "loading" | "success" | "error";
-  error: string | null;
-}
-
 const initialState: UserState = {
   currentUser: null,
+  users: [],
   status: "idle",
   error: null,
+  usersStatus: "idle",
 };
 
 export const userSlice = createSlice({
@@ -35,16 +33,34 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+
+      //  Log out
       .addCase(logoutUser.fulfilled, (state) => {
         state.currentUser = null;
         state.status = "idle";
       })
 
+      // Load Account
+      .addMatcher(isPending(getAllShippers, getAllUsers), (state) => {
+        state.usersStatus = "loading";
+        state.error = null;
+      })
+      .addMatcher(isFulfilled(getAllShippers, getAllUsers), (state, action) => {
+        state.users = action.payload;
+        state.usersStatus = "succeeded";
+        state.error = null;
+      })
+      .addMatcher(isRejected(getAllShippers, getAllUsers), (state, action) => {
+        state.usersStatus = "failed";
+        state.error = action.payload as string;
+      })
+
+      // Authenticate
       .addMatcher(
         isFulfilled(fetchUser, loginUser, registerUser),
         (state, action) => {
           state.currentUser = action.payload;
-          state.status = "success";
+          state.status = "succeeded";
         }
       )
       .addMatcher(
@@ -57,7 +73,7 @@ export const userSlice = createSlice({
       .addMatcher(
         isRejected(fetchUser, loginUser, registerUser, logoutUser),
         (state, action) => {
-          state.status = "error";
+          state.status = "failed";
           state.error = action.payload as string;
         }
       );

@@ -28,6 +28,31 @@ export interface User {
   imageProfile: String;
 }
 
+export interface UserInfo {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  totalSpend: number;
+  shipper_info: {
+    vehicle_type: string;
+    license_number: string;
+    verification_status: string;
+  };
+  phone: string;
+  address: string;
+  image_profile: string;
+  status: string;
+}
+
+export interface UserState {
+  currentUser: User | null;
+  users: UserInfo[];
+  status: "idle" | "loading" | "succeeded" | "failed";
+  error: string | null;
+  usersStatus: "idle" | "loading" | "succeeded" | "failed";
+}
+
 export const roles: { id: UserRole; label: string; icon: any; desc: string }[] =
   [
     {
@@ -116,7 +141,7 @@ export const adminNavBarSelect = [
   {
     name: "Store",
     icon: Layers,
-    path: "admin/store",
+    path: "/admin/store",
   },
   {
     name: "Order",

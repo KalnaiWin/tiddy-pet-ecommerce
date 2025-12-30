@@ -1,5 +1,5 @@
 import { ArrowLeft, Menu } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { adminNavBarSelect } from "../types/InterfaceUser";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -9,12 +9,15 @@ const AdminNavBar = () => {
 
   return (
     <div className="bg-slate-800 text-white relative h-full flex md:block items-center w-full justify-between">
-      <div className="p-5 flex items-center gap-2 cursor-pointer group">
+      <Link
+        to={"/"}
+        className="p-5 flex items-center gap-2 cursor-pointer group"
+      >
         <div className="w-11 h-11 bg-orange-500 rounded-xl flex items-center justify-center text-white rotate-5 group-hover:rotate-15 transition-transform">
           <span className="text-2xl font-bold">TP</span>
         </div>
         <span className="text-xl font-bold tracking-tight">Tiddy Pet</span>
-      </div>
+      </Link>
       <div
         className="md:hidden block px-5"
         onClick={() => setIsOpenMenu(!isOpenMenu)}

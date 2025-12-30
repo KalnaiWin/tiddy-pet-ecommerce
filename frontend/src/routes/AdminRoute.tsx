@@ -12,11 +12,11 @@ export const AdminRoute = () => {
     <Routes>
       <Route element={<AdminLayout />}>
         <Route element={<AdminProtect />}>
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path={"/admin/analytic"} element={<AnalyticTable />} />
-          <Route path="/admin/account" element={<AccountManagement />} />
-          <Route path="/admin/store" element={<ProductStore />} />
-          <Route path="/admin/order" element={<OrderInformation />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="analytic" element={<AnalyticTable />} />
+          <Route path="account" element={<AccountManagement />} />
+          <Route path="store" element={<ProductStore />} />
+          <Route path="order" element={<OrderInformation />} />
         </Route>
       </Route>
     </Routes>
