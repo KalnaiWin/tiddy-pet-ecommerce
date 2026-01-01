@@ -66,14 +66,12 @@ export const verifyRefreshToken = (token: string): UserPayload => {
 };
 
 export const signAccessToken = (payload: UserPayload) => {
-  console.log("Called access sign");
   return jwt.sign(payload, ENV.JWT_ACCESS_SECRET, {
     expiresIn: "15m",
   });
 };
 
 export const signRefreshToken = (payload: UserPayload) => {
-  console.log("Called refresh sign");
   return jwt.sign(payload, ENV.JWT_REFRESH_SECRET, {
     expiresIn: "7d",
   });

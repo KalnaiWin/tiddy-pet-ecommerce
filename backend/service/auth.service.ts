@@ -75,7 +75,6 @@ export const authService = {
       userId: decoded.userId,
       role: decoded.role,
     });
-    console.log("Successfully in cookie");
     return { newAccessToken, newRefreshToken };
   },
 };

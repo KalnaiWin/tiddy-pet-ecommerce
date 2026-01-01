@@ -5,16 +5,22 @@ export interface childProductInput {
   stock: number;
 }
 
+export interface tagInput {
+  name: string;
+  slug: string;
+  isActive: boolean;
+}
+
 export interface productInputInterface {
   name: string;
   description: string;
   total: number;
-  minPrice?: number;
+  minPrice: number;
   maxPrice: number;
   imageProduct: string[];
   childProduct: childProductInput[];
-  category: string[];
-  brand: string;
+  category: tagInput[];
+  brand: tagInput;
   discount: number;
-  status?: "Available" | "Out of stock" | "Draft";
+  status: "Available" | "Out of stock" | "Draft";
 }

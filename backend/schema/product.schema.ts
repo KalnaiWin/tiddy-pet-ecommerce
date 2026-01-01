@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import "./category.schema.js";
+import "./brand.schema.js";
 
 const productSchema = new mongoose.Schema(
   {
@@ -75,13 +76,15 @@ const productSchema = new mongoose.Schema(
     ],
     category: [
       {
-        type: mongoose.Schema.Types.String,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
+        required: true,
       },
     ],
     brand: {
-      type: mongoose.Schema.Types.String,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Brand",
+      required: true,
     },
     discount: {
       type: Number,

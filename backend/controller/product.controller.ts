@@ -1,19 +1,19 @@
 import type { Request, Response } from "express";
 import { createProductSchema } from "../model/product.model.js";
 import { ZodError } from "zod";
-import Product from "../schema/product.schema.js";
 import { productService } from "../service/product.service.js";
 
 export const getAllProducts = async (req: Request, res: Response) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 10;
+  const name = String(req.query.name) || "";
   try {
     if (page < 1 || limit < 1) {
       return res.status(400).json({
         message: "Incorrect page or limit number",
       });
     }
-    const products = await productService.getAllProducts(page, limit);
+    const products = await productService.getAllProducts(page, limit, name);
     res.status(200).json(products);
   } catch (error) {
     if (error instanceof ZodError) {
@@ -33,8 +33,7 @@ export const addNewProduct = async (req: Request, res: Response) => {
     const product = await productService.addNewProduct(req.body);
 
     const response = createProductSchema.parse(product);
-    // return res.status(201).json({ productId: productid, product });
-    return res.status(201).json({ id: product._id, response });
+    return res.status(201).json(response);
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
@@ -57,7 +56,7 @@ export const EditProduct = async (req: Request, res: Response) => {
 
     const response = createProductSchema.parse(editedProduct);
 
-    return res.status(200).json({ id: editedProduct?._id, response });
+    return res.status(201).json(response);
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
@@ -77,8 +76,7 @@ export const DeleteProduct = async (req: Request, res: Response) => {
     const result = await productService.deleteOldProduct(id);
     if (result)
       return res.status(200).json({ message: "Deleted product successfully" });
-    else
-      return res.status(400).json({ message: "Deleted product failed" });
+    else return res.status(400).json({ message: "Deleted product failed" });
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({

@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 export const MainLayout = () => {
   return (
     <div>
-      <div>
+      <div className="shadow-md">
         <NavBar />
       </div>
       <main>

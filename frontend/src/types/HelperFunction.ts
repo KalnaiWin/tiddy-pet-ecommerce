@@ -25,3 +25,16 @@ export const VerifyStatus = (text: string) => {
       break;
   }
 };
+
+export const StatusProduct = (text:string) => {
+  switch (text) {
+    case "Available":
+      return "text-green-500 bg-green-100";
+    case "Out of stock":
+      return "text-red-500 bg-red-100";
+    case "Draft":
+      return "text-slate-500 bg-slate-100";
+    default:
+      break;
+  }
+}
