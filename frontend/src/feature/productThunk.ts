@@ -1,6 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../lib/axios";
-import type { ProductInfo } from "../types/InterfaceProduct";
+import type {
+  CreateProductPayload,
+  GetCategoryAndBrand,
+  ProductInfo,
+} from "../types/InterfaceProduct";
 
 export const getAllProducts = createAsyncThunk<
   ProductInfo[],
@@ -23,3 +27,42 @@ export const getAllProducts = createAsyncThunk<
     }
   }
 );
+
+export const getAllCategories = createAsyncThunk<
+  GetCategoryAndBrand[],
+  void,
+  { rejectValue: string }
+>("store/getAllCategories", async (_, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.get("/product/category");
+    return res.data;
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data || "Error");
+  }
+});
+
+export const getAllBrands = createAsyncThunk<
+  GetCategoryAndBrand[],
+  void,
+  { rejectValue: string }
+>("store/getAllBrands", async (_, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.get("/product/brand");
+    return res.data;
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data || "Error");
+  }
+});
+
+export const createNewProduct = createAsyncThunk<
+  ProductInfo,
+  CreateProductPayload,
+  { rejectValue: string }
+>("store/createNewProduct", async (payload, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.post("/product/add", payload);
+    return res.data;
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data || "Error");
+  }
+});

@@ -29,6 +29,17 @@ export const productService = {
     return parsedProducts;
   },
 
+  findAllCategoriesName: async () => {
+    const arrayCategoryName =
+      await productRepository.findAlNamelCategoryExist();
+    return arrayCategoryName;
+  },
+
+  findAllBrandsName: async () => {
+    const arrayBrandName = await productRepository.findAllNameBrandExist();
+    return arrayBrandName;
+  },
+
   addNewProduct: async (data: productInputInterface) => {
     if (!createProductSchema.parse(data))
       throw new Error("Error input product");

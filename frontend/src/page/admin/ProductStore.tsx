@@ -35,7 +35,7 @@ const ProductStore = () => {
 
   return (
     <div className="w-full min-h-screen bg-slate-100 p-3 sm:p-5">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 sm:gap-0">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-5">
         <div className="flex flex-col">
           <h1 className="font-bold text-lg sm:text-xl md:text-2xl">
             Inventory Management

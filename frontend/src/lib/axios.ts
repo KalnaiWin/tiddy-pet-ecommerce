@@ -28,7 +28,6 @@ axiosInstance.interceptors.response.use(
 
       try {
         await generateRefreshToken();
-        console.log("Success");
         return axiosInstance(originalRequest);
       } catch (err) {
         return Promise.reject(err);

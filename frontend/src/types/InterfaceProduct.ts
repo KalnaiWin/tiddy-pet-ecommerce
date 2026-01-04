@@ -17,12 +17,17 @@ export interface Brand {
   slug: string;
 }
 
+export interface GetCategoryAndBrand {
+  _id: string;
+  name: string;
+}
+
 export interface ProductInfo {
   _id: string;
   name: string;
   description: string;
   total: number;
-  sold: number,
+  sold: number;
   minPrice?: number;
   maxPrice: number;
   imageProduct: string[];
@@ -37,6 +42,38 @@ export interface ProductState {
   products: ProductInfo[] | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
+  categories: GetCategoryAndBrand[] | null;
+  categoriesStatus: "idle" | "loading" | "succeeded" | "failed";
+  brands: GetCategoryAndBrand[] | null;
+  brandsStatus: "idle" | "loading" | "succeeded" | "failed";
+  creatingStatus: "idle" | "loading" | "succeeded" | "failed";
+}
+
+export interface CreateProductPayload {
+  name: string;
+  status: string;
+  description: string;
+  imageProduct: string[];
+  minPrice: number;
+  maxPrice: number;
+  total: number;
+  discount: number;
+  childProduct: {
+    name: string;
+    price: number;
+    image: string;
+    stock: number;
+  }[];
+  category: {
+    name: string;
+    slug: string;
+    isActive: boolean;
+  }[];
+  brand: {
+    name: string;
+    slug: string;
+    isActive: boolean;
+  };
 }
 
 export const SocialNetwork = [

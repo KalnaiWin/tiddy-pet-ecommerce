@@ -1,8 +1,10 @@
+import { ca } from "zod/locales";
 import type mongoose from "mongoose";
 import type { tagInput } from "../interface/product.interface.js";
 import Brand from "../schema/brand.schema.js";
 import Product from "../schema/product.schema.js";
 import Category from "../schema/category.schema.js";
+import { _discriminatedUnion } from "zod/v4/core";
 
 export const productRepository = {
   findAllProducts: async (skip: number, limit: number, name: string) => {
@@ -45,5 +47,45 @@ export const productRepository = {
     }
 
     return ids;
+  },
+
+  findAlNamelCategoryExist: async () => {
+    const products = await Product.find();
+    const categoryMap = new Map<string, string>();
+
+    for (const product of products) {
+      for (const cateId of product.category) {
+        const id = cateId.toString();
+
+        if (!categoryMap.has(id)) {
+          const category = await Category.findById(cateId);
+          if (category) {
+            categoryMap.set(category._id.toString(), category.name);
+          }
+        }
+      }
+    }
+
+    return Array.from(categoryMap, ([_id, name]) => ({ _id, name }));
+  },
+
+  findAllNameBrandExist: async () => {
+    const products = await Product.find();
+    const brandMap = new Map<string, string>();
+
+    for (const product of products) {
+      const brandId = product.brand.toString();
+
+      if (!brandMap.has(brandId)) {
+        const brand = await Brand.findById(brandId);
+        if (brand) {
+          brandMap.set(brand._id.toString(), brand.name);
+        }
+      }
+    }
+    return Array.from(brandMap, ([_id, name]) => ({
+      _id,
+      name,
+    }));
   },
 };

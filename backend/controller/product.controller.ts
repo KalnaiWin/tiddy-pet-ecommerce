@@ -28,11 +28,31 @@ export const getAllProducts = async (req: Request, res: Response) => {
   }
 };
 
+export const getAllCategories = async (req: Request, res: Response) => {
+  try {
+    const allCategory = await productService.findAllCategoriesName();
+    return res.status(200).json(allCategory);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getAllBrands = async (req: Request, res: Response) => {
+  try {
+    const allBrand = await productService.findAllBrandsName();
+    return res.status(200).json(allBrand);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 export const addNewProduct = async (req: Request, res: Response) => {
   try {
     const product = await productService.addNewProduct(req.body);
-
     const response = createProductSchema.parse(product);
+
     return res.status(201).json(response);
   } catch (error) {
     if (error instanceof ZodError) {

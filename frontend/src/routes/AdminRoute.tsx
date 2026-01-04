@@ -6,6 +6,7 @@ import AccountManagement from "../page/admin/AccountManagement";
 import ProductStore from "../page/admin/ProductStore";
 import OrderInformation from "../page/admin/OrderInformation";
 import AdminProtect from "../layout/AdminProtect";
+import CreateProductPage from "../page/admin/CreateProductPage";
 
 export const AdminRoute = () => {
   return (
@@ -16,6 +17,7 @@ export const AdminRoute = () => {
           <Route path="analytic" element={<AnalyticTable />} />
           <Route path="account" element={<AccountManagement />} />
           <Route path="store" element={<ProductStore />} />
+          <Route path="create" element={<CreateProductPage />} />
           <Route path="order" element={<OrderInformation />} />
         </Route>
       </Route>

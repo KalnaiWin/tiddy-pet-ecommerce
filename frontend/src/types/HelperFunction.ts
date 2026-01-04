@@ -26,7 +26,7 @@ export const VerifyStatus = (text: string) => {
   }
 };
 
-export const StatusProduct = (text:string) => {
+export const StatusProduct = (text: string) => {
   switch (text) {
     case "Available":
       return "text-green-500 bg-green-100";
@@ -37,4 +37,16 @@ export const StatusProduct = (text:string) => {
     default:
       break;
   }
-}
+};
+
+export const convertSlug = (text: string): string => {
+  return text
+    .toLowerCase()
+    .normalize("NFD") // tách dấu tiếng Việt
+    .replace(/[\u0300-\u036f]/g, "") // xóa dấu
+    .replace(/đ/g, "d")
+    .replace(/[^a-z0-9\s-]/g, "") // xóa ký tự đặc biệt
+    .trim()
+    .replace(/\s+/g, "-") // space → -
+    .replace(/-+/g, "-"); // nhiều - → 1
+};
