@@ -23,6 +23,12 @@ export const productRepository = {
       .lean();
   },
 
+  findSpecificProductById: async (productId: string) => {
+    return Product.findById(productId)
+      .populate("category", "slug name")
+      .populate("brand", "slug name");
+  },
+
   findOrCreateBrand: async (brand: tagInput) => {
     const existingBrand = await Brand.findOne({ slug: brand.slug });
 

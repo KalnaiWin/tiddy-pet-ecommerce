@@ -1,19 +1,37 @@
-import { Dot, Edit, PlusCircle, Search, Trash, View } from "lucide-react";
+import {
+  Dot,
+  Edit,
+  PlusCircle,
+  Search,
+  Trash,
+  View,
+  XIcon,
+} from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import type { AppDispatch, RootState } from "../../store";
 import { useEffect, useState } from "react";
-import { getAllProducts } from "../../feature/productThunk";
+import { deleteProduct, getAllProducts } from "../../feature/productThunk";
 import { StatusProduct } from "../../types/HelperFunction";
+import toast from "react-hot-toast";
+import { resetDeleteStatus } from "../../store/productSlice";
+import ViewProductInformation from "./ViewProductInformation";
 
 const ProductStore = () => {
-  const { products } = useSelector((state: RootState) => state.product);
+  const { products, deletingStaus } = useSelector(
+    (state: RootState) => state.product
+  );
   const dispatch = useDispatch<AppDispatch>();
   const [page, setPage] = useState(1);
   const limit = 10;
 
   const [search, setSearch] = useState("");
   const [debouncedName, setDebouncedName] = useState("");
+
+  const [isView, setIsView] = useState({
+    option: false,
+    productId: "",
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -28,13 +46,46 @@ const ProductStore = () => {
     dispatch(getAllProducts({ page, limit, name: debouncedName }));
   }, [dispatch, page, limit, debouncedName]);
 
+  useEffect(() => {
+    if (deletingStaus === "succeeded") {
+      toast.success("Deleted successfully");
+      dispatch(resetDeleteStatus());
+    }
+
+    if (deletingStaus === "failed") {
+      toast.error("Delete failed");
+      dispatch(resetDeleteStatus());
+    }
+  }, [deletingStaus, dispatch]);
+
   let totalSold = 0;
   products?.forEach((product) => {
     totalSold += product.sold;
   });
 
   return (
-    <div className="w-full min-h-screen bg-slate-100 p-3 sm:p-5">
+    <div className="w-full min-h-screen bg-slate-100 p-3 sm:p-5 relative">
+      {isView.option && (
+        <div
+          className="absolute-center w-full h-full bg-black/70 z-2 flex justify-center items-center"
+          onClick={() => setIsView({ option: false, productId: "" })}
+        >
+          <div
+            className="relative md:size-[80%] w-[60%] md:w-[60%] bg-white rounded-lg overflow-y-auto md:top-0 -top-70"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setIsView({ option: false, productId: "" })}
+              className="absolute right-3 top-3 z-30 rounded-full bg-white p-1 text-slate-500 hover:bg-red-100 hover:text-red-600"
+              aria-label="Close"
+            >
+              <XIcon className="h-5 w-5" />
+            </button>
+
+            <ViewProductInformation productId={isView.productId} />
+          </div>
+        </div>
+      )}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-5">
         <div className="flex flex-col">
           <h1 className="font-bold text-lg sm:text-xl md:text-2xl">
@@ -196,15 +247,33 @@ const ProductStore = () => {
                         )}
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex justify-end gap-2">
-                          <button className="text-slate-600 hover:bg-slate-200 p-1.5 rounded-md transition-colors">
-                            <View className="w-5 h-5" />
+                        <div className="flex justify-end">
+                          <button
+                            onClick={() => {
+                              setIsView({
+                                option: true,
+                                productId: product._id,
+                              });
+                            }}
+                            className="text-slate-600 hover:bg-slate-200 p-1.5 rounded-md transition-colors"
+                          >
+                            <View className="w-4 h-4" />
                           </button>
                           <button className="text-blue-600 hover:bg-blue-200 p-1.5 rounded-md transition-colors">
-                            <Edit className="w-5 h-5" />
+                            <Edit className="w-4 h-4" />
                           </button>
-                          <button className="text-red-600 hover:bg-red-200 p-1.5 rounded-md transition-colors">
-                            <Trash className="w-5 h-5" />
+                          <button
+                            onClick={() =>
+                              dispatch(deleteProduct({ id: product._id }))
+                            }
+                            className={`p-1.5 rounded-md transition-colors ${
+                              deletingStaus === "loading"
+                                ? "text-red-300 cursor-not-allowed"
+                                : "text-red-600 hover:bg-red-200"
+                            }`}
+                            disabled={deletingStaus === "loading"}
+                          >
+                            <Trash className="w-4 h-4" />
                           </button>
                         </div>
                       </td>
@@ -285,13 +354,31 @@ const ProductStore = () => {
                   </div>
 
                   <div className="flex md:justify-end justify-start gap-2 pt-2 border-t border-slate-100">
-                    <button className="text-slate-600 hover:bg-slate-200 p-2 rounded-md transition-colors">
+                    <button
+                      onClick={() => {
+                        setIsView({
+                          option: true,
+                          productId: product._id,
+                        });
+                      }}
+                      className="text-slate-600 hover:bg-slate-200 p-2 rounded-md transition-colors"
+                    >
                       <View className="w-4 h-4 sm:w-5 sm:h-5" />
                     </button>
                     <button className="text-blue-600 hover:bg-blue-200 p-2 rounded-md transition-colors">
                       <Edit className="w-4 h-4 sm:w-5 sm:h-5" />
                     </button>
-                    <button className="text-red-600 hover:bg-red-200 p-2 rounded-md transition-colors">
+                    <button
+                      onClick={() =>
+                        dispatch(deleteProduct({ id: product._id }))
+                      }
+                      className={` p-2 rounded-md transition-colors ${
+                        deletingStaus === "loading"
+                          ? "cursor-not-allowed text-red-300"
+                          : "text-red-600 hover:bg-red-200"
+                      }`}
+                      disabled={deletingStaus === "loading"}
+                    >
                       <Trash className="w-4 h-4 sm:w-5 sm:h-5" />
                     </button>
                   </div>

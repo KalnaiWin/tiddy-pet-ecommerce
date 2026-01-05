@@ -3,6 +3,7 @@ import { getRedis } from "../config/redis.js";
 import {
   createProductSchema,
   getAllAdminProductSchema,
+  getSpecificProduct,
 } from "../model/product.model.js";
 import type { productInputInterface } from "../interface/product.interface.js";
 import Product from "../schema/product.schema.js";
@@ -27,6 +28,12 @@ export const productService = {
     const parsedProducts = getAllAdminProductSchema.parse(productsFromDb);
     await redis.set(cacheKey, JSON.stringify(parsedProducts), { EX: 60 });
     return parsedProducts;
+  },
+
+  getProductDetail: async (productId: string) => {
+    const product = await productRepository.findSpecificProductById(productId);
+    if (!product) throw new Error("Product is not found");
+    return product;
   },
 
   findAllCategoriesName: async () => {
@@ -89,9 +96,6 @@ export const productService = {
   },
 
   deleteOldProduct: async (productId: string) => {
-    const existingProduct = await Product.findById(productId);
-    if (!existingProduct) throw new Error("This product is not found");
-    existingProduct.deleteOne();
-    return 1;
+    return Product.findByIdAndDelete(productId);
   },
 };

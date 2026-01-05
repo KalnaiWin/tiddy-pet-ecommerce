@@ -47,6 +47,9 @@ export interface ProductState {
   brands: GetCategoryAndBrand[] | null;
   brandsStatus: "idle" | "loading" | "succeeded" | "failed";
   creatingStatus: "idle" | "loading" | "succeeded" | "failed";
+  deletingStaus: "idle" | "loading" | "succeeded" | "failed";
+  detail: ProductInfo | null;
+  detailStatus: "idle" | "loading" | "succeeded" | "failed";
 }
 
 export interface CreateProductPayload {

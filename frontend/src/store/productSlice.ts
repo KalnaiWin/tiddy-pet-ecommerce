@@ -2,9 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { ProductState } from "../types/InterfaceProduct";
 import {
   createNewProduct,
+  deleteProduct,
   getAllBrands,
   getAllCategories,
   getAllProducts,
+  viewProductDetail,
 } from "../feature/productThunk";
 
 const initialState: ProductState = {
@@ -19,13 +21,55 @@ const initialState: ProductState = {
   brandsStatus: "idle",
 
   creatingStatus: "idle",
+  deletingStaus: "idle",
+
+  detail: null,
+  detailStatus: "idle",
 };
 
 export const productSlice = createSlice({
   name: "product",
   initialState,
-  reducers: {},
+  reducers: {
+    resetDeleteStatus(state) {
+      state.deletingStaus = "idle";
+    },
+  },
+
   extraReducers(builder) {
+    // ================== VIEW PRODUCT DETAIL ==================
+
+    builder
+      .addCase(viewProductDetail.pending, (state) => {
+        state.detailStatus = "loading";
+      })
+      .addCase(viewProductDetail.fulfilled, (state, action) => {
+        state.detail = action.payload;
+        state.detailStatus = "succeeded";
+      })
+      .addCase(viewProductDetail.rejected, (state, action) => {
+        state.detailStatus = "failed";
+        state.error = action.payload as string;
+      });
+
+    // ================== DELETE PRODUCT ==================
+    builder
+      .addCase(deleteProduct.pending, (state) => {
+        state.deletingStaus = "loading";
+      })
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        state.deletingStaus = "succeeded";
+        if (state.products) {
+          state.products = state.products.filter(
+            (p) => p._id !== action.meta.arg.id
+          );
+        }
+      })
+      .addCase(deleteProduct.rejected, (state) => {
+        state.creatingStatus = "failed";
+      });
+
+    // ================== CREATE NEW PRODUCT ==================
     builder
       .addCase(createNewProduct.pending, (state) => {
         state.creatingStatus = "loading";
@@ -87,4 +131,5 @@ export const productSlice = createSlice({
   },
 });
 
+export const { resetDeleteStatus } = productSlice.actions;
 export default productSlice.reducer;

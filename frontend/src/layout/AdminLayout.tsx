@@ -7,7 +7,7 @@ const AdminLayout = () => {
       <div className="md:w-1/4 md:h-screen min-h-screen w-full md:fixed md:left-0 top-0">
         <AdminNavBar />
       </div>
-      <div className="md:w-3/4 w-full overflow-y-auto absolute md:right-0 top-[14%] md:top-0">
+      <div className="md:w-3/4 w-full overflow-y-auto absolute md:right-0 top-[12%] md:top-0">
         <Outlet />
       </div>
     </div>
