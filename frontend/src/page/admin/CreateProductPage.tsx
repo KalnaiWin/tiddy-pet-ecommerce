@@ -1,6 +1,6 @@
 import { ArrowLeft, Loader, Trash, XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { childProductInput } from "../../types/InterfaceProduct";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store";
@@ -10,6 +10,7 @@ import {
   getAllCategories,
 } from "../../feature/productThunk";
 import { convertSlug } from "../../types/HelperFunction";
+import toast from "react-hot-toast";
 
 const CreateProductPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -23,16 +24,29 @@ const CreateProductPage: React.FC = () => {
   const [newBrand, setNewBrand] = useState("");
   const [customBrand, setCustomBrand] = useState("");
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     dispatch(getAllCategories());
     dispatch(getAllBrands());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (creatingStatus === "succeeded") {
+      toast.success("Add successfully!");
+      navigate("/admin/store");
+    }
+
+    if (creatingStatus === "failed") {
+      toast.error("Has something went wrong");
+    }
+  }, [creatingStatus, navigate]);
+
   const [formData, setFormData] = useState({
     name: "",
     status: "",
     description: "",
-    imageProduct: [""],
+    imageProduct: ["/src/asset/Empty.webp"],
     minPrice: 0,
     maxPrice: 0,
     total: 0,
@@ -231,42 +245,45 @@ const CreateProductPage: React.FC = () => {
             Product Gallery
           </h2>
           <div className="grid grid-cols-4 gap-4 mb-4">
-            {formData.imageProduct.map((url, idx) => (
-              <div
-                key={idx}
-                className="relative group aspect-square rounded-lg overflow-hidden border border-slate-200"
-              >
-                <img
-                  src={url}
-                  alt={`Preview ${idx}`}
-                  className="w-full h-full object-cover"
-                />
-                <button
-                  type="button"
-                  onClick={() =>
-                    setFormData((p) => ({
-                      ...p,
-                      imageProduct: p.imageProduct.filter((_, i) => i !== idx),
-                    }))
-                  }
-                  className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            {formData.imageProduct.length > 0 &&
+              formData.imageProduct.map((url, idx) => (
+                <div
+                  key={idx}
+                  className="relative group aspect-square rounded-lg overflow-hidden border border-slate-200"
                 >
-                  <svg
-                    className="w-3 h-3"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                  <img
+                    src={url}
+                    alt={`Preview ${idx}`}
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((p) => ({
+                        ...p,
+                        imageProduct: p.imageProduct.filter(
+                          (_, i) => i !== idx
+                        ),
+                      }))
+                    }
+                    className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-            ))}
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              ))}
             <button
               type="button"
               onClick={addImage}
@@ -317,7 +334,7 @@ const CreateProductPage: React.FC = () => {
                   className="flex items-center gap-4 p-4 border border-slate-200 rounded-lg bg-slate-50"
                 >
                   <img
-                    src={child.image}
+                    src={child.image || "/src/asset/Empty.webp"}
                     className="w-12 h-12 rounded bg-white object-cover border"
                     alt=""
                   />
@@ -612,13 +629,16 @@ const CreateProductPage: React.FC = () => {
       </div>
       <button
         type="submit"
-        className={`w-full my-10 ${
+        className={`w-full my-10 py-5 ${
           creatingStatus === "loading" ? "cursor-not-allowed" : "cursor-pointer"
-        } bg-orange-600  rounded-md py-2 hover:bg-orange-400`}
+        } bg-orange-600  rounded-md py-2 hover:bg-orange-400 flex justify-center items-center`}
         disabled={creatingStatus === "loading"}
       >
         {creatingStatus === "loading" ? (
-          <Loader className="animate-spin" />
+          <p className="flex justify-center items-center text-white font-black text-xl gap-2 animate-pulse">
+            <Loader className="animate-spin" />
+            Please waiting...
+          </p>
         ) : (
           <p className="font-black text-2xl text-white">Submit</p>
         )}

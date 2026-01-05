@@ -107,6 +107,9 @@ const ProductStore = () => {
                 <thead className="bg-slate-50 border-b border-slate-200">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      Num
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                       Product
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
@@ -127,11 +130,15 @@ const ProductStore = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
-                  {products.map((product) => (
+                  {products.map((product, idx) => (
                     <tr
-                      key={product._id}
+                      key={`${product._id}+${idx}`}
                       className="hover:bg-slate-50 transition-colors"
                     >
+                      <td className="flex items-center gap-2 py-5">
+                        <p className="text-xl font-semibold">{idx}</p>
+                        <input type="checkbox" className="bg-red-700 size-6" />
+                      </td>
                       <td className="px-4 py-3">
                         <div className="flex gap-3 items-center">
                           <img
@@ -147,17 +154,18 @@ const ProductStore = () => {
                       <td className="px-4 py-3">
                         <div className="flex md:flex-row flex-col gap-4">
                           <div className="flex flex-wrap gap-1">
-                            {product.category.map((cate) => (
-                              <span
-                                key={cate._id}
-                                className="text-xs font-medium text-blue-700 underline"
-                              >
-                                {cate.name}
-                              </span>
-                            ))}
+                            {product.category?.length > 0 &&
+                              product.category?.map((cate, idx) => (
+                                <span
+                                  key={`${cate._id}+${idx}`}
+                                  className="text-xs font-medium text-blue-700 underline"
+                                >
+                                  {cate.name}
+                                </span>
+                              ))}
                           </div>
                           <span className="text-xs font-medium text-pink-700 underline">
-                            {product.brand.name}
+                            {product.brand?.name}
                           </span>
                         </div>
                       </td>
@@ -206,30 +214,37 @@ const ProductStore = () => {
               </table>
             </div>
 
+            {/* Mobile responsive */}
             <div className="lg:hidden space-y-3 sm:space-y-4">
-              {products.map((product) => (
+              {products.map((product, idx) => (
                 <div
-                  key={product._id}
+                  key={`${product._id} + ${idx}`}
                   className="bg-white border border-slate-200 rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow"
                 >
-                  <div className="flex gap-3 mb-3">
-                    <img
-                      src={"/src/asset/Empty.webp"}
-                      alt={product.name}
-                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-md object-cover"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-sm sm:text-base mb-1 truncate">
-                        {product.name}
-                      </h3>
-                      <div
-                        className={`${StatusProduct(
-                          product.status || ""
-                        )} flex items-center rounded-md font-semibold text-xs w-fit px-2 py-0.5`}
-                      >
-                        <Dot className="w-4 h-4" />
-                        {product.status}
+                  <div className="flex justify-between gap-3 mb-3">
+                    <div className="flex gap-3">
+                      <img
+                        src={"/src/asset/Empty.webp"}
+                        alt={product.name}
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-md object-cover"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-sm sm:text-base mb-1 truncate">
+                          {product.name}
+                        </h3>
+                        <div
+                          className={`${StatusProduct(
+                            product.status || ""
+                          )} flex items-center rounded-md font-semibold text-xs w-fit px-2 py-0.5`}
+                        >
+                          <Dot className="w-4 h-4" />
+                          {product.status}
+                        </div>
                       </div>
+                    </div>
+                    <div className="flex gap-3 items-center">
+                      <p className="text-2xl font-black">{idx}</p>
+                      <input type="checkbox" className="bg-red-700 size-10" />
                     </div>
                   </div>
 
@@ -238,20 +253,21 @@ const ProductStore = () => {
                     <div className="flex justify-between">
                       <span className="text-slate-500">Category:</span>
                       <div className="flex flex-wrap gap-1 justify-end">
-                        {product.category.map((cate) => (
-                          <span
-                            key={cate._id}
-                            className="font-medium text-blue-700 underline"
-                          >
-                            {cate.name}
-                          </span>
-                        ))}
+                        {product.category?.length > 0 &&
+                          product.category?.map((cate, idx) => (
+                            <span
+                              key={`${cate._id}+${idx}`}
+                              className="font-medium text-blue-700 underline"
+                            >
+                              {cate.name}
+                            </span>
+                          ))}
                       </div>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">Brand:</span>
                       <span className="font-medium text-pink-700 underline">
-                        {product.brand.name}
+                        {product.brand?.name}
                       </span>
                     </div>
                     <div className="flex justify-between">
