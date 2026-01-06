@@ -15,6 +15,7 @@ export interface Brand {
   _id: string;
   name: string;
   slug: string;
+  isActive: boolean;
 }
 
 export interface GetCategoryAndBrand {
@@ -50,6 +51,7 @@ export interface ProductState {
   deletingStaus: "idle" | "loading" | "succeeded" | "failed";
   detail: ProductInfo | null;
   detailStatus: "idle" | "loading" | "succeeded" | "failed";
+  editStatus: "idle" | "loading" | "succeeded" | "failed";
 }
 
 export interface CreateProductPayload {
@@ -77,6 +79,10 @@ export interface CreateProductPayload {
     slug: string;
     isActive: boolean;
   };
+}
+export interface EditProductPayload {
+  id: string;
+  data: Partial<CreateProductPayload>;
 }
 
 export const SocialNetwork = [

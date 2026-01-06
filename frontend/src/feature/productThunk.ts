@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../lib/axios";
 import type {
   CreateProductPayload,
+  EditProductPayload,
   GetCategoryAndBrand,
   ProductInfo,
 } from "../types/InterfaceProduct";
@@ -62,6 +63,22 @@ export const createNewProduct = createAsyncThunk<
   try {
     const res = await axiosInstance.post("/product/add", payload);
     return res.data;
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data || "Error");
+  }
+});
+
+export const editProduct = createAsyncThunk<
+  ProductInfo,
+  EditProductPayload,
+  { rejectValue: string }
+>("store/editProduct", async ({ id, data }, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.put(`/product/edit/${id}`, data);
+    return {
+      ...res.data,
+      _id: id,
+    };
   } catch (error: any) {
     return rejectWithValue(error.response?.data || "Error");
   }

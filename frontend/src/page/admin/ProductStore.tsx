@@ -14,11 +14,11 @@ import { useEffect, useState } from "react";
 import { deleteProduct, getAllProducts } from "../../feature/productThunk";
 import { StatusProduct } from "../../types/HelperFunction";
 import toast from "react-hot-toast";
-import { resetDeleteStatus } from "../../store/productSlice";
+import { resetProductCRUDstatus } from "../../store/productSlice";
 import ViewProductInformation from "./ViewProductInformation";
 
 const ProductStore = () => {
-  const { products, deletingStaus } = useSelector(
+  const { products, deletingStaus, creatingStatus, editStatus } = useSelector(
     (state: RootState) => state.product
   );
   const dispatch = useDispatch<AppDispatch>();
@@ -44,19 +44,39 @@ const ProductStore = () => {
 
   useEffect(() => {
     dispatch(getAllProducts({ page, limit, name: debouncedName }));
-  }, [dispatch, page, limit, debouncedName]);
+  }, [page, limit, debouncedName, dispatch]);
+
+  useEffect(() => {
+    if (creatingStatus === "succeeded") {
+      toast.success("Created successfully!");
+      dispatch(getAllProducts({ page, limit, name: debouncedName }));
+      dispatch(resetProductCRUDstatus());
+    }
+  }, [creatingStatus, dispatch, page, limit, debouncedName]);
+
+  useEffect(() => {
+    if (editStatus === "succeeded") {
+      toast.success("Updated successfully!");
+      dispatch(getAllProducts({ page, limit, name: debouncedName }));
+      dispatch(resetProductCRUDstatus());
+    }
+    if (editStatus === "failed") {
+      toast.error("Update failed");
+      dispatch(resetProductCRUDstatus());
+    }
+  }, [editStatus, dispatch, page, limit, debouncedName]);
 
   useEffect(() => {
     if (deletingStaus === "succeeded") {
       toast.success("Deleted successfully");
-      dispatch(resetDeleteStatus());
+      dispatch(getAllProducts({ page, limit, name: debouncedName }));
+      dispatch(resetProductCRUDstatus());
     }
-
     if (deletingStaus === "failed") {
       toast.error("Delete failed");
-      dispatch(resetDeleteStatus());
+      dispatch(resetProductCRUDstatus());
     }
-  }, [deletingStaus, dispatch]);
+  }, [deletingStaus, dispatch, page, limit, debouncedName]);
 
   let totalSold = 0;
   products?.forEach((product) => {
@@ -224,7 +244,7 @@ const ProductStore = () => {
                         <div
                           className={`${StatusProduct(
                             product.status || ""
-                          )} flex items-center rounded-md font-semibold text-sm w-fit px-2 py-1`}
+                          )} flex items-center rounded-md font-semibold text-xs w-fit px-2 py-1`}
                         >
                           <Dot className="w-5 h-5" />
                           {product.status}
@@ -259,9 +279,12 @@ const ProductStore = () => {
                           >
                             <View className="w-4 h-4" />
                           </button>
-                          <button className="text-blue-600 hover:bg-blue-200 p-1.5 rounded-md transition-colors">
+                          <Link
+                            to={`/admin/edit/${product._id}`}
+                            className="text-blue-600 hover:bg-blue-200 p-1.5 rounded-md transition-colors"
+                          >
                             <Edit className="w-4 h-4" />
-                          </button>
+                          </Link>
                           <button
                             onClick={() =>
                               dispatch(deleteProduct({ id: product._id }))
@@ -365,9 +388,12 @@ const ProductStore = () => {
                     >
                       <View className="w-4 h-4 sm:w-5 sm:h-5" />
                     </button>
-                    <button className="text-blue-600 hover:bg-blue-200 p-2 rounded-md transition-colors">
+                    <Link
+                      to={`/admin/edit/${product._id}`}
+                      className="text-blue-600 hover:bg-blue-200 p-2 rounded-md transition-colors"
+                    >
                       <Edit className="w-4 h-4 sm:w-5 sm:h-5" />
-                    </button>
+                    </Link>
                     <button
                       onClick={() =>
                         dispatch(deleteProduct({ id: product._id }))

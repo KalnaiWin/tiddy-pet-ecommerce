@@ -3,6 +3,7 @@ import type { ProductState } from "../types/InterfaceProduct";
 import {
   createNewProduct,
   deleteProduct,
+  editProduct,
   getAllBrands,
   getAllCategories,
   getAllProducts,
@@ -22,6 +23,7 @@ const initialState: ProductState = {
 
   creatingStatus: "idle",
   deletingStaus: "idle",
+  editStatus: "idle",
 
   detail: null,
   detailStatus: "idle",
@@ -31,8 +33,10 @@ export const productSlice = createSlice({
   name: "product",
   initialState,
   reducers: {
-    resetDeleteStatus(state) {
+    resetProductCRUDstatus(state) {
       state.deletingStaus = "idle";
+      state.editStatus = "idle";
+      state.creatingStatus = "idle";
     },
   },
 
@@ -66,7 +70,7 @@ export const productSlice = createSlice({
         }
       })
       .addCase(deleteProduct.rejected, (state) => {
-        state.creatingStatus = "failed";
+        state.deletingStaus = "failed";
       });
 
     // ================== CREATE NEW PRODUCT ==================
@@ -84,6 +88,28 @@ export const productSlice = createSlice({
       })
       .addCase(createNewProduct.rejected, (state, action) => {
         state.creatingStatus = "failed";
+        state.error = action.payload as string;
+      });
+
+    // ================== EDIT PRODUCT ==================
+    builder
+      .addCase(editProduct.pending, (state) => {
+        state.editStatus = "loading";
+      })
+      .addCase(editProduct.fulfilled, (state, action) => {
+        state.editStatus = "succeeded";
+        state.detail = action.payload;
+        if (state.products) {
+          const index = state.products.findIndex(
+            (p) => p._id === action.payload._id
+          );
+          if (index !== -1) {
+            state.products[index] = action.payload;
+          }
+        }
+      })
+      .addCase(editProduct.rejected, (state, action) => {
+        state.editStatus = "failed";
         state.error = action.payload as string;
       });
 
@@ -131,5 +157,5 @@ export const productSlice = createSlice({
   },
 });
 
-export const { resetDeleteStatus } = productSlice.actions;
+export const { resetProductCRUDstatus } = productSlice.actions;
 export default productSlice.reducer;

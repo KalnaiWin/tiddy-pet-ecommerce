@@ -16,7 +16,7 @@ export const productRepository = {
 
     return Product.find(filter)
       .populate("category", "slug name")
-      .populate("brand", "slug name")
+      .populate("brand", "slug name Active")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -26,7 +26,7 @@ export const productRepository = {
   findSpecificProductById: async (productId: string) => {
     return Product.findById(productId)
       .populate("category", "slug name")
-      .populate("brand", "slug name");
+      .populate("brand", "slug name is Active");
   },
 
   findOrCreateBrand: async (brand: tagInput) => {
