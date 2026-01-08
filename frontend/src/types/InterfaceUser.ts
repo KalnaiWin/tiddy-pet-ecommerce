@@ -28,6 +28,19 @@ export interface User {
   imageProfile: String;
 }
 
+export interface AccountUpdateInput {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  shipper_info: {
+    vehicle_type: string;
+    license_number: string;
+    verification_status: string;
+  };
+  status: string;
+}
+
 export interface UserInfo {
   _id: string;
   name: string;
@@ -43,6 +56,7 @@ export interface UserInfo {
   address: string;
   image_profile: string;
   status: string;
+  createdAt: Date;
 }
 
 export interface UserState {
@@ -51,6 +65,10 @@ export interface UserState {
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
   usersStatus: "idle" | "loading" | "succeeded" | "failed";
+  detailAccount: UserInfo | null;
+  statusDetail: "idle" | "loading" | "succeeded" | "failed";
+  deletingStatus: "idle" | "loading" | "succeeded" | "failed";
+  updatingStatus: "idle" | "loading" | "succeeded" | "failed";
 }
 
 export const roles: { id: UserRole; label: string; icon: any; desc: string }[] =

@@ -1,6 +1,6 @@
 import type {
   AccountStatus,
-  accountTypeInterface,
+  updateProfileInterface,
   VerifyStatus,
 } from "../interface/account.interface.js";
 import { AccountRepository } from "../repository/account.repository.js";
@@ -9,7 +9,6 @@ export const AccountService = {
   getAllCustomer: async (page: number, limit: number, email: string) => {
     if (page < 1 || limit < 1)
       throw new Error("Incorrect page and limit number");
-
     const skip = (page - 1) * limit;
     const users = await AccountRepository.findAccountByRole(
       "CUSTOMER",
@@ -17,7 +16,6 @@ export const AccountService = {
       limit,
       email
     );
-
     return users;
   },
 
@@ -36,33 +34,34 @@ export const AccountService = {
     return users;
   },
 
-  changeStatusAccount: async (status: AccountStatus, id: string) => {
-    const exsistingUser = await AccountRepository.findUserById(id);
-    if (!exsistingUser) throw new Error("User is not found");
-
-    exsistingUser.status = status;
-    await exsistingUser.save();
-
-    return exsistingUser;
+  getSpecificAccount: async (userId: string) => {
+    const existingUser = await AccountRepository.findUserById(userId);
+    if (!existingUser) throw new Error("User is not found");
+    return existingUser;
   },
 
-  verifyAccountShipper: async (verify: VerifyStatus, id: string) => {
-    const exsistingShipper = await AccountRepository.findUserById(id);
-    if (!exsistingShipper) throw new Error("User is not found");
-
-    if (exsistingShipper.role !== "SHIPPER")
-      throw new Error("User is not shipper");
-
-    if (!exsistingShipper.shipper_info) {
-      exsistingShipper.shipper_info = {
-        vehicle_type: "BIKE",
-        license_number: "",
-        verification_status: "PENDING",
-      };
+  updateProfile: async (userId: string, data: updateProfileInterface) => {
+    const emailExists = await AccountRepository.findByEmailExceptUser(
+      data.email,
+      userId
+    );
+    const nameExists = await AccountRepository.findByNameExceptUser(
+      data.name,
+      userId
+    );
+    if (nameExists || emailExists) {
+      throw new Error("Name or Email has already taken");
     }
-    exsistingShipper.shipper_info.verification_status = verify;
-    await exsistingShipper.save();
 
-    return exsistingShipper;
+    await AccountRepository.findUserByIdAndUpdateProfile(userId, data);
+    return 1;
+  },
+
+  deleteAccount: async (userId: string) => {
+    const deletedUser = await AccountRepository.findAccountByIdAndDelete(
+      userId
+    );
+    if (!deletedUser) throw new Error("User is not found");
+    return deletedUser;
   },
 };

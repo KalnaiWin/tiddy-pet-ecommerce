@@ -7,6 +7,7 @@ import ProductStore from "../page/admin/ProductStore";
 import OrderInformation from "../page/admin/OrderInformation";
 import AdminProtect from "../layout/AdminProtect";
 import CreateProductPage from "../page/admin/CreateProductPage";
+import EditProductPage from "../page/admin/EditProductPage";
 
 export const AdminRoute = () => {
   return (
@@ -18,6 +19,7 @@ export const AdminRoute = () => {
           <Route path="account" element={<AccountManagement />} />
           <Route path="store" element={<ProductStore />} />
           <Route path="create" element={<CreateProductPage />} />
+          <Route path="edit/:id" element={<EditProductPage />} />
           <Route path="order" element={<OrderInformation />} />
         </Route>
       </Route>

@@ -6,12 +6,15 @@ import {
 } from "@reduxjs/toolkit";
 import type { UserState } from "../types/InterfaceUser";
 import {
+  deleteAccount,
   fetchUser,
+  getAccountDetail,
   getAllShippers,
   getAllUsers,
   loginUser,
   logoutUser,
   registerUser,
+  updateProfileAccount,
 } from "../feature/userThunk";
 
 const initialState: UserState = {
@@ -20,6 +23,12 @@ const initialState: UserState = {
   status: "idle",
   error: null,
   usersStatus: "idle",
+
+  detailAccount: null,
+  statusDetail: "idle",
+
+  deletingStatus: "idle",
+  updatingStatus: "idle",
 };
 
 export const userSlice = createSlice({
@@ -32,6 +41,46 @@ export const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+
+
+    builder
+      .addCase(updateProfileAccount.pending, (state) => {
+        state.updatingStatus = "loading";
+      })
+      .addCase(updateProfileAccount.fulfilled, (state) => {
+        state.updatingStatus = "succeeded";
+      })
+      .addCase(updateProfileAccount.rejected, (state) => {
+        state.updatingStatus = "failed";
+      })
+
+    builder
+      .addCase(deleteAccount.pending, (state) => {
+        state.deletingStatus = "loading";
+        state.error = null;
+      })
+      .addCase(deleteAccount.fulfilled, (state, action) => {
+        state.deletingStatus = "succeeded";
+        state.users = state.users.filter((user) => user._id !== action.payload);
+      })
+      .addCase(deleteAccount.rejected, (state, action) => {
+        state.deletingStatus = "failed";
+        state.error = action.payload ?? "Delete account failed";
+      });
+
+    //
+    builder
+      .addCase(getAccountDetail.pending, (state) => {
+        state.statusDetail = "loading";
+      })
+      .addCase(getAccountDetail.fulfilled, (state, action) => {
+        state.statusDetail = "succeeded";
+        state.detailAccount = action.payload;
+      })
+      .addCase(getAccountDetail.rejected, (state) => {
+        state.statusDetail = "failed";
+      });
+
     builder
 
       //  Log out

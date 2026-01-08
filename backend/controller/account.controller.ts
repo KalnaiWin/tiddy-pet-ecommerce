@@ -56,47 +56,45 @@ export const getAllShippers = async (req: Request, res: Response) => {
   }
 };
 
-export const changeStatusAccount = async (req: Request, res: Response) => {
-  const { status } = req.body;
-  const { id: userId } = req.params;
+export const getAccountDetail = async (req: Request, res: Response) => {
+  const { id } = req.params;
   try {
-    if (!userId) return res.status(404).json({ message: "Id not found" });
-    const user = await AccountService.changeStatusAccount(status, userId);
-    const changed = changeStatusResponse.parse(user);
-    return res.status(200).json(changed);
+    if (!id) return res.status(404).json({ message: "Id not found" });
+    const user = await AccountService.getSpecificAccount(id);
+    return res.status(200).json(user);
   } catch (error) {
-    if (error instanceof ZodError) {
-      return res.status(400).json({
-        errors: error.message,
-      });
-    }
-    return res.status(500).json({
-      message: error instanceof Error ? error.message : "Internal Server Error",
-    });
+    if (error instanceof Error)
+      return res.status(400).json({ message: error.message });
+    else return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-export const verifyAccountShipper = async (req: Request, res: Response) => {
-  const { verification_status } = req.body;
-  const { id: userId } = req.params;
+export const deleteAccount = async (req: Request, res: Response) => {
+  const { id } = req.params;
   try {
-    if (!userId) return res.status(404).json({ message: "Id not found" });
-    const user = await AccountService.verifyAccountShipper(
-      verification_status,
-      userId
-    );
-
-    const changed = verifyStatusShipperResponse.parse(user);
-
-    return res.status(200).json(changed);
+    if (!id) return res.status(404).json({ message: "This id not found" });
+    const deletedAccount = await AccountService.deleteAccount(id);
+    if (!deletedAccount)
+      return res.status(404).json({ message: "Deleted failed" });
+    return res.status(200).json({ message: "Deleted succesfully" });
   } catch (error) {
-    if (error instanceof ZodError) {
-      return res.status(400).json({
-        errors: error.message,
-      });
-    }
-    return res.status(500).json({
-      message: error instanceof Error ? error.message : "Internal Server Error",
-    });
+    if (error instanceof Error)
+      return res.status(400).json({ message: error.message });
+    else return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const updateProfile = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const data = req.body;
+  try {
+    if (!id) return res.status(404).json({ message: "This id not found" });
+    const result = await AccountService.updateProfile(id, data);
+    if (!result) return res.status(400).json({ message: "Updated failed" });
+    return res.status(200).json({ message: "Updated successfully" });
+  } catch (error) {
+    if (error instanceof Error)
+      return res.status(400).json({ message: error.message });
+    else return res.status(500).json({ message: "Internal Server Error" });
   }
 };

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { date, z } from "zod";
 
 export const userAuthResponse = z.object({
   _id: z.unknown(),
@@ -19,6 +19,7 @@ export const listUserInfoResponse = z.array(
     address: z.string(),
     image_profile: z.string(),
     status: z.enum(["INACTIVE", "ACTIVE", "BANNED", "BUSY"]),
+    createdAt: z.date(),
   })
 );
 
@@ -37,6 +38,7 @@ export const lisShipperInfo = z.array(
       license_number: z.string(),
       verification_status: z.enum(["PENDING", "APPROVED", "REJECTED"]),
     }),
+    createdAt: z.date(),
   })
 );
 

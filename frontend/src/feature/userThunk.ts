@@ -1,7 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../lib/axios";
 import toast from "react-hot-toast";
-import type { User, UserInfo } from "../types/InterfaceUser";
+import type {
+  AccountUpdateInput,
+  User,
+  UserInfo,
+} from "../types/InterfaceUser";
 
 export const fetchUser = createAsyncThunk(
   "user/fetchUser",
@@ -101,3 +105,42 @@ export const getAllShippers = createAsyncThunk<
     }
   }
 );
+
+export const getAccountDetail = createAsyncThunk<
+  UserInfo,
+  { id: string },
+  { rejectValue: string }
+>("account/getAccountDetail", async ({ id }, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.get(`/account/${id}`);
+    return res.data;
+  } catch (error) {
+    return rejectWithValue("Cannot account deatail");
+  }
+});
+
+export const deleteAccount = createAsyncThunk<
+  string,
+  { id: string },
+  { rejectValue: string }
+>("account/deleteAccount", async ({ id }, { rejectWithValue }) => {
+  try {
+    await axiosInstance.delete(`/account/delete/${id}`);
+    return id;
+  } catch (error) {
+    return rejectWithValue("Cannot account deatail");
+  }
+});
+
+export const updateProfileAccount = createAsyncThunk<
+  boolean,
+  { id: string; data: AccountUpdateInput },
+  { rejectValue: string }
+>("account/updateProfileAccount", async ({ id, data }, { rejectWithValue }) => {
+  try {
+    await axiosInstance.put(`/account/update-profile/${id}`, data);
+    return true;
+  } catch (error) {
+    return rejectWithValue("Cannot account deatail");
+  }
+});

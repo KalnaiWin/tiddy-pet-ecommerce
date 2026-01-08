@@ -1,9 +1,11 @@
-import { Search, Truck, UserCircle2 } from "lucide-react";
+import { Search, Truck, UserCircle2, XIcon } from "lucide-react";
 import { useState } from "react";
 import TableListShipper from "./TableListShipper";
 import TableListCustomer from "./TableListCustomer";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
+import ViewUserInformation from "./ViewUserInformation";
+import EditProfileAccount from "./EditProfileAccount";
 
 const AccountManagement = () => {
   const { users } = useSelector((state: RootState) => state.user);
@@ -11,25 +13,38 @@ const AccountManagement = () => {
 
   const [isEmail, setIsEmail] = useState("");
 
+  const [isView, setIsView] = useState({
+    option: false,
+    userId: "",
+  });
+
+  const [isEdit, setIsEdit] = useState({
+    option: false,
+    userId: "",
+  });
+
   const totalShipper = users.filter((user) => {
     user.role === "SHIPPER";
     user.status === "ACTIVE";
   }).length;
+
   const totalVerified = users.filter((user) => {
     user.role === "SHIPPER";
     user?.shipper_info?.verification_status === "APPROVED";
   }).length;
+
   const totalCustomer = users.filter((user) => {
     user.role === "CUSTOMER";
     user.status === "ACTIVE";
   }).length;
+
   let amountSpend = 0;
   users.forEach((user) => {
     amountSpend += user.totalSpend;
   });
 
   return (
-    <div className="h-full bg-slate-100 min-h-screen p-5">
+    <div className="h-full bg-slate-100 min-h-screen p-5 relative">
       <div className="flex gap-2 items-center">
         <h1 className="font-bold text-lg sm:text-xl md:text-2xl">
           Account Management
@@ -100,11 +115,59 @@ const AccountManagement = () => {
       </div>
       <div className="my-5 md:text-md text-xs">
         {isCustomer ? (
-          <TableListCustomer email={isEmail} />
+          <TableListCustomer
+            email={isEmail}
+            setIsView={setIsView}
+            setIsEdit={setIsEdit}
+          />
         ) : (
-          <TableListShipper email={isEmail} />
+          <TableListShipper
+            email={isEmail}
+            setIsView={setIsView}
+            setIsEdit={setIsEdit}
+          />
         )}
       </div>
+      {isView.option && (
+        <div
+          className="absolute-center w-full h-full bg-black/70 z-2 flex justify-center items-center top-2"
+          onClick={() => setIsView({ option: false, userId: "" })}
+        >
+          <div
+            className="relative md:w-[80%] bg-white rounded-lg overflow-y-auto md:top-0 top-5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setIsView({ option: false, userId: "" })}
+              className="absolute right-3 top-3 z-30 rounded-full bg-white p-1 text-slate-500 hover:bg-red-100 hover:text-red-600"
+              aria-label="Close"
+            >
+              <XIcon className="h-5 w-5" />
+            </button>
+            <ViewUserInformation userId={isView.userId} />
+          </div>
+        </div>
+      )}
+      {isEdit.option && (
+        <div
+          className="absolute-center w-full h-full bg-black/70 z-2 flex justify-center items-center"
+          onClick={() => setIsEdit({ option: false, userId: "" })}
+        >
+          <div
+            className="relative md:w-[80%] bg-white rounded-lg  md:top-0 -top-70"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setIsEdit({ option: false, userId: "" })}
+              className="absolute right-3 top-3 z-30 rounded-full bg-white p-1 text-slate-500 hover:bg-red-100 hover:text-red-600"
+              aria-label="Close"
+            >
+              <XIcon className="h-5 w-5" />
+            </button>
+            <EditProfileAccount userId={isEdit.userId} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
