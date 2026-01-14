@@ -213,7 +213,9 @@ const ProductStore = () => {
                       <td className="px-4 py-3">
                         <div className="flex gap-3 items-center">
                           <img
-                            src={"/src/asset/Empty.webp"}
+                            src={`${
+                              product.imageProduct[0] || "/src/asset/Empty.webp"
+                            }`}
                             alt={product.name}
                             className="w-12 h-12 rounded-md object-cover"
                           />
@@ -254,7 +256,7 @@ const ProductStore = () => {
                         {product.total}
                       </td>
                       <td className="px-4 py-3">
-                        {product.minPrice ? (
+                        {product.minPrice !== 0 ? (
                           <div className="flex gap-1 text-sm font-medium">
                             <span>{product.minPrice}</span>
                             <span>-</span>

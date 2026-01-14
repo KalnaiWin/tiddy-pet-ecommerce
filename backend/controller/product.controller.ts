@@ -69,7 +69,7 @@ export const addNewProduct = async (req: Request, res: Response) => {
     const product = await productService.addNewProduct(req.body);
     const response = createProductSchema.parse(product);
 
-    return res.status(201).json(response);
+    return res.status(201).json(product);
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({

@@ -1,13 +1,11 @@
 import { z } from "zod";
 
-export const childProduct = z.array(
-  z.object({
-    name: z.string().max(100),
-    price: z.number().min(0),
-    image: z.string(),
-    stock: z.number().min(0),
-  })
-);
+export const childProduct = z.object({
+  name: z.string().max(100),
+  price: z.number().min(0),
+  image: z.string(),
+  stock: z.number().min(0),
+});
 
 export const tagSchema = z.object({
   name: z.string().min(1),
@@ -37,7 +35,6 @@ export const createProductSchema = z.object({
   minPrice: z.number().min(0).optional(),
   maxPrice: z.number().min(0),
   imageProduct: z.array(z.string()).min(1),
-  childProduct: childProduct,
   discount: z.number().min(0).max(100).optional(),
   status: z.enum(["Available", "Out of stock", "Draft"]),
 });

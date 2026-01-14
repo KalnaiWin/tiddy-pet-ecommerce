@@ -55,23 +55,9 @@ const productSchema = new mongoose.Schema(
 
     childProduct: [
       {
-        name: {
-          type: String,
-          required: true,
-          maxlength: 100,
-        },
-        price: {
-          type: Number,
-          min: 0,
-        },
-        image: {
-          type: String,
-          required: true,
-        },
-        stock: {
-          type: Number,
-          min: 0,
-        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Variant",
+        require: true,
       },
     ],
     category: [

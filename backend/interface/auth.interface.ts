@@ -1,7 +1,6 @@
 export interface authRegisterInterface {
   name: string;
   email: string;
-  password: string;
   role: string;
 }
 

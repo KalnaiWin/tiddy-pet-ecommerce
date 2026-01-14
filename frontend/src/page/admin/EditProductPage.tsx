@@ -1,4 +1,4 @@
-import { ArrowLeft, Loader, Trash, XIcon } from "lucide-react";
+import { ArrowLeft, Loader, Plus, Trash, XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import type { childProductInput } from "../../types/InterfaceProduct";
@@ -48,7 +48,7 @@ const EditProductPage: React.FC = () => {
       dispatch(resetProductCRUDstatus());
     }
   }, [editStatus, navigate, dispatch]);
-  
+
   const [formData, setFormData] = useState({
     name: "",
     status: "",
@@ -96,7 +96,12 @@ const EditProductPage: React.FC = () => {
         discount: detail.discount || 0,
         childProduct:
           detail.childProduct?.length > 0
-            ? detail.childProduct
+            ? detail.childProduct.map((child) => ({
+                name: child.name,
+                price: child.price,
+                image: child.image,
+                stock: child.stock,
+              }))
             : [
                 {
                   name: "",
@@ -132,7 +137,6 @@ const EditProductPage: React.FC = () => {
             },
       });
 
-      // Also populate custom categories and brand if they exist
       if (detail.category) {
         const customCats = detail.category.map((cat: any) => cat.name);
         setCustomCategories(customCats);
@@ -169,13 +173,38 @@ const EditProductPage: React.FC = () => {
     const newChild: childProductInput = {
       name: `Variant ${formData.childProduct.length + 1}`,
       price: formData.maxPrice,
-      image: "https://picsum.photos/200/200",
+      image: `${formData.childProduct[0]}`,
       stock: 10,
     };
     setFormData((prev) => ({
       ...prev,
       childProduct: [...prev.childProduct, newChild],
     }));
+  };
+
+  const addImageChild = (index: number) => {
+    const url = prompt("Enter Image URL:");
+    if (!url) return;
+
+    setFormData((prev) => {
+      const childProduct = [...prev.childProduct];
+      childProduct[index] = {
+        ...childProduct[index],
+        image: url,
+      };
+      return { ...prev, childProduct };
+    });
+  };
+
+  const removeVariantImage = (index: number) => {
+    setFormData((prev) => {
+      const childProduct = [...prev.childProduct];
+      childProduct[index] = {
+        ...childProduct[index],
+        image: "",
+      };
+      return { ...prev, childProduct };
+    });
   };
 
   const removeChildProduct = (index: number) => {
@@ -237,15 +266,6 @@ const EditProductPage: React.FC = () => {
       alert("Product name is required");
       return;
     }
-
-    // const payload = {
-    //   ...formData,
-    //   category: formData.category.filter((c) => c.isActive),
-    //   imageProduct: formData.imageProduct.filter(Boolean),
-    //   childProduct: formData.childProduct.filter((c) => c.name && c.price > 0),
-    // };
-
-    // console.log("SUBMIT PAYLOAD:", payload);
 
     dispatch(editProduct({ id, data: formData }));
   };
@@ -318,7 +338,7 @@ const EditProductPage: React.FC = () => {
           <h2 className="text-xl font-semibold mb-6 text-slate-800 border-b pb-4">
             Product Gallery
           </h2>
-          <div className="grid grid-cols-4 gap-4 mb-4">
+          <div className="grid grid-cols-6 gap-4 mb-4">
             {formData.imageProduct.length > 0 &&
               formData.imageProduct.map((url, idx) => (
                 <div
@@ -342,19 +362,7 @@ const EditProductPage: React.FC = () => {
                     }
                     className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                   >
-                    <svg
-                      className="w-3 h-3"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
+                    <XIcon className="w-3 h-3" />
                   </button>
                 </div>
               ))}
@@ -407,12 +415,35 @@ const EditProductPage: React.FC = () => {
                   key={idx}
                   className="flex items-center gap-4 p-4 border border-slate-200 rounded-lg bg-slate-50"
                 >
-                  <img
-                    src={child.image || "/src/asset/Empty.webp"}
-                    className="w-12 h-12 rounded bg-white object-cover border"
-                    alt=""
-                  />
-                  <div className="flex-1 grid grid-cols-3 gap-4">
+                  <div className="flex-1 grid grid-cols-4 gap-4">
+                    <div className="w-fit">
+                      {child.image !== "" ? (
+                        <div className="relative group">
+                          <img
+                            src={child.image || "/src/asset/Empty.webp"}
+                            className="w-12 h-12 rounded bg-white object-cover border"
+                            alt=""
+                          />
+
+                          <button
+                            type="button"
+                            onClick={() => removeVariantImage(idx)}
+                            className="absolute -top-2 -right-2 bg-red-500 z-10 text-white p-1 rounded-full"
+                          >
+                            <XIcon className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => addImageChild(idx)}
+                          className="aspect-square border-2 border-dashed border-slate-300 rounded-lg flex flex-col items-center justify-center text-slate-400 hover:text-indigo-500 hover:border-indigo-500 transition-all"
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span className="text-xs font-medium">Add Image</span>
+                        </button>
+                      )}
+                    </div>
                     <input
                       className="bg-transparent border-b border-slate-300 focus:border-indigo-500 outline-none text-sm py-1"
                       placeholder="Variant Name"

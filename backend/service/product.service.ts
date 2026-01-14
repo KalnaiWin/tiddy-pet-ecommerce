@@ -7,6 +7,7 @@ import {
 } from "../model/product.model.js";
 import type { productInputInterface } from "../interface/product.interface.js";
 import Product from "../schema/product.schema.js";
+import Variant from "../schema/variant.schema.js";
 
 export const productService = {
   getAllProducts: async (page: number, limit: number, name: string) => {
@@ -69,10 +70,29 @@ export const productService = {
     );
 
     const product = await Product.create({
-      ...data,
+      name: data.name,
+      description: data.description,
+      total: data.total,
+      minPrice: data.minPrice,
+      maxPrice: data.maxPrice,
+      imageProduct: data.imageProduct,
       brand: brandId,
       category: categoryIds,
+      discount: data.discount,
+      status: data.status,
     });
+
+    const variants = await Variant.insertMany(
+      data.childProduct.map((item) => ({
+        productId: product._id,
+        name: item.name,
+        price: item.price,
+        image: item.image,
+        stock: item.stock,
+      }))
+    );
+
+    product.childProduct = variants.map((v) => v._id);
 
     await product.save();
     const keys = await redis.keys("products:page=*");

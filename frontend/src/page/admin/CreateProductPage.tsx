@@ -1,4 +1,4 @@
-import { ArrowLeft, Loader, Trash, XIcon } from "lucide-react";
+import { ArrowLeft, Loader, Plus, Trash, XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import type { childProductInput } from "../../types/InterfaceProduct";
@@ -44,7 +44,7 @@ const CreateProductPage: React.FC = () => {
 
   const [formData, setFormData] = useState({
     name: "",
-    status: "",
+    status: "Draft",
     description: "",
     imageProduct: ["/src/asset/Empty.webp"],
     minPrice: 0,
@@ -95,17 +95,42 @@ const CreateProductPage: React.FC = () => {
     }
   };
 
+  const addImageChild = (index: number) => {
+    const url = prompt("Enter Image URL:");
+    if (!url) return;
+
+    setFormData((prev) => {
+      const childProduct = [...prev.childProduct];
+      childProduct[index] = {
+        ...childProduct[index],
+        image: url,
+      };
+      return { ...prev, childProduct };
+    });
+  };
+
   const addChildProduct = () => {
     const newChild: childProductInput = {
       name: `Variant ${formData.childProduct.length + 1}`,
       price: formData.maxPrice,
-      image: "https://picsum.photos/200/200",
+      image: `${formData.imageProduct[0]}`,
       stock: 10,
     };
     setFormData((prev) => ({
       ...prev,
       childProduct: [...prev.childProduct, newChild],
     }));
+  };
+
+  const removeVariantImage = (index: number) => {
+    setFormData((prev) => {
+      const childProduct = [...prev.childProduct];
+      childProduct[index] = {
+        ...childProduct[index],
+        image: "",
+      };
+      return { ...prev, childProduct };
+    });
   };
 
   const removeChildProduct = (index: number) => {
@@ -200,7 +225,6 @@ const CreateProductPage: React.FC = () => {
       </div>
 
       <div className="lg:col-span-2 space-y-8">
-        {/* Basic information */}
         <section className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
           <h2 className="text-xl font-semibold mb-6 text-slate-800 border-b pb-4">
             Basic Information
@@ -244,7 +268,7 @@ const CreateProductPage: React.FC = () => {
           <h2 className="text-xl font-semibold mb-6 text-slate-800 border-b pb-4">
             Product Gallery
           </h2>
-          <div className="grid grid-cols-4 gap-4 mb-4">
+          <div className="grid grid-cols-6 gap-4 mb-4">
             {formData.imageProduct.length > 0 &&
               formData.imageProduct.map((url, idx) => (
                 <div
@@ -268,19 +292,7 @@ const CreateProductPage: React.FC = () => {
                     }
                     className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                   >
-                    <svg
-                      className="w-3 h-3"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
+                    <XIcon className="w-3 h-3" />
                   </button>
                 </div>
               ))}
@@ -289,19 +301,8 @@ const CreateProductPage: React.FC = () => {
               onClick={addImage}
               className="aspect-square border-2 border-dashed border-slate-300 rounded-lg flex flex-col items-center justify-center text-slate-400 hover:text-indigo-500 hover:border-indigo-500 transition-all"
             >
-              <svg
-                className="w-8 h-8 mb-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
+              <Plus className="w-8 h-8 mb-2" />
+
               <span className="text-xs font-medium">Add Image</span>
             </button>
           </div>
@@ -333,12 +334,35 @@ const CreateProductPage: React.FC = () => {
                   key={idx}
                   className="flex items-center gap-4 p-4 border border-slate-200 rounded-lg bg-slate-50"
                 >
-                  <img
-                    src={child.image || "/src/asset/Empty.webp"}
-                    className="w-12 h-12 rounded bg-white object-cover border"
-                    alt=""
-                  />
-                  <div className="flex-1 grid grid-cols-3 gap-4">
+                  <div className="flex-1 grid grid-cols-4 gap-4">
+                    <div className="w-fit">
+                      {child.image !== "" ? (
+                        <div className="relative group">
+                          <img
+                            src={child.image || "/src/asset/Empty.webp"}
+                            className="w-12 h-12 rounded bg-white object-cover border"
+                            alt=""
+                          />
+
+                          <button
+                            type="button"
+                            onClick={() => removeVariantImage(idx)}
+                            className="absolute -top-2 -right-2 bg-red-500 z-10 text-white p-1 rounded-full"
+                          >
+                            <XIcon className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => addImageChild(idx)}
+                          className="aspect-square border-2 border-dashed border-slate-300 rounded-lg flex flex-col items-center justify-center text-slate-400 hover:text-indigo-500 hover:border-indigo-500 transition-all"
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span className="text-xs font-medium">Add Image</span>
+                        </button>
+                      )}
+                    </div>
                     <input
                       className="bg-transparent border-b border-slate-300 focus:border-indigo-500 outline-none text-sm py-1"
                       placeholder="Variant Name"
@@ -394,9 +418,7 @@ const CreateProductPage: React.FC = () => {
           </div>
         </section>
       </div>
-      {/* Right Column: Sidebar Settings */}
       <div className="space-y-8">
-        {/* Pricing & Inventory */}
         <section className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
           <h2 className="text-xl font-semibold mb-6 text-slate-800 border-b pb-4">
             Pricing & Stock
@@ -457,7 +479,6 @@ const CreateProductPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Categorization */}
         <section className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
           <h2 className="text-xl font-semibold mb-6 text-slate-800 border-b pb-4">
             Classification

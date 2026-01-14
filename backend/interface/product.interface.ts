@@ -18,7 +18,7 @@ export interface productInputInterface {
   minPrice: number;
   maxPrice: number;
   imageProduct: string[];
-  childProduct: childProductInput[] | [];
+  childProduct: childProductInput[];
   category: tagInput[];
   brand: tagInput;
   discount: number;

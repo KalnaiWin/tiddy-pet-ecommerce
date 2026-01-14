@@ -7,36 +7,57 @@ const orderSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    customerInfo: {
+      name: String,
+      phone: String,
+    },
     items: [
       {
-        product: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Product",
-          required: true,
-        },
-        quantity: {
-          type: Number,
-          required: true,
-        },
-        price: {
-          type: Number,
-          required: true,
-        },
+        productId: String,
+        name: String,
+        image: String,
+        quantity: Number,
+        price: Number,
       },
     ],
-    totalAmount: {
-      type: Number,
-      required: true,
-    },
-    status: {
-      type: String,
-      enum: ["PENDING", "PAID", "SHIPPING", "DELIVERED", "CANCELLED"],
-      default: "PENDING",
+
+    discount: Number,
+    totalPrice: Number,
+    subTotal: Number,
+    shippingFee: Number,
+
+    shipping: {
+      address: String,
+      note: String,
+      shipper: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      assignedAt: Date,
     },
 
-    shipper: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+    status: {
+      type: String,
+      enum: [
+        "PENDING",
+        "CONFIRMED",
+        "ASSIGNED",
+        "PICKING",
+        "SHIPPING",
+        "DELIVERED",
+        "FAILED",
+        "CANCELLED",
+      ],
+      default: "PENDING",
+    },
+    cancel: {
+      reason: String,
+      cancelledBy: String,
+      cancelledAt: Date,
+    },
+    deliveryFailed: {
+      reason: String,
+      failedAt: Date,
     },
   },
   {
