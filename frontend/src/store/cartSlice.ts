@@ -16,7 +16,11 @@ const initialState: CartState = {
 export const cartSlice = createSlice({
   name: "cart",
   initialState,
-  reducers: {},
+  reducers: {
+    resetStatusCart(state) {
+      state.status = "idle";
+    },
+  },
   extraReducers(builder) {
     // =========== ADD ITEM TO CART ===========
     builder
@@ -44,7 +48,7 @@ export const cartSlice = createSlice({
         state.status = "failed";
       });
 
-    // =========== GET ALL ITEMS FROM CART ===========
+    // =========== DELETED ITEMS FROM CART ===========
     builder
       .addCase(deleteItemFromCart.pending, (state) => {
         state.status = "loading";
@@ -52,7 +56,7 @@ export const cartSlice = createSlice({
       .addCase(deleteItemFromCart.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.cartArray = state.cartArray.filter(
-          (item) => item.product && item.product._id !== action.payload
+          (item) => item.variantId !== action.payload
         );
       })
       .addCase(deleteItemFromCart.rejected, (state) => {
@@ -61,4 +65,5 @@ export const cartSlice = createSlice({
   },
 });
 
+export const { resetStatusCart } = cartSlice.actions;
 export default cartSlice.reducer;

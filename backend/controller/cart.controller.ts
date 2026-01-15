@@ -3,15 +3,18 @@ import { CartService } from "../service/cart.service.js";
 
 export const addToCart = async (req: Request, res: Response) => {
   const userId = req.user._id.toString();
-  const { productId, quantity } = req.body;
+  const { productId, quantity, variantId } = req.body;
   try {
-    if (!productId || quantity <= 0) {
-      return res.status(400).json({ message: "Invalid productId or quantiy" });
+    if (!productId || !variantId || quantity <= 0) {
+      return res
+        .status(400)
+        .json({ message: "Invalid productId, quantiy or variantId" });
     }
 
     const result = await CartService.addCart({
       userId,
       productId,
+      variantId,
       quantity,
     });
 
@@ -24,19 +27,20 @@ export const addToCart = async (req: Request, res: Response) => {
 
 export const removeFromCart = async (req: Request, res: Response) => {
   const userId = req.user._id.toString();
-  const { id: productId } = req.params;
+  const { id: variantId } = req.params;
 
   try {
-    if (!productId || !userId) {
-      return res.status(400).json({ message: "Invalid productId or userId" });
+    if (!variantId || !userId) {
+      return res.status(400).json({ message: "Invalid variantId or userId" });
     }
 
-    const deletedCount = await CartService.removeItemInCart(userId, productId);
+    const deletedCount = await CartService.removeItemInCart(userId, variantId);
 
     if (deletedCount === 1) {
-      return res.status(200).json({ message: "Deleted successfully" });
+      return res
+        .status(200)
+        .json({ message: "Deleted successfully", variantId });
     }
-
     return res.status(404).json({ message: "Item not found in cart" });
   } catch (error) {
     console.error(error);
@@ -48,7 +52,6 @@ export const getAllProductsFromCart = async (req: Request, res: Response) => {
   const userId = req.user._id.toString();
   try {
     const cart = await CartService.getAllFromCart(userId);
-
     return res.status(200).json(cart);
   } catch (error) {
     console.error(error);

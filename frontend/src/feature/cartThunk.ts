@@ -22,11 +22,11 @@ export const deleteItemFromCart = createAsyncThunk<
   string,
   string,
   { rejectValue: string }
->("cart/deleteItemFromCart", async (productId, { rejectWithValue }) => {
+>("cart/deleteItemFromCart", async (variantId, { rejectWithValue }) => {
   try {
-    await axiosInstance.delete(`/cart/remove/${productId}`);
+    const res = await axiosInstance.delete(`/cart/remove/${variantId}`);
     toast.success("Deleted successfully");
-    return productId;
+    return res.data.variantId;
   } catch (error: any) {
     toast.error("Deleted failed");
     return rejectWithValue(error.response?.data || "Error");

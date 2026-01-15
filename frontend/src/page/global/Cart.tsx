@@ -7,27 +7,31 @@ import {
 } from "../../feature/cartThunk";
 import { ArrowRight, ShoppingBag, Sparkles, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
+import { formatVND } from "../../types/HelperFunction";
+import { resetStatusCart } from "../../store/cartSlice";
 
 const Cart = () => {
-  const { cartArray } = useSelector((state: RootState) => state.cart);
+  const { cartArray, status } = useSelector((state: RootState) => state.cart);
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    dispatch(getAllItemsFromCart());
-  }, [dispatch]);
+    if (status === "idle") {
+      dispatch(getAllItemsFromCart());
+    }
+  }, [dispatch, status]);
+  dispatch(resetStatusCart());
 
   let subTotal = 0;
   cartArray.forEach((item) => {
-    if (!item?.product) return;
-
-    subTotal += item?.product?.maxPrice;
+    if (!item?.variantId) return;
+    subTotal += item?.price * item.quantity;
   });
 
   let discount = 0;
   cartArray.forEach((item) => {
-    if (!item?.product) return;
+    if (!item?.variantId) return;
 
-    discount += item?.product?.maxPrice * (item?.product?.discount / 100);
+    discount += item?.price * item.quantity * (item?.productDiscount / 100);
   });
 
   return (
@@ -49,23 +53,26 @@ const Cart = () => {
       {cartArray.length > 0 ? (
         <div>
           {cartArray.map((item) => {
-            let discountedMinPrice = item?.product?.minPrice
-              ? item?.product?.discount
-                ? item?.product?.minPrice -
-                  (item?.product?.minPrice * item?.product?.discount) / 100
-                : item?.product?.minPrice
-              : null;
+            // let discountedMinPrice = item?.product?.minPrice
+            //   ? item?.product?.discount
+            //     ? item?.product?.minPrice -
+            //       (item?.product?.minPrice * item?.product?.discount) / 100
+            //     : item?.product?.minPrice
+            //   : null;
 
-            let discountedMaxPrice = item?.product?.discount
-              ? item?.product?.maxPrice -
-                (item?.product?.maxPrice * item?.product?.discount) / 100
-              : item?.product?.maxPrice;
+            // let discountedMaxPrice = item?.product?.discount
+            //   ? item?.product?.maxPrice -
+            //     (item?.product?.maxPrice * item?.product?.discount) / 100
+            //   : item?.product?.maxPrice;
 
             return (
               <div
-                key={item?.product?._id}
-                className="flex flex-col sm:flex-row items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 hover:shadow-md transition-shadow group mb-3"
+                key={item?.variantId}
+                className="flex flex-col sm:flex-row items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 hover:shadow-md transition-shadow group mb-3 relative"
               >
+                <p className="absolute -top-5 -left-5 bg-orange-600 text-white rounded-full size-12 flex items-center justify-center">
+                  {item?.productDiscount}%
+                </p>
                 <div className="flex items-center">
                   <input
                     type="checkbox"
@@ -76,41 +83,30 @@ const Cart = () => {
                 </div>
                 <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-50">
                   <img
-                    src={item?.product?.imageProduct[0]}
-                    alt={item?.product?.name}
+                    src={item?.image}
+                    alt={item?.variantName}
                     className="w-full h-full object-cover"
                   />
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-900 truncate">{}</h3>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Variation:{" "}
-                    <span className="text-gray-700 font-medium">
-                      {/* {selectedChild?.name} */}
-                    </span>
-                  </p>
-                  <p className="text-xs text-[#FF6B00] font-medium mt-1">
-                    {item?.product?.brand.name} •{" "}
-                    {item?.product?.category[0].name}
-                  </p>
+                  <h3 className="font-semibold text-gray-900 truncate">
+                    {item.variantName}
+                  </h3>
+                  <div className="text-xs text-[#FF6B00] font-medium mt-1 flex">
+                    {item?.brand?.name} •{" "}
+                    {item.category &&
+                      item.category.map((cate) => (
+                        <div>
+                          <p>{cate.name}</p>
+                        </div>
+                      ))}
+                  </div>
                 </div>
 
                 <div className="flex flex-col items-end gap-2 w-full sm:w-auto">
-                  <div className="flex items-center gap-2">
-                    {item?.product?.minPrice ? (
-                      <span className="text-sm text-gray-400 line-through">
-                        ${discountedMinPrice?.toFixed(2)}
-                      </span>
-                    ) : (
-                      <span className="text-sm text-gray-400 line-through">
-                        ${discountedMinPrice?.toFixed(2)} {" - "}$
-                        {discountedMaxPrice?.toFixed(2)}
-                      </span>
-                    )}
-                    <span className="text-lg font-bold text-gray-900">
-                      ${item?.product?.discount.toFixed(2)}
-                    </span>
+                  <div className="flex items-center gap-2 text-lg font-bold text-gray-900">
+                    <span>${formatVND(item.price)}</span>
                   </div>
 
                   <div className="flex items-center gap-4 w-full justify-between sm:justify-start">
@@ -141,7 +137,7 @@ const Cart = () => {
                     {/* Remove Button */}
                     <button
                       onClick={() =>
-                        dispatch(deleteItemFromCart(item?.product?._id))
+                        dispatch(deleteItemFromCart(item?.variantId))
                       }
                       className="text-gray-400 hover:text-red-500 transition-colors p-2"
                     >
@@ -156,12 +152,12 @@ const Cart = () => {
             <h1 className="font-bold text-2xl">Order Summary</h1>
             <div className="flex w-full justify-between">
               <h2 className="text-slate-700 font-medium">Subtotal</h2>
-              <p className="font-semibold text-xl">{subTotal}</p>
+              <p className="font-semibold text-xl">{formatVND(subTotal)}</p>
             </div>
             <div className="flex w-full justify-between">
               <h2 className="text-green-700 font-medium">Discount</h2>
-              <p className="text-green-500 font-bold">{`-${discount.toFixed(
-                2
+              <p className="text-green-500 font-bold">{`-${formatVND(
+                discount
               )}`}</p>
             </div>
             <div className="flex w-full justify-between">
@@ -186,7 +182,7 @@ const Cart = () => {
             <div className="flex w-full justify-between mt-5">
               <h2 className="text-2xl font-black">Total</h2>
               <p className="font-bold text-xl text-orange-600">
-                {subTotal + discount}
+                {formatVND(subTotal - discount)}
               </p>
             </div>
             <button className="w-full bg-orange-500 py-5 rounded-md font-black text-white">

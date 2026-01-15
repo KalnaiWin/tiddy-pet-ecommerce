@@ -1,4 +1,4 @@
-import type { ProductInfo } from "./InterfaceProduct";
+import type { Brand, Category } from "./InterfaceProduct";
 
 export interface CartState {
   cartItems: null;
@@ -9,11 +9,18 @@ export interface CartState {
 
 export interface CartRequestInput {
   productId: string;
+  variantId: string;
   quantity: number;
 }
 
 export interface CartItem {
-    product: ProductInfo;
-    quantity: number;
+  productId: string;
+  variantId: string;
+  variantName: string;
+  price: number;
+  image: string;
+  quantity: number;
+  productDiscount: number;
+  brand: Brand;
+  category: Category[];
 }
-

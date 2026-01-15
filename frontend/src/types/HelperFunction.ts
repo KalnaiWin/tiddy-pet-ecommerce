@@ -39,6 +39,19 @@ export const StatusProduct = (text: string) => {
   }
 };
 
+export const roleUserColor = (text: string) => {
+  switch (text) {
+    case "ADMIN":
+      return "bg-orange-100 text-orange-700";
+    case "SHIPPER":
+      return "bg-green-100 text-green-700";
+    case "CUSTOMER":
+      return "bg-blue-100 text-blue-700";
+    default:
+      break;
+  }
+};
+
 export const convertSlug = (text: string): string => {
   return text
     .toLowerCase()
@@ -50,3 +63,9 @@ export const convertSlug = (text: string): string => {
     .replace(/\s+/g, "-") // space → -
     .replace(/-+/g, "-"); // nhiều - → 1
 };
+
+export const formatVND = (value: number) =>
+  new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(value);

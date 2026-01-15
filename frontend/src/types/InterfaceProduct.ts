@@ -5,6 +5,14 @@ export interface childProductInput {
   stock: number;
 }
 
+export interface childProduct {
+  _id: string;
+  name: string;
+  price: number;
+  image: string;
+  stock: number;
+}
+
 export interface Category {
   _id: string;
   name: string;
@@ -32,7 +40,7 @@ export interface ProductInfo {
   minPrice?: number;
   maxPrice: number;
   imageProduct: string[];
-  childProduct: childProductInput[];
+  childProduct: childProduct[];
   category: Category[];
   brand: Brand;
   discount: number;
