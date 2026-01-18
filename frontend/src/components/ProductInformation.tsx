@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { childProduct, ProductInfo } from "../types/InterfaceProduct";
 import { DollarSign, Shield, ShoppingCart, Star, Truck } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
@@ -68,8 +68,8 @@ export const ProductInformation = ({ product }: ProductInformationProps) => {
                 status === "Available"
                   ? "bg-green-100 text-green-600"
                   : status === "Out of stock"
-                  ? "bg-red-100 text-red-600"
-                  : "bg-gray-200 text-gray-600"
+                    ? "bg-red-100 text-red-600"
+                    : "bg-gray-200 text-gray-600"
               }`}
             >
               {status}
@@ -108,6 +108,8 @@ export const ProductDetails = () => {
   const { detail } = useSelector((state: RootState) => state.product);
   const dispatch = useDispatch<AppDispatch>();
 
+  const navigate = useNavigate();
+
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedVariantId, setSelectedVariantId] = useState<childProduct>();
@@ -132,10 +134,6 @@ export const ProductDetails = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-  const handleBuyNow = () => {
-    alert(`Proceeding to checkout with ${quantity} item(s).`);
-  };
 
   const minPrice =
     detail?.minPrice != null
@@ -350,7 +348,7 @@ export const ProductDetails = () => {
                       productId: detail?._id as string,
                       variantId: selectedVariantId?._id as string,
                       quantity: quantity,
-                    })
+                    }),
                   )
                 }
                 disabled={!selectedVariantId}
@@ -362,7 +360,17 @@ export const ProductDetails = () => {
                 <span>Thêm Vào Giỏ Hàng</span>
               </button>
               <button
-                onClick={handleBuyNow}
+                onClick={() => {
+                  dispatch(
+                    addItemToCart({
+                      productId: detail?._id as string,
+                      variantId: selectedVariantId?._id as string,
+                      quantity: quantity,
+                    }),
+                  );
+                  navigate("/cart");
+                }}
+                disabled={!selectedVariantId}
                 className="flex-1 bg-orange-600 text-white py-3 rounded-sm hover:bg-orange-700 transition-colors shadow-sm"
               >
                 Mua Ngay

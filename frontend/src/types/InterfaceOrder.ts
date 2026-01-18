@@ -15,4 +15,15 @@ export interface OrderInfo {
 export interface initialOrder {
   orders: OrderInfo[] | [];
   status: "idle" | "loading" | "succeeded" | "failed";
+  checkoutStatus: "idle" | "loading" | "succeeded" | "failed";
+}
+
+export interface CheckOut {
+  userId: string;
+  items: Array<{
+    name: string;
+    image: string[];
+    price: number;
+    quantity: number;
+  }>;
 }

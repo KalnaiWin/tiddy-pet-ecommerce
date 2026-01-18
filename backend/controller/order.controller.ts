@@ -11,7 +11,13 @@ export const getAllOrderForAdmin = async (req: Request, res: Response) => {
   const status = String(req.query.status) || "";
   const payment = String(req.query.payment) || "";
   try {
-    const result = await OrderService.getAllOrders(userId, {page, limit, search, status, payment});
+    const result = await OrderService.getAllOrders(userId, {
+      page,
+      limit,
+      search,
+      status,
+      payment,
+    });
     return res.status(201).json(result);
   } catch (error) {
     return res.status(500).json({
@@ -39,5 +45,16 @@ export const createOrder = async (req: Request, res: Response) => {
     return res.status(500).json({
       message: error instanceof Error ? error.message : "Internal Server Error",
     });
+  }
+};
+
+export const checkoutOrder = async (req: Request, res: Response) => {
+  const items = req.body;
+  try {
+    const result = await OrderService.checkoutOrder(items);
+    if (result) res.status(200).json(result);
+    else res.status(400).json({ message: "Paid failed" });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 };

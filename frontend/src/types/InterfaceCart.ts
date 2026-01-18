@@ -24,3 +24,4 @@ export interface CartItem {
   brand: Brand;
   category: Category[];
 }
+

@@ -56,7 +56,7 @@ export const cartSlice = createSlice({
       .addCase(deleteItemFromCart.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.cartArray = state.cartArray.filter(
-          (item) => item.variantId !== action.payload
+          (item) => item.variantId !== action.payload,
         );
       })
       .addCase(deleteItemFromCart.rejected, (state) => {

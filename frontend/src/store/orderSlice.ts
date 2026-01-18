@@ -1,10 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { initialOrder } from "../types/InterfaceOrder";
-import { getAllOrdersForAdmin } from "../feature/orderThunk";
+import { checkoutCart, getAllOrdersForAdmin } from "../feature/orderThunk";
 
 const initialState: initialOrder = {
   orders: [],
   status: "idle",
+  checkoutStatus: "idle",
 };
 
 export const orderSlice = createSlice({
@@ -23,6 +24,18 @@ export const orderSlice = createSlice({
       })
       .addCase(getAllOrdersForAdmin.rejected, (state) => {
         state.status = "failed";
+      });
+
+    // ================= CHECKOUT CART =================
+    builder
+      .addCase(checkoutCart.pending, (state) => {
+        state.checkoutStatus = "loading";
+      })
+      .addCase(checkoutCart.fulfilled, (state) => {
+        state.checkoutStatus = "succeeded";
+      })
+      .addCase(checkoutCart.rejected, (state) => {
+        state.checkoutStatus = "failed";
       });
   },
 });

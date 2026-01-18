@@ -25,3 +25,13 @@ export interface QueryOrderManagement {
   status: string;
   payment: string;
 }
+
+export interface CheckOutInput {
+  userId: string;
+  items: Array<{
+    name: string;
+    image: string[];
+    price: number;
+    quantity: number;
+  }>;
+}
