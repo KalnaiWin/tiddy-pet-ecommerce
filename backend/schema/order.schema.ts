@@ -7,33 +7,85 @@ const orderSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    customerInfo: {
-      name: String,
-      phone: String,
-    },
     items: [
       {
-        productId: String,
-        name: String,
-        image: String,
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+        variantId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Variant",
+          required: true,
+        },
         quantity: Number,
         price: Number,
       },
     ],
-
-    discount: Number,
+    otherPrice: {
+      discount: {
+        type: Number,
+        default: 0,
+      },
+      shippingFee: {
+        type: Number,
+        default: 0,
+      },
+    },
+    voucher: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Voucher",
+      default: null,
+    },
     totalPrice: Number,
     subTotal: Number,
-    shippingFee: Number,
+
+    payment: {
+      method: {
+        type: String,
+        enum: ["COD", "ONLINE"],
+        required: true,
+        default: "COD",
+      },
+      status: {
+        type: String,
+        enum: ["UNPAID", "PAID", "REFUNDED"],
+        default: "UNPAID",
+      },
+      paidAt: {
+        type: Date,
+        default: null,
+      },
+    },
 
     shipping: {
-      address: String,
-      note: String,
+      address: {
+        type: String,
+        require: true,
+      },
+      phone: {
+        type: String,
+        require: true,
+      },
+      note: {
+        type: String,
+        default: "",
+      },
       shipper: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
+        default: null,
       },
-      assignedAt: Date,
+      assignedAt: {
+        type: Date,
+        default: null,
+      },
+    },
+
+    predictedDayShipping: {
+      type: Date,
+      default: null,
     },
 
     status: {
@@ -50,14 +102,30 @@ const orderSchema = new mongoose.Schema(
       ],
       default: "PENDING",
     },
+
     cancel: {
-      reason: String,
-      cancelledBy: String,
-      cancelledAt: Date,
+      reason: {
+        type: String,
+        default: "",
+      },
+      cancelledBy: {
+        type: String,
+        default: "",
+      },
+      cancelledAt: {
+        type: Date,
+        default: "",
+      },
     },
     deliveryFailed: {
-      reason: String,
-      failedAt: Date,
+      reason: {
+        type: String,
+        default: "",
+      },
+      failedAt: {
+        type: Date,
+        default: "",
+      },
     },
   },
   {

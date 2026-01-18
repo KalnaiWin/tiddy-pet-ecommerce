@@ -69,3 +69,39 @@ export const formatVND = (value: number) =>
     style: "currency",
     currency: "VND",
   }).format(value);
+
+export const statusOrderColor = (status: string) => {
+  switch (status) {
+    case "PENDING":
+      return "bg-yellow-100 text-yellow-700";
+    case "CONFIRMED":
+      return "bg-blue-100 text-blue-700";
+    case "ASSIGNED":
+      return "bg-indigo-100 text-indigo-700";
+    case "PICKING":
+      return "bg-purple-100 text-purple-700";
+    case "SHIPPING":
+      return "bg-cyan-100 text-cyan-700";
+    case "DELIVERED":
+      return "bg-green-100 text-green-700";
+    case "FAILED":
+      return "bg-red-100 text-red-700";
+    case "CANCELLED":
+      return "bg-slate-200 text-slate-600";
+    default:
+      return "bg-slate-100 text-slate-700";
+  }
+};
+
+export const paymentStatusColor = (status: string): string => {
+  switch (status) {
+    case "UNPAID":
+      return "bg-yellow-100 text-yellow-700";
+    case "PAID":
+      return "bg-green-100 text-green-700";
+    case "REFUNDED":
+      return "bg-red-100 text-red-700";
+    default:
+      return "bg-slate-100 text-slate-700";
+  }
+};

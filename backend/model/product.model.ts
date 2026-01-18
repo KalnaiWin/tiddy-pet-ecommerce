@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const childProduct = z.object({
+  _id: z.unknown(),
   name: z.string().max(100),
   price: z.number().min(0),
   image: z.string(),
@@ -22,6 +23,7 @@ export const getSpecificProduct = z.object({
   rating: z.number().min(0).max(5),
   minPrice: z.number().min(0),
   maxPrice: z.number().min(0),
+  childProduct: z.array(childProduct).min(1),
   category: z.array(tagSchema).min(1),
   brand: tagSchema,
   discount: z.number().min(0),

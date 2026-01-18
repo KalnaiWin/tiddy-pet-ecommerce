@@ -26,7 +26,7 @@ export const getAllProducts = createAsyncThunk<
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Error");
     }
-  }
+  },
 );
 
 export const getAllCategories = createAsyncThunk<
@@ -94,7 +94,7 @@ export const deleteProduct = createAsyncThunk<
     return true;
   } catch (error: any) {
     return rejectWithValue(
-      error.response?.data?.message || "Delete product failed"
+      error.response?.data?.message || "Delete product failed",
     );
   }
 });
@@ -109,7 +109,7 @@ export const viewProductDetail = createAsyncThunk<
     return res.data;
   } catch (error: any) {
     return rejectWithValue(
-      error.response?.data?.message || "Delete product failed"
+      error.response?.data?.message || "Delete product failed",
     );
   }
 });

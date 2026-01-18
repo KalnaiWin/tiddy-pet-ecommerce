@@ -17,7 +17,7 @@ export const productRepository = {
     return Product.find(filter)
       .populate("category", "slug name")
       .populate("brand", "slug name Active")
-      .populate("childProduct", "name price image stock")
+      .populate("childProduct", "id name price image stock")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)

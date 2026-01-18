@@ -53,20 +53,9 @@ const Cart = () => {
       {cartArray.length > 0 ? (
         <div>
           {cartArray.map((item) => {
-            // let discountedMinPrice = item?.product?.minPrice
-            //   ? item?.product?.discount
-            //     ? item?.product?.minPrice -
-            //       (item?.product?.minPrice * item?.product?.discount) / 100
-            //     : item?.product?.minPrice
-            //   : null;
-
-            // let discountedMaxPrice = item?.product?.discount
-            //   ? item?.product?.maxPrice -
-            //     (item?.product?.maxPrice * item?.product?.discount) / 100
-            //   : item?.product?.maxPrice;
-
             return (
-              <div
+              <Link
+                to={`/store/${item.productId}}`}
                 key={item?.variantId}
                 className="flex flex-col sm:flex-row items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 hover:shadow-md transition-shadow group mb-3 relative"
               >
@@ -145,7 +134,7 @@ const Cart = () => {
                     </button>
                   </div>
                 </div>
-              </div>
+              </Link>
             );
           })}
           <div className="flex flex-col gap-4 bg-white p-4 rounded-xl border border-gray-100 hover:shadow-md transition-shadow group mb-3">

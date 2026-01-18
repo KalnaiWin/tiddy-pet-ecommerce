@@ -4,7 +4,6 @@ export const userAuthResponse = z.object({
   _id: z.unknown(),
   name: z.string(),
   email: z.string(),
-  password: z.string(),
   role: z.string(),
 });
 

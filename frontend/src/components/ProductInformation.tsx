@@ -12,7 +12,6 @@ interface ProductInformationProps {
 }
 
 export const ProductInformation = ({ product }: ProductInformationProps) => {
-  const dispatch = useDispatch<AppDispatch>();
   const {
     name,
     imageProduct,
@@ -97,25 +96,6 @@ export const ProductInformation = ({ product }: ProductInformationProps) => {
           <p className="text-xs text-gray-500">
             Sold {sold} / {total}
           </p>
-        </div>
-
-        {/* Actions */}
-        <div className="flex gap-2 mt-2">
-          <button
-            onClick={() =>
-              dispatch(
-                addItemToCart({
-                  productId: product._id,
-                  variantId: product?.childProduct?.[0]?._id,
-                  quantity: 1,
-                })
-              )
-            }
-            className="flex-1 bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center gap-2 py-2 rounded-lg text-sm"
-          >
-            <ShoppingCart className="size-4" />
-            Add to cart
-          </button>
         </div>
       </div>
     </div>

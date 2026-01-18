@@ -20,6 +20,12 @@ import {
 
 export type UserRole = "CUSTOMER" | "ADMIN" | "SHIPPER";
 
+export interface UserOrderInfo {
+  name: string;
+  email: string;
+  image_profile: string;
+}
+
 export interface User {
   name: string;
   email: string;
@@ -165,5 +171,21 @@ export const adminNavBarSelect = [
     name: "Order",
     icon: Package,
     path: "/admin/order",
+  },
+];
+
+export const customerNavbarSelect = [
+  {
+    icon: Home,
+    name: "",
+    path: "",
+  },
+];
+
+export const shipperNavbarSelect = [
+  {
+    icon: Home,
+    name: "",
+    path: "",
   },
 ];
