@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import type { updateProfileInterface } from "../interface/account.interface.js";
+import type { editAccountCustomer, updateProfileInterface } from "../interface/account.interface.js";
 import User from "../schema/user.schema.js";
 
 export const AccountRepository = {
@@ -46,7 +46,7 @@ export const AccountRepository = {
 
   findUserByIdAndUpdateProfile: async (
     userId: string,
-    data: updateProfileInterface
+    data: updateProfileInterface | editAccountCustomer
   ) => {
     return User.findByIdAndUpdate(userId, data);
   },

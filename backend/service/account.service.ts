@@ -1,5 +1,6 @@
 import type {
   AccountStatus,
+  editAccountCustomer,
   updateProfileInterface,
   VerifyStatus,
 } from "../interface/account.interface.js";
@@ -14,7 +15,7 @@ export const AccountService = {
       "CUSTOMER",
       skip,
       limit,
-      email
+      email,
     );
     return users;
   },
@@ -28,7 +29,7 @@ export const AccountService = {
       "SHIPPER",
       skip,
       limit,
-      email
+      email,
     );
 
     return users;
@@ -41,13 +42,16 @@ export const AccountService = {
   },
 
   updateProfile: async (userId: string, data: updateProfileInterface) => {
+    const user = await AccountRepository.findUserById(userId);
+    if (!user || user.role !== "ADMIN") throw new Error("You are not allowed");
+
     const emailExists = await AccountRepository.findByEmailExceptUser(
-      data.email,
-      userId
+      user.email,
+      userId,
     );
     const nameExists = await AccountRepository.findByNameExceptUser(
       data.name,
-      userId
+      userId,
     );
     if (nameExists || emailExists) {
       throw new Error("Name or Email has already taken");
@@ -57,10 +61,25 @@ export const AccountService = {
     return 1;
   },
 
-  deleteAccount: async (userId: string) => {
-    const deletedUser = await AccountRepository.findAccountByIdAndDelete(
-      userId
+  updateUserProfile: async (userId: string, data: editAccountCustomer) => {
+    const user = await AccountRepository.findUserById(userId);
+    if (!user) throw new Error("User not found");
+
+    const nameExists = await AccountRepository.findByNameExceptUser(
+      data.name,
+      userId,
     );
+    if (nameExists) {
+      throw new Error("Name has already taken");
+    }
+    await AccountRepository.findUserByIdAndUpdateProfile(userId, data);
+
+    return 1;
+  },
+
+  deleteAccount: async (userId: string) => {
+    const deletedUser =
+      await AccountRepository.findAccountByIdAndDelete(userId);
     if (!deletedUser) throw new Error("User is not found");
     return deletedUser;
   },

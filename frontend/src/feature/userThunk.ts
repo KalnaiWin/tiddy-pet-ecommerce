@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../lib/axios";
 import toast from "react-hot-toast";
 import type {
+  AccountCustomerEdit,
   AccountUpdateInput,
   User,
   UserInfo,
@@ -16,7 +17,7 @@ export const fetchUser = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Error");
     }
-  }
+  },
 );
 
 export const registerUser = createAsyncThunk<
@@ -59,7 +60,7 @@ export const logoutUser = createAsyncThunk<void, void, { rejectValue: string }>(
       toast.error("Logout failed");
       return rejectWithValue(error.response?.data);
     }
-  }
+  },
 );
 
 export const getAllUsers = createAsyncThunk<
@@ -81,7 +82,7 @@ export const getAllUsers = createAsyncThunk<
     } catch (error) {
       return rejectWithValue("Cannot fetch users");
     }
-  }
+  },
 );
 
 export const getAllShippers = createAsyncThunk<
@@ -103,7 +104,7 @@ export const getAllShippers = createAsyncThunk<
     } catch (error) {
       return rejectWithValue("Cannot fetch users");
     }
-  }
+  },
 );
 
 export const getAccountDetail = createAsyncThunk<
@@ -134,13 +135,17 @@ export const deleteAccount = createAsyncThunk<
 
 export const updateProfileAccount = createAsyncThunk<
   boolean,
-  { id: string; data: AccountUpdateInput },
+  { id: string; data: AccountUpdateInput | AccountCustomerEdit },
   { rejectValue: string }
 >("account/updateProfileAccount", async ({ id, data }, { rejectWithValue }) => {
   try {
-    await axiosInstance.put(`/account/update-profile/${id}`, data);
+    if (id !== "")
+      await axiosInstance.put(`/account/update-profile/${id}`, data);
+    else await axiosInstance.put(`/account/update-profile`, data);
+    toast.success("Updated successfully");
     return true;
   } catch (error) {
+    toast.error("Updated failed");
     return rejectWithValue("Cannot account deatail");
   }
 });

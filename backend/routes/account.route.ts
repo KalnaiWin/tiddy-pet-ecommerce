@@ -7,6 +7,7 @@ import {
   getAllShippers,
   getAllUsers,
   updateProfile,
+  updateUserProfile,
 } from "../controller/account.controller.js";
 
 const router = express.Router();
@@ -17,6 +18,7 @@ router.get("/user", authorizeRole("ADMIN"), getAllUsers);
 router.get("/shipper", authorizeRole("ADMIN"), getAllShippers);
 router.get("/:id", authorizeRole("ADMIN"), getAccountDetail);
 router.put("/update-profile/:id", authorizeRole("ADMIN"), updateProfile);
+router.put("/update-profile", updateUserProfile);
 router.delete("/delete/:id", authorizeRole("ADMIN"), deleteAccount);
 
 export default router;

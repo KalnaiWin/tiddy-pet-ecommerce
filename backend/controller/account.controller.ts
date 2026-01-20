@@ -1,9 +1,7 @@
 import type { Request, Response } from "express";
 import {
-  changeStatusResponse,
   lisShipperInfo,
   listUserInfoResponse,
-  verifyStatusShipperResponse,
 } from "../model/account.model.js";
 import { AccountService } from "../service/account.service.js";
 import { ZodError } from "zod";
@@ -90,6 +88,21 @@ export const updateProfile = async (req: Request, res: Response) => {
   try {
     if (!id) return res.status(404).json({ message: "This id not found" });
     const result = await AccountService.updateProfile(id, data);
+    if (!result) return res.status(400).json({ message: "Updated failed" });
+    return res.status(200).json({ message: "Updated successfully" });
+  } catch (error) {
+    if (error instanceof Error)
+      return res.status(400).json({ message: error.message });
+    else return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const updateUserProfile = async (req: Request, res: Response) => {
+  const id = req.user._id;
+  const data = req.body;
+  try {
+    if (!id) return res.status(404).json({ message: "This id not found" });
+    const result = await AccountService.updateUserProfile(id, data);
     if (!result) return res.status(400).json({ message: "Updated failed" });
     return res.status(200).json({ message: "Updated successfully" });
   } catch (error) {

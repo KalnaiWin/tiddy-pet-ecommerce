@@ -35,9 +35,12 @@ export interface User {
   _id: string;
   name: string;
   email: string;
-  password: string;
   role: UserRole;
-  imageProfile: String;
+  image_profile: string;
+  phone: string;
+  address: string;
+  totalSpend: number;
+  status: string;
 }
 
 export interface AccountUpdateInput {
@@ -51,6 +54,12 @@ export interface AccountUpdateInput {
     verification_status: string;
   };
   status: string;
+}
+export interface AccountCustomerEdit {
+  name: string;
+  image_profile: string;
+  phone: string;
+  address: string;
 }
 
 export interface UserInfo {
