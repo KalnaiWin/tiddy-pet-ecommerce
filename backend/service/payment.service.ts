@@ -1,0 +1,77 @@
+import type Stripe from "stripe";
+import type { CheckOutInput } from "../interface/order.interface.js";
+import { ENV } from "../config/env.js";
+import { stripe } from "../config/stripe.js";
+import { getRedis } from "../config/redis.js";
+
+export const PaymentService = {
+  checkoutOrder: async (data: CheckOutInput) => {
+    const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] =
+      data.items.map((item) => ({
+        price_data: {
+          currency: "vnd",
+          product_data: {
+            name: item.name,
+            images: item.image.length ? [String(item.image[0])] : [],
+          },
+          unit_amount: item.price,
+        },
+        quantity: item.quantity,
+      }));
+
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      shipping_address_collection: {
+        allowed_countries: ["VN"],
+      },
+      phone_number_collection: {
+        enabled: true,
+      },
+      line_items: lineItems,
+      success_url: `${ENV.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${ENV.CLIENT_URL}/cancel`,
+      metadata: {
+        userId: data.userId,
+      },
+    });
+
+    return session.url;
+  },
+
+  verifySuccessfulPayment: async (sessionId: string) => {
+    if (!sessionId) throw new Error("Invalid session_id");
+
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    const lineItems = await stripe.checkout.sessions.listLineItems(sessionId, {
+      limit: 100,
+    });
+    if (session.payment_status !== "paid") throw new Error("Payment failed");
+
+    const orderHistory = {
+      sessionId: session.id,
+      amountTotal: session.amount_total,
+      currency: session.currency,
+      paymentStatus: session.payment_status,
+
+      customer: {
+        email: session.customer_details?.email,
+        phone: session.customer_details?.phone,
+        address: session.customer_details?.address,
+      },
+
+      items: lineItems.data.map((item) => ({
+        name: item.description,
+        quantity: item.quantity,
+        unitAmount: item.price?.unit_amount,
+        total: item.amount_total,
+      })),
+
+      createdAt: new Date(session.created * 1000),
+    };
+
+    const redis = getRedis();
+    await redis.del(`cart:user:${session.metadata?.userId}`);
+
+    return orderHistory;
+  },
+};
