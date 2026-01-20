@@ -10,17 +10,22 @@ import {
   Layers,
   LucideUser2,
   Package,
+  PackageCheck,
   Pill,
   Shapes,
   Shield,
   ShoppingBag,
+  ShoppingCart,
   Store,
+  StoreIcon,
   Truck,
+  UserCogIcon,
 } from "lucide-react";
 
 export type UserRole = "CUSTOMER" | "ADMIN" | "SHIPPER";
 
 export interface UserOrderInfo {
+  id: string;
   name: string;
   email: string;
   image_profile: string;
@@ -178,8 +183,28 @@ export const adminNavBarSelect = [
 export const customerNavbarSelect = [
   {
     icon: Home,
-    name: "",
-    path: "",
+    name: "Home",
+    path: "/",
+  },
+  {
+    icon: UserCogIcon,
+    name: "Profile",
+    path: "/profile",
+  },
+  {
+    icon: StoreIcon,
+    name: "Shopping",
+    path: "/store",
+  },
+  {
+    icon: PackageCheck,
+    name: "History Order",
+    path: "/history",
+  },
+  {
+    icon: ShoppingCart,
+    name: "Cart",
+    path: "/cart",
   },
 ];
 

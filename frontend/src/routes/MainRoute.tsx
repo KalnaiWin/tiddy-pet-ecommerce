@@ -4,6 +4,10 @@ import { MainLayout } from "../layout/MainLayout";
 import { StorePage } from "../page/global/StorePage";
 import { ProductDetails } from "../components/ProductInformation";
 import Cart from "../page/global/Cart";
+import SuccessPage from "../page/global/SuccessPage";
+import CancelPage from "../page/global/CancelPage";
+import HistoryOrder from "../page/global/HistoryOrder";
+import Profile from "../page/global/Profile";
 
 export const MainRoute = () => {
   return (
@@ -13,6 +17,10 @@ export const MainRoute = () => {
         <Route path="/store" element={<StorePage />} />
         <Route path="/store/:id" element={<ProductDetails />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/history" element={<HistoryOrder />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/success" element={<SuccessPage />} />
+        <Route path="/cancel" element={<CancelPage />} />
       </Route>
     </Routes>
   );

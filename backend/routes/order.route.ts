@@ -2,11 +2,8 @@ import express from "express";
 import { arcjetProtection } from "../middleware/arcjet.middleware.js";
 import { authorizeJWT, authorizeRole } from "../middleware/auth.middleware.js";
 import {
-  checkoutOrder,
   createOrder,
-  getAllOrderForAdmin,
-  getAllOrderForCustomer,
-  getAllOrderForShipper,
+  getAllOrders,
 } from "../controller/order.controller.js";
 
 const router = express.Router();
@@ -14,15 +11,12 @@ const router = express.Router();
 router.use(authorizeJWT, arcjetProtection);
 
 router.post("/create", createOrder);
-router.post("/checkout", checkoutOrder);
 
 //  Admin permission
-router.get("/admin", authorizeRole("ADMIN"), getAllOrderForAdmin);
+router.get("/", getAllOrders);
 
 //  User permission
-router.get("/customer", authorizeRole("CUSTOMER"), getAllOrderForCustomer);
 
 //  Shipper permission
-router.get("/shipper", authorizeRole("SHIPPER"), getAllOrderForShipper);
 
 export default router;

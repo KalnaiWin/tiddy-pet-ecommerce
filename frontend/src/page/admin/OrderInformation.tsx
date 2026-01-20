@@ -2,9 +2,10 @@ import { Dot, Download, Eye, Filter, Search } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store";
 import { useEffect, useState } from "react";
-import { getAllOrdersForAdmin } from "../../feature/orderThunk";
+import { getAllOrders } from "../../feature/orderThunk";
 import {
   formatVND,
+  generateOrderCode,
   paymentStatusColor,
   statusOrderColor,
 } from "../../types/HelperFunction";
@@ -24,7 +25,7 @@ const OrderInformation = () => {
 
   useEffect(() => {
     dispatch(
-      getAllOrdersForAdmin({
+      getAllOrders({
         page,
         limit,
         search: filter.search,
@@ -33,8 +34,6 @@ const OrderInformation = () => {
       }),
     );
   }, [dispatch, page, limit, filter.search, filter.status, filter.payment]);
-
-  console.log(orders);
 
   return (
     <div className="w-full p-5 bg-slate-100 min-h-screen flex flex-col gap-5">
@@ -135,7 +134,7 @@ const OrderInformation = () => {
               >
                 <td className="px-6 py-4 text-sm text-slate-700">
                   <div className="flex flex-col">
-                    <p className="font-extrabold uppercase">#{order._id}</p>
+                    <p className="font-extrabold uppercase">#{generateOrderCode(order._id, order.user.id)}</p>
                     <p>
                       {new Date(order.createdAt).toLocaleDateString("vi-VN")}
                     </p>

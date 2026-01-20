@@ -87,7 +87,9 @@ export const statusOrderColor = (status: string) => {
     case "FAILED":
       return "bg-red-100 text-red-700";
     case "CANCELLED":
-      return "bg-slate-200 text-slate-600";
+      return "bg-red-300 text-red-900";
+    case "ALL":
+      return "bg-orange-300 text-orange-900";
     default:
       return "bg-slate-100 text-slate-700";
   }
@@ -96,12 +98,21 @@ export const statusOrderColor = (status: string) => {
 export const paymentStatusColor = (status: string): string => {
   switch (status) {
     case "UNPAID":
-      return "bg-yellow-100 text-yellow-700";
+      return "bg-red-100 text-red-700";
     case "PAID":
       return "bg-green-100 text-green-700";
     case "REFUNDED":
       return "bg-red-100 text-red-700";
+    case "ALL":
+      return "bg-orange-300 text-orange-900";
     default:
       return "bg-slate-100 text-slate-700";
   }
+};
+
+export const generateOrderCode = (orderId: string, userId: string) => {
+  const userPart = userId.slice(-4).toUpperCase();
+  const orderPart = orderId.slice(-4).toUpperCase();
+
+  return `U${userPart}-O${orderPart}`;
 };
