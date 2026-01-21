@@ -1,8 +1,12 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../lib/axios";
-import type { CheckOut, OrderInfo } from "../types/InterfaceOrder";
+import type {
+  OrderCreateInput,
+  OrderCreateOutput,
+  OrderInfo,
+} from "../types/InterfaceOrder";
 
-export const getAllOrdersForAdmin = createAsyncThunk<
+export const getAllOrders = createAsyncThunk<
   OrderInfo[],
   {
     page: number;
@@ -13,10 +17,10 @@ export const getAllOrdersForAdmin = createAsyncThunk<
   },
   { rejectValue: string }
 >(
-  "order/getAllOrdersForAdmin",
+  "order/getAllOrders",
   async ({ page, limit, search, status, payment }, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get("/order/admin", {
+      const res = await axiosInstance.get("/order", {
         params: {
           page,
           limit,
@@ -32,13 +36,14 @@ export const getAllOrdersForAdmin = createAsyncThunk<
   },
 );
 
-export const checkoutCart = createAsyncThunk<
-  string,
-  CheckOut,
+export const createOrder = createAsyncThunk<
+  OrderCreateOutput,
+  OrderCreateInput,
   { rejectValue: string }
->("order/checkoutCart", async (data: CheckOut, { rejectWithValue }) => {
+>("order/createOrder", async (data: OrderCreateInput, { rejectWithValue }) => {
   try {
-    const res = await axiosInstance.post("/order/checkout", data);
+    console.log("Creating order");
+    const res = await axiosInstance.post("/order/create", data);
     return res.data;
   } catch (error: any) {
     return rejectWithValue(error.response?.data || "Error");

@@ -25,7 +25,7 @@ import {
 export type UserRole = "CUSTOMER" | "ADMIN" | "SHIPPER";
 
 export interface UserOrderInfo {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   image_profile: string;

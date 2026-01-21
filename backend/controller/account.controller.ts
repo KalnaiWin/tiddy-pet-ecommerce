@@ -83,11 +83,12 @@ export const deleteAccount = async (req: Request, res: Response) => {
 };
 
 export const updateProfile = async (req: Request, res: Response) => {
+  const userId = req.user._id;
   const { id } = req.params;
   const data = req.body;
   try {
     if (!id) return res.status(404).json({ message: "This id not found" });
-    const result = await AccountService.updateProfile(id, data);
+    const result = await AccountService.updateProfile(userId, id, data);
     if (!result) return res.status(400).json({ message: "Updated failed" });
     return res.status(200).json({ message: "Updated successfully" });
   } catch (error) {

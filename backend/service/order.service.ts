@@ -25,6 +25,8 @@ export const OrderService = {
     let subTotal = 0,
       totalPrice = 0;
 
+    console.log("order serivce");
+
     const userExisting = await User.findById(userId);
     if (!userExisting) throw new Error("UserId not found");
 
@@ -35,7 +37,7 @@ export const OrderService = {
     }
 
     const itemMap = new Map<string, OrderItem>();
-
+    let discountAmount = 0;
     for (const item of data.items) {
       const productExisiting = await Product.findById(item.productId);
       if (!productExisiting) throw new Error("ProductId not found");
@@ -45,8 +47,17 @@ export const OrderService = {
       else if (variantExisiting.stock < item.quantity)
         throw new Error("Not enough variant");
 
-      subTotal += variantExisiting.price * item.quantity;
+      subTotal +=
+        variantExisiting.price *
+        item.quantity *
+        (1 - productExisiting.discount / 100);
+
+      discountAmount +=
+        (productExisiting.discount / 100) * variantExisiting.price;
       const key = item.variantId;
+
+      await Product.updateOne({ _id: item.productId }, { $inc: { total: -1 } });
+      await Variant.updateOne({ _id: item.variantId }, { $inc: { stock: -1 } });
 
       if (itemMap.has(key)) {
         itemMap.get(key)!.quantity += item.quantity;
@@ -60,22 +71,27 @@ export const OrderService = {
       }
     }
 
-    let discountAmount = subTotal * (data.discount / 100);
     let voucherAmount = voucherExsiting ? voucherExsiting.discount : 0;
+    totalPrice = subTotal - voucherAmount + data.shippingFee;
 
-    totalPrice = subTotal - discountAmount - voucherAmount + data.shippingFee;
+    await User.updateOne({ _id: userId }, { $inc: { totalSpend: totalPrice } });
 
     const items = Array.from(itemMap.values());
     const createdOrder = await Order.create({
       user: userId,
       items: items,
       otherPrice: {
-        discount: data.discount,
+        discount: discountAmount,
         shippingFee: data.shippingFee,
       },
       voucher: data.voucherId || null,
       totalPrice: totalPrice,
       subTotal: subTotal,
+      payment: {
+        method: "ONLINE",
+        status: "PAID",
+        paidAt: new Date(),
+      },
       shipping: {
         address: userExisting.address,
         phone: userExisting.phone,

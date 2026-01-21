@@ -18,3 +18,10 @@ export interface updateProfileInterface {
     verification_status: VerifyStatus;
   };
 }
+
+export interface editAccountCustomer {
+  name: "";
+  image_profile: "";
+  phone: "";
+  address: "";
+}

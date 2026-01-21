@@ -8,7 +8,6 @@ export interface SourceOrderCreatedInput {
   items: ItemOrder[];
   shippingFee: number;
   voucherId: string;
-  discount: number;
 }
 
 export interface OrderItem {

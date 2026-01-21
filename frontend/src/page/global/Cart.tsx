@@ -5,21 +5,25 @@ import {
   deleteItemFromCart,
   getAllItemsFromCart,
 } from "../../feature/cartThunk";
-import { ArrowRight, ShoppingBag, Sparkles, Trash } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowRight, Loader, ShoppingBag, Sparkles, Trash } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { formatVND } from "../../types/HelperFunction";
-import { resetStatusCart } from "../../store/cartSlice";
+import type { CheckOut, OrderCreateInput } from "../../types/InterfaceOrder";
+import { checkoutCart } from "../../feature/paymentThunk";
+import { createOrder } from "../../feature/orderThunk";
 
 const Cart = () => {
   const { cartArray, status } = useSelector((state: RootState) => state.cart);
+  const { checkoutStatus } = useSelector((state: RootState) => state.payment);
+  const { currentUser } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (status === "idle") {
       dispatch(getAllItemsFromCart());
     }
-  }, [dispatch, status]);
-  dispatch(resetStatusCart());
+  }, [dispatch]);
 
   let subTotal = 0;
   cartArray.forEach((item) => {
@@ -33,6 +37,26 @@ const Cart = () => {
 
     discount += item?.price * item.quantity * (item?.productDiscount / 100);
   });
+
+  const checkOutCart: CheckOut = {
+    userId: String(currentUser?._id),
+    items: cartArray.map((item) => ({
+      name: item.variantName,
+      image: [item.image],
+      price: Math.round(item.price * (1 - item.productDiscount / 100)),
+      quantity: item.quantity,
+    })),
+  };
+
+  const orderCartInput: OrderCreateInput = {
+    items: cartArray.map((item) => ({
+      productId: item.productId,
+      variantId: item.variantId,
+      quantity: item.quantity,
+    })),
+    shippingFee: 0,
+    voucherId: "",
+  };
 
   return (
     <div className="flex flex-col p-10 mb-20">
@@ -54,8 +78,7 @@ const Cart = () => {
         <div>
           {cartArray.map((item) => {
             return (
-              <Link
-                to={`/store/${item.productId}}`}
+              <div
                 key={item?.variantId}
                 className="flex flex-col sm:flex-row items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 hover:shadow-md transition-shadow group mb-3 relative"
               >
@@ -70,13 +93,16 @@ const Cart = () => {
                     className="w-5 h-5 rounded text-[#FF6B00] focus:ring-[#FF6B00] border-gray-300 cursor-pointer"
                   />
                 </div>
-                <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-50">
+                <Link
+                  to={`/store/${item.productId}}`}
+                  className="w-24 h-24 rounded-lg overflow-hidden bg-gray-50"
+                >
                   <img
                     src={item?.image}
                     alt={item?.variantName}
                     className="w-full h-full object-cover"
                   />
-                </div>
+                </Link>
 
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-gray-900 truncate">
@@ -86,7 +112,7 @@ const Cart = () => {
                     {item?.brand?.name} •{" "}
                     {item.category &&
                       item.category.map((cate) => (
-                        <div>
+                        <div key={cate._id}>
                           <p>{cate.name}</p>
                         </div>
                       ))}
@@ -134,7 +160,7 @@ const Cart = () => {
                     </button>
                   </div>
                 </div>
-              </Link>
+              </div>
             );
           })}
           <div className="flex flex-col gap-4 bg-white p-4 rounded-xl border border-gray-100 hover:shadow-md transition-shadow group mb-3">
@@ -146,7 +172,7 @@ const Cart = () => {
             <div className="flex w-full justify-between">
               <h2 className="text-green-700 font-medium">Discount</h2>
               <p className="text-green-500 font-bold">{`-${formatVND(
-                discount
+                discount,
               )}`}</p>
             </div>
             <div className="flex w-full justify-between">
@@ -174,8 +200,24 @@ const Cart = () => {
                 {formatVND(subTotal - discount)}
               </p>
             </div>
-            <button className="w-full bg-orange-500 py-5 rounded-md font-black text-white">
-              Checkout Here
+            <button
+              onClick={async () => {
+                await dispatch(createOrder(orderCartInput));
+                const url = await dispatch(checkoutCart(checkOutCart));
+                if (!url.payload) return alert("Check out error");
+                navigate(url.payload);
+              }} // test payment and create order
+              className={`${checkoutStatus === "loading" ? "cursor-not-allowed bg-orange-300" : "hover:bg-orange-300 hover:text-orange-500 cursor-pointer bg-orange-500"} w-full py-5 rounded-md font-black text-white flex items-center justify-center`}
+              disabled={checkoutStatus === "loading"}
+            >
+              {checkoutStatus === "loading" ? (
+                <div className="flex gap-2">
+                  <Loader className="animate-spin" />
+                  <p>Sending</p>
+                </div>
+              ) : (
+                <p>Checkout Here</p>
+              )}
             </button>
           </div>
         </div>

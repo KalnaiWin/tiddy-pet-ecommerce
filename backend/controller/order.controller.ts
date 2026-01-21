@@ -28,10 +28,6 @@ export const getAllOrders = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllOrderForCustomer = async (req: Request, res: Response) => {};
-
-export const getAllOrderForShipper = async (req: Request, res: Response) => {};
-
 export const createOrder = async (req: Request, res: Response) => {
   const userId = req.user._id.toString();
   try {

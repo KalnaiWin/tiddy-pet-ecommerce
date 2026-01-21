@@ -10,7 +10,6 @@ export const CreateOrderInputSchema = z.object({
   items: z.array(ItemOrderSchema).min(1),
   shippingFee: z.number(),
   voucherId: z.string(),
-  discount: z.number().max(90),
 });
 
 export type CreateOrderInput = z.infer<typeof CreateOrderInputSchema>;

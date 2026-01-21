@@ -126,12 +126,13 @@ export const OrderReposioty = {
           totalPrice: 1,
           status: 1,
           createdAt: 1,
+          otherPrice: 1,
 
           "payment.status": 1,
           "payment.method": 1,
 
           user: {
-            id: "$user._id",
+            _id: "$user._id",
             name: "$user.name",
             email: "$user.email",
           },

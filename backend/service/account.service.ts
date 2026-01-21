@@ -41,9 +41,17 @@ export const AccountService = {
     return existingUser;
   },
 
-  updateProfile: async (userId: string, data: updateProfileInterface) => {
+  updateProfile: async (
+    adminId: string,
+    userId: string,
+    data: updateProfileInterface,
+  ) => {
+    const adminAccount = await AccountRepository.findUserById(adminId);
+    if (!adminAccount || adminAccount.role !== "ADMIN")
+      throw new Error("You are not allowed");
+
     const user = await AccountRepository.findUserById(userId);
-    if (!user || user.role !== "ADMIN") throw new Error("You are not allowed");
+    if (!user) throw new Error("The user not found");
 
     const emailExists = await AccountRepository.findByEmailExceptUser(
       user.email,

@@ -24,7 +24,11 @@ const HistoryOrder = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState<string | null>(null);
+
+  const handleToggle = (idx: string) => {
+    setIsExpanded((prev) => (prev === idx ? null : idx));
+  };
 
   const [page, setPage] = useState(1);
   const limit = 10;
@@ -143,7 +147,7 @@ const HistoryOrder = () => {
         orders.map((order) => (
           <div
             key={order._id}
-            className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow"
+            className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow my-5"
           >
             {/* Header Info */}
             <div className="p-4 sm:p-6 flex flex-wrap items-start justify-between gap-4 border-b border-gray-100 bg-slate-50/50">
@@ -153,7 +157,7 @@ const HistoryOrder = () => {
                     Order ID
                   </p>
                   <p className="text-sm font-bold text-gray-900">
-                    {generateOrderCode(order._id, order.user.id)}
+                    {generateOrderCode(order._id, order.user._id)}
                   </p>
                 </div>
                 <div>
@@ -197,15 +201,15 @@ const HistoryOrder = () => {
                   </span>
                 </div>
                 <button
-                  onClick={() => setIsExpanded(!isExpanded)}
+                  onClick={() => handleToggle(order._id)}
                   className="flex items-center gap-1 text-xs font-semibold text-orange-600 hover:text-orange-700 transition-colors"
                 >
-                  {isExpanded ? (
+                  {isExpanded === order._id ? (
                     <ChevronUp className="w-4 h-4" />
                   ) : (
                     <ChevronDown className="w-4 h-4" />
                   )}
-                  {isExpanded ? "Hide Details" : "View Details"}
+                  {isExpanded === order._id ? "Hide Details" : "View Details"}
                 </button>
               </div>
             </div>
@@ -256,7 +260,7 @@ const HistoryOrder = () => {
               </div>
             </div>
 
-            {isExpanded && (
+            {isExpanded === order._id && (
               <div className="px-4 sm:px-6 pb-6 pt-2 animate-in fade-in duration-300">
                 <div className="bg-slate-50 rounded-xl p-4 border border-gray-100">
                   <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 border-b border-gray-200 pb-2">
@@ -295,19 +299,36 @@ const HistoryOrder = () => {
                       <p>
                         Ordered by:
                         <span className="font-semibold text-gray-700">
+                          {" "}
                           {order.user.name}
                         </span>
                       </p>
-                      <p>Email: {order.user.email}</p>
+                      <p>
+                        Email:
+                        <span className="font-semibold text-gray-700">
+                          {" "}
+                          {order.user.email}
+                        </span>
+                      </p>
                     </div>
                     <div className="w-full sm:w-auto text-right">
                       <div className="flex justify-between sm:justify-end gap-10 text-xs text-gray-500 mb-1">
                         <span>Subtotal</span>
                         <span>{formatVND(order.totalPrice)}</span>
                       </div>
+                      <div className="flex justify-between sm:justify-end gap-10 text-xs text-gray-500 mb-1">
+                        <span>Discount</span>
+                        <span className="text-green-600">
+                          -{formatVND(order.otherPrice.discount)}
+                        </span>
+                      </div>
                       <div className="flex justify-between sm:justify-end gap-10 text-xs text-gray-500 mb-2">
                         <span>Shipping</span>
-                        <span className="text-green-600">Free</span>
+                        <span className="text-green-600">
+                          {order.otherPrice.shippingFee === 0
+                            ? "Free"
+                            : order.otherPrice.shippingFee}
+                        </span>
                       </div>
                       <div className="flex justify-between sm:justify-end gap-10 text-sm font-bold text-gray-900 border-t border-gray-100 pt-2">
                         <span>Order Total</span>

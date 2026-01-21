@@ -62,7 +62,7 @@ const EditProfileAccount = ({ userId }: Props) => {
         updateProfileAccount({
           id: detailAccount._id,
           data: formData,
-        })
+        }),
       ).unwrap();
       dispatch(getAccountDetail({ id: detailAccount._id }));
       toast.success("Update profile successfully");
@@ -155,9 +155,10 @@ const EditProfileAccount = ({ userId }: Props) => {
               }
               className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all bg-slate-700 focus:text-white text-white"
             >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="pending">Pending</option>
+              <option value="INACTIVE">Inactive</option>
+              <option value="ACTIVE">Active</option>
+              <option value="BANNED">Banned</option>
+              <option value="BUSY">Busy</option>
             </select>
           </div>
 
@@ -235,7 +236,7 @@ const EditProfileAccount = ({ userId }: Props) => {
                 <select
                   name="verification_status"
                   value={
-                    formData.shipper_info?.verification_status || "pending"
+                    formData.shipper_info?.verification_status || "PENDING"
                   }
                   onChange={(e) =>
                     setFormData({
@@ -248,9 +249,9 @@ const EditProfileAccount = ({ userId }: Props) => {
                   }
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all bg-slate-700 focus:text-white text-white"
                 >
-                  <option value="pending">Pending</option>
-                  <option value="verified">Verified</option>
-                  <option value="rejected">Rejected</option>
+                  <option value="PENDING">Pending</option>
+                  <option value="APPROVED">Approved</option>
+                  <option value="REJECTED">Rejected</option>
                 </select>
               </div>
             </>

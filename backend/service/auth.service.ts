@@ -1,5 +1,4 @@
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import type {
   authLoginInterface,
   authRegisterInterface,
@@ -7,13 +6,10 @@ import type {
 import { authRepository } from "../repository/auth.repository.js";
 import { authRegisterForm } from "../model/auth.model.js";
 import {
-  generateToken,
   signAccessToken,
   signRefreshToken,
   verifyRefreshToken,
-  type UserPayload,
 } from "../utils/jwt.js";
-import { de } from "zod/locales";
 
 export const authService = {
   register: async (data: authRegisterInterface) => {
@@ -56,7 +52,7 @@ export const authService = {
 
     const isPasswordCorrect = await bcrypt.compare(
       password,
-      exsitingUser.password
+      exsitingUser.password,
     );
     if (!isPasswordCorrect) throw new Error("Invalid password");
 
