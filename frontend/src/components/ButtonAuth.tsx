@@ -1,6 +1,6 @@
 import { User, XIcon } from "lucide-react";
 import { useState } from "react";
-import LoginAndRegisterPage from "../page/LoginAndRegisterPage";
+import LoginAndRegisterPage from "../page/customer/LoginAndRegisterPage";
 
 const ButtonAuth = () => {
   const [isOpen, setIsOpen] = useState(false);

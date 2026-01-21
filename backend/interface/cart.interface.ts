@@ -29,5 +29,6 @@ export interface VariantWithProduct {
     discount: number;
     brand: tagInput;
     category: tagInput[];
+    name: string;
   };
 }

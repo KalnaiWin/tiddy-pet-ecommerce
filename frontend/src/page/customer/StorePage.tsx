@@ -6,9 +6,10 @@ import { SocialNetwork } from "../../types/InterfaceProduct";
 import { Link } from "react-router-dom";
 import { getAllProducts } from "../../feature/productThunk";
 import { ProductInformation } from "../../components/ProductInformation";
+import SkeletonStore from "../../components/common/(customer)/SkeletonStore";
 
 export const StorePage = () => {
-  const { products } = useSelector((state: RootState) => state.product);
+  const { products, status } = useSelector((state: RootState) => state.product);
   const dispatch = useDispatch<AppDispatch>();
 
   const [page, setPage] = useState(1);
@@ -29,6 +30,8 @@ export const StorePage = () => {
   useEffect(() => {
     dispatch(getAllProducts({ page, limit, name: debouncedName }));
   }, [page, limit, debouncedName, dispatch]);
+
+  if (status === "loading") return <SkeletonStore />;
 
   return (
     <div className="w-full min-h-full">

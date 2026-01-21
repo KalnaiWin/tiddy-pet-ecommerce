@@ -1,13 +1,13 @@
 import { Route, Routes } from "react-router-dom";
-import { HomePage } from "../page/global/HomePage";
+import { HomePage } from "../page/global/Home/HomePage";
 import { MainLayout } from "../layout/MainLayout";
-import { StorePage } from "../page/global/StorePage";
+import { StorePage } from "../page/customer/StorePage";
 import { ProductDetails } from "../components/ProductInformation";
-import Cart from "../page/global/Cart";
+import Cart from "../page/customer/Cart";
 import SuccessPage from "../page/global/SuccessPage";
 import CancelPage from "../page/global/CancelPage";
-import HistoryOrder from "../page/global/HistoryOrder";
-import Profile from "../page/global/Profile";
+import HistoryOrder from "../page/customer/HistoryOrder";
+import Profile from "../page/customer/Profile";
 
 export const MainRoute = () => {
   return (

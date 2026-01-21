@@ -134,7 +134,9 @@ const OrderInformation = () => {
               >
                 <td className="px-6 py-4 text-sm text-slate-700">
                   <div className="flex flex-col">
-                    <p className="font-extrabold uppercase">#{generateOrderCode(order._id, order.user.id)}</p>
+                    <p className="font-extrabold uppercase">
+                      #{generateOrderCode(order._id, order.user._id)}
+                    </p>
                     <p>
                       {new Date(order.createdAt).toLocaleDateString("vi-VN")}
                     </p>

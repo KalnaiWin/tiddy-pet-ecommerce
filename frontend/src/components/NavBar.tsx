@@ -1,4 +1,4 @@
-import { Bell, Search, ShoppingCart, Store } from "lucide-react";
+import { Bell, ShoppingCart, Store } from "lucide-react";
 import ButtonAuth from "./ButtonAuth";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../store";
@@ -27,22 +27,16 @@ const NavBar = () => {
         </span>
       </Link>
       <div className="flex items-center gap-3 justify-end">
-        <div className="w-[70%] bg-slate-200 py-1.5 px-5 rounded-full relative md:block hidden">
-          <Search className="absolute top-1.5 left-2 text-slate-400" />
-          <input
-            type="text"
-            className=" w-full focus:outline-none indent-5"
-            placeholder="Search..."
-          />
-        </div>
-        <Link to={"/store"} className="md:block hidden hover:text-orange-600">
+        <Link to={"/store"} className="md:block hidden hover:text-orange-600" title="Store">
           <Store />
         </Link>
         <button className="hover:text-orange-600">
           <Bell />
         </button>
-        <Link to={"/cart"} className=" relative">
-          <p className="absolute -top-2.5 -right-2 bg-orange-600 px-1.5 text-sm rounded-full text-white">{cartArray.length}</p>
+        <Link to={"/cart"} className=" relative" title="Cart">
+          <p className="absolute -top-2.5 -right-2 bg-orange-600 px-1.5 text-sm rounded-full text-white">
+            {cartArray.length}
+          </p>
           <ShoppingCart className="hover:text-orange-600 cursor-pointer" />
         </Link>
         {!currentUser ? <ButtonAuth /> : <ButtonMenu />}

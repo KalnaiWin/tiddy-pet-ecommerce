@@ -9,9 +9,10 @@ import {
 } from "../../types/HelperFunction";
 import { Camera, UserCog } from "lucide-react";
 import type { AccountCustomerEdit } from "../../types/InterfaceUser";
+import SkeletonProfile from "../../components/common/(customer)/SkeletonProfile";
 
 const Profile = () => {
-  const { currentUser } = useSelector((state: RootState) => state.user);
+  const { currentUser, status } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -44,6 +45,8 @@ const Profile = () => {
       }),
     );
   };
+
+  if (status === "loading") return <SkeletonProfile />;
 
   return (
     <div className="p-10">

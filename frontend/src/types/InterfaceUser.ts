@@ -1,6 +1,5 @@
 import {
   BadgeCheck,
-  Beef,
   ChartColumn,
   ChartLine,
   ClipboardList,
@@ -11,12 +10,9 @@ import {
   LucideUser2,
   Package,
   PackageCheck,
-  Pill,
-  Shapes,
   Shield,
   ShoppingBag,
   ShoppingCart,
-  Store,
   StoreIcon,
   Truck,
   UserCogIcon,
@@ -104,34 +100,11 @@ export const roles: { id: UserRole; label: string; icon: any; desc: string }[] =
     { id: "SHIPPER", label: "Shipper", icon: Truck, desc: "Handle deliveries" },
   ];
 
-export const pathCategorySelects = [
-  {
-    name: "All products",
-    icon: Store,
-    path: "/store",
-  },
-  {
-    name: "Vitaim & Nutrition",
-    icon: Pill,
-    path: "/store/nutrition",
-  },
-  {
-    name: "Yummy Food",
-    icon: Beef,
-    path: "/store/food",
-  },
-  {
-    name: "Toys",
-    icon: Shapes,
-    path: "/store/toy",
-  },
-];
-
 export const pathUserSelect = [
   {
     name: "Order History",
     icon: History,
-    path: "/order",
+    path: "/history",
   },
   {
     name: "Wishlist",

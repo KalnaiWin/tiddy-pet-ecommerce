@@ -11,6 +11,8 @@ import { formatVND } from "../../types/HelperFunction";
 import type { CheckOut, OrderCreateInput } from "../../types/InterfaceOrder";
 import { checkoutCart } from "../../feature/paymentThunk";
 import { createOrder } from "../../feature/orderThunk";
+import SkeletonCart from "../../components/common/(customer)/SkeletonCart";
+import { resetStatusCart } from "../../store/cartSlice";
 
 const Cart = () => {
   const { cartArray, status } = useSelector((state: RootState) => state.cart);
@@ -20,9 +22,10 @@ const Cart = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (status === "idle") {
-      dispatch(getAllItemsFromCart());
-    }
+    dispatch(getAllItemsFromCart());
+    return () => {
+      dispatch(resetStatusCart());
+    };
   }, [dispatch]);
 
   let subTotal = 0;
@@ -58,10 +61,12 @@ const Cart = () => {
     voucherId: "",
   };
 
+  if (status === "loading") return <SkeletonCart />;
+
   return (
-    <div className="flex flex-col p-10 mb-20">
+    <div className="flex flex-col md:px-25 px-15 py-10 mb-5">
       {/* Title */}
-      <div className="flex justify-between items-center border-b pb-4">
+      <div className="flex justify-between items-center border-b pb-4 mb-10">
         <div>
           <h1 className="text-2xl font-semibold">Your Cart</h1>
           <p className="text-sm text-gray-500">
@@ -75,95 +80,99 @@ const Cart = () => {
       </div>
 
       {cartArray.length > 0 ? (
-        <div>
-          {cartArray.map((item) => {
-            return (
-              <div
-                key={item?.variantId}
-                className="flex flex-col sm:flex-row items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 hover:shadow-md transition-shadow group mb-3 relative"
-              >
-                <p className="absolute -top-5 -left-5 bg-orange-600 text-white rounded-full size-12 flex items-center justify-center">
-                  {item?.productDiscount}%
-                </p>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    // checked={item.isSelected}
-                    //   onChange={() => onToggleSelect(item._id, item.selectedChildId)}
-                    className="w-5 h-5 rounded text-[#FF6B00] focus:ring-[#FF6B00] border-gray-300 cursor-pointer"
-                  />
-                </div>
-                <Link
-                  to={`/store/${item.productId}}`}
-                  className="w-24 h-24 rounded-lg overflow-hidden bg-gray-50"
+        <div className="flex md:flex-row flex-col w-full gap-5">
+          <div className="md:w-2/3 w-full">
+            {cartArray.map((item) => {
+              return (
+                <div
+                  key={item?.variantId}
+                  className="flex flex-col sm:flex-row items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 hover:shadow-md transition-shadow group mb-3 relative"
                 >
-                  <img
-                    src={item?.image}
-                    alt={item?.variantName}
-                    className="w-full h-full object-cover"
-                  />
-                </Link>
-
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-900 truncate">
-                    {item.variantName}
-                  </h3>
-                  <div className="text-xs text-[#FF6B00] font-medium mt-1 flex">
-                    {item?.brand?.name} •{" "}
-                    {item.category &&
-                      item.category.map((cate) => (
-                        <div key={cate._id}>
-                          <p>{cate.name}</p>
-                        </div>
-                      ))}
+                  <p className="absolute -top-5 -left-5 bg-orange-600 text-white rounded-full size-12 flex items-center justify-center">
+                    {item?.productDiscount}%
+                  </p>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      // checked={item.isSelected}
+                      //   onChange={() => onToggleSelect(item._id, item.selectedChildId)}
+                      className="w-5 h-5 rounded text-[#FF6B00] focus:ring-[#FF6B00] border-gray-300 cursor-pointer"
+                    />
                   </div>
-                </div>
+                  <Link
+                    to={`/store/${item.productId}}`}
+                    className="w-24 h-24 rounded-lg overflow-hidden bg-gray-50"
+                  >
+                    <img
+                      src={item?.image}
+                      alt={item?.productName}
+                      className="w-full h-full object-cover"
+                    />
+                  </Link>
 
-                <div className="flex flex-col items-end gap-2 w-full sm:w-auto">
-                  <div className="flex items-center gap-2 text-lg font-bold text-gray-900">
-                    <span>${formatVND(item.price)}</span>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 truncate">
+                      {item?.productName}
+                    </h3>
+                    <p className="text-xs text-gray-500  mt-1">
+                      {item.variantName}
+                    </p>
+                    <div className="text-xs text-[#FF6B00] font-medium mt-1 flex">
+                      {item?.brand?.name} •{" "}
+                      {item.category &&
+                        item.category.map((cate) => (
+                          <div key={cate._id}>
+                            <p>{cate.name}</p>
+                          </div>
+                        ))}
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-4 w-full justify-between sm:justify-start">
-                    {/* Quantity Controls */}
-                    <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                      <button
-                        //   onClick={() =>
-                        //     onUpdateQuantity(item._id, item.selectedChildId, -1)
-                        //   }
-                        //   disabled={item.quantity <= 1}
-                        className="px-3 py-1 bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors disabled:opacity-50"
-                      >
-                        -
-                      </button>
-                      <span className="px-4 py-1 text-sm font-medium w-12 text-center">
-                        {item.quantity}
-                      </span>
-                      <button
-                        //   onClick={() =>
-                        // onUpdateQuantity(item._id, item.selectedChildId, 1)
-                        //   }
-                        className="px-3 py-1 bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors"
-                      >
-                        +
-                      </button>
+                  <div className="flex flex-col items-end gap-2 w-full sm:w-auto">
+                    <div className="flex items-center gap-2 text-lg font-bold text-gray-900">
+                      <span>${formatVND(item.price)}</span>
                     </div>
 
-                    {/* Remove Button */}
-                    <button
-                      onClick={() =>
-                        dispatch(deleteItemFromCart(item?.variantId))
-                      }
-                      className="text-gray-400 hover:text-red-500 transition-colors p-2"
-                    >
-                      <Trash />
-                    </button>
+                    <div className="flex items-center gap-4 w-full justify-between sm:justify-start">
+                      {/* Quantity Controls */}
+                      <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+                        <button
+                          //   onClick={() =>
+                          //     onUpdateQuantity(item._id, item.selectedChildId, -1)
+                          //   }
+                          //   disabled={item.quantity <= 1}
+                          className="px-3 py-1 bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors disabled:opacity-50"
+                        >
+                          -
+                        </button>
+                        <span className="px-4 py-1 text-sm font-medium w-12 text-center">
+                          {item.quantity}
+                        </span>
+                        <button
+                          //   onClick={() =>
+                          // onUpdateQuantity(item._id, item.selectedChildId, 1)
+                          //   }
+                          className="px-3 py-1 bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      <button
+                        onClick={() =>
+                          dispatch(deleteItemFromCart(item?.variantId))
+                        }
+                        className="text-gray-400 hover:text-red-500 transition-colors p-2"
+                      >
+                        <Trash />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-          <div className="flex flex-col gap-4 bg-white p-4 rounded-xl border border-gray-100 hover:shadow-md transition-shadow group mb-3">
+              );
+            })}
+          </div>
+          <div className="flex flex-col gap-4 bg-white p-4 rounded-xl border border-gray-100 hover:shadow-md transition-shadow group mb-3 md:w-1/3 w-full">
             <h1 className="font-bold text-2xl">Order Summary</h1>
             <div className="flex w-full justify-between">
               <h2 className="text-slate-700 font-medium">Subtotal</h2>

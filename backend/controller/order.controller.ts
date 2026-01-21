@@ -18,8 +18,6 @@ export const getAllOrders = async (req: Request, res: Response) => {
       status,
       payment,
     });
-    console.log(result);
-
     return res.status(201).json(result);
   } catch (error) {
     return res.status(500).json({

@@ -50,7 +50,7 @@ export const CartService = {
     })
       .populate({
         path: "productId",
-        select: "discount brand category",
+        select: "name discount brand category",
         populate: [
           { path: "brand", select: "name slug isActive" },
           { path: "category", select: "name slug isActive" },
@@ -61,6 +61,7 @@ export const CartService = {
     return variants.map((variant) => ({
       productId: variant.productId._id,
       productDiscount: variant.productId.discount,
+      productName: variant.productId.name,
       variantId: variant._id,
       variantName: variant.name,
       price: variant.price,
