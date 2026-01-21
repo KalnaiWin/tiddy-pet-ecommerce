@@ -13,14 +13,30 @@ import { arcjetProtection } from "../middleware/arcjet.middleware.js";
 
 const router = express.Router();
 
-router.use(authorizeJWT, arcjetProtection);
-
-router.get("/", getAllProducts);
-router.get("/category", getAllCategories);
-router.get("/brand", getAllBrands);
-router.get("/view/:id", getProductDetail);
-router.post("/add", authorizeRole("ADMIN"), addNewProduct);
-router.put("/edit/:id", authorizeRole("ADMIN"), EditProduct);
-router.delete("/delete/:id", authorizeRole("ADMIN"), DeleteProduct);
+router.get("/", arcjetProtection, getAllProducts);
+router.get("/category", arcjetProtection, getAllCategories);
+router.get("/brand", arcjetProtection, getAllBrands);
+router.get("/view/:id", arcjetProtection, getProductDetail);
+router.post(
+  "/add",
+  authorizeJWT,
+  arcjetProtection,
+  authorizeRole("ADMIN"),
+  addNewProduct,
+);
+router.put(
+  "/edit/:id",
+  authorizeJWT,
+  arcjetProtection,
+  authorizeRole("ADMIN"),
+  EditProduct,
+);
+router.delete(
+  "/delete/:id",
+  authorizeJWT,
+  arcjetProtection,
+  authorizeRole("ADMIN"),
+  DeleteProduct,
+);
 
 export default router;

@@ -1,5 +1,4 @@
 import axios from "axios";
-import toast from "react-hot-toast";
 
 const axiosInstance = axios.create({
   baseURL:
@@ -35,7 +34,7 @@ axiosInstance.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export const generateRefreshToken = async () => {
@@ -43,6 +42,5 @@ export const generateRefreshToken = async () => {
     await axiosInstance.get("/auth/refresh-token");
   } catch (error: any) {
     console.error(error);
-    toast.error(error?.response?.data?.error?.message);
   }
 };
