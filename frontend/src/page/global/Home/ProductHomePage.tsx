@@ -3,7 +3,7 @@ import { brandSupport } from "../../../types/InterfaceGlobal";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store";
 import { useEffect } from "react";
-import { ProductInformation } from "../../../components/ProductInformation";
+import { ProductInformation } from "../ProductInformation";
 import { getAllProducts } from "../../../feature/productThunk";
 import { SocialNetwork } from "../../../types/InterfaceProduct";
 import { ArrowRight, PackageSearch } from "lucide-react";
