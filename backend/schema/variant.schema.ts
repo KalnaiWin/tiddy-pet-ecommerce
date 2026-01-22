@@ -23,6 +23,15 @@ const variantSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  status: {
+    type: String,
+    enum: ["Available", "Out of stock", "Draft"],
+    default: "Available",
+  },
+  discount: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const Variant = mongoose.model("Variant", variantSchema);

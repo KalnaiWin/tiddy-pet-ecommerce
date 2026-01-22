@@ -19,7 +19,7 @@ const EditProductPage: React.FC = () => {
   const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const { categories, brands, editStatus, detail } = useSelector(
-    (state: RootState) => state.product
+    (state: RootState) => state.product,
   );
 
   const [newCategory, setNewCategory] = useState("");
@@ -64,6 +64,8 @@ const EditProductPage: React.FC = () => {
         price: 0,
         image: "",
         stock: 0,
+        status: "Available",
+        discount: 0,
       },
     ],
     category: [
@@ -101,6 +103,8 @@ const EditProductPage: React.FC = () => {
                 price: child.price,
                 image: child.image,
                 stock: child.stock,
+                status: child.status,
+                discount: child.discount,
               }))
             : [
                 {
@@ -108,6 +112,8 @@ const EditProductPage: React.FC = () => {
                   price: 0,
                   image: "",
                   stock: 0,
+                  status: "Available",
+                  discount: 0,
                 },
               ],
         category:
@@ -150,7 +156,7 @@ const EditProductPage: React.FC = () => {
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value, type } = e.target;
     setFormData((prev) => ({
@@ -175,6 +181,8 @@ const EditProductPage: React.FC = () => {
       price: formData.maxPrice,
       image: `${formData.childProduct[0]}`,
       stock: 10,
+      status: "Available",
+      discount: 0,
     };
     setFormData((prev) => ({
       ...prev,
@@ -220,7 +228,7 @@ const EditProductPage: React.FC = () => {
     const slug = convertSlug(name);
 
     setCustomCategories((prev) =>
-      prev.includes(name) ? prev : [...prev, name]
+      prev.includes(name) ? prev : [...prev, name],
     );
     setFormData((prev) => ({
       ...prev,
@@ -356,7 +364,7 @@ const EditProductPage: React.FC = () => {
                       setFormData((p) => ({
                         ...p,
                         imageProduct: p.imageProduct.filter(
-                          (_, i) => i !== idx
+                          (_, i) => i !== idx,
                         ),
                       }))
                     }
@@ -415,7 +423,7 @@ const EditProductPage: React.FC = () => {
                   key={idx}
                   className="flex items-center gap-4 p-4 border border-slate-200 rounded-lg bg-slate-50"
                 >
-                  <div className="flex-1 grid grid-cols-4 gap-4">
+                  <div className="flex-1 grid grid-cols-6 gap-4">
                     <div className="w-fit">
                       {child.image !== "" ? (
                         <div className="relative group">
@@ -424,7 +432,6 @@ const EditProductPage: React.FC = () => {
                             className="w-12 h-12 rounded bg-white object-cover border"
                             alt=""
                           />
-
                           <button
                             type="button"
                             onClick={() => removeVariantImage(idx)}
@@ -479,6 +486,37 @@ const EditProductPage: React.FC = () => {
                       onChange={(e) => {
                         const newChildren = [...formData.childProduct];
                         newChildren[idx].stock = Number(e.target.value);
+                        setFormData((p) => ({
+                          ...p,
+                          childProduct: newChildren,
+                        }));
+                      }}
+                    />
+                    <select
+                      title="Status"
+                      className="bg-transparent border-b border-slate-300 focus:border-indigo-500 outline-none text-sm py-1"
+                      value={child.status}
+                      onChange={(e) => {
+                        const newChildren = [...formData.childProduct];
+                        newChildren[idx].status = String(e.target.value);
+                        setFormData((p) => ({
+                          ...p,
+                          childProduct: newChildren,
+                        }));
+                      }}
+                    >
+                      <option value="Available">Available</option>
+                      <option value="Out of stock">Out of stock</option>
+                      <option value="Draft">Draft</option>
+                    </select>
+                    <input
+                      className="bg-transparent border-b border-slate-300 focus:border-indigo-500 outline-none text-sm py-1"
+                      placeholder="Dicount"
+                      title="Discount"
+                      value={child.discount !== 0 ? child.discount : ""}
+                      onChange={(e) => {
+                        const newChildren = [...formData.childProduct];
+                        newChildren[idx].discount = Number(e.target.value);
                         setFormData((p) => ({
                           ...p,
                           childProduct: newChildren,
@@ -681,7 +719,7 @@ const EditProductPage: React.FC = () => {
                       className="absolute -top-2 -right-2"
                       onClick={() =>
                         setCustomCategories((prev) =>
-                          prev.filter((_, i) => i !== idx)
+                          prev.filter((_, i) => i !== idx),
                         )
                       }
                     >

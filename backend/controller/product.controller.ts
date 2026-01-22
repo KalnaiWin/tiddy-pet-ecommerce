@@ -53,7 +53,6 @@ export const getProductDetail = async (req: Request, res: Response) => {
   try {
     if (!id) return res.status(404).json({ message: "Id not found" });
     const product = await productService.getProductDetail(id);
-    // const response =
     return res.status(200).json(product);
   } catch (error) {
     if (error instanceof Error) {
@@ -67,7 +66,7 @@ export const getProductDetail = async (req: Request, res: Response) => {
 export const addNewProduct = async (req: Request, res: Response) => {
   try {
     const product = await productService.addNewProduct(req.body);
-    const response = createProductSchema.parse(product);
+    // const response = createProductSchema.parse(product);
 
     return res.status(201).json(product);
   } catch (error) {

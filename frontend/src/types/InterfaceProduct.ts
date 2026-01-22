@@ -3,6 +3,8 @@ export interface childProductInput {
   price: number;
   image: string;
   stock: number;
+  status: string;
+  discount: number;
 }
 
 export interface childProduct {
@@ -11,6 +13,8 @@ export interface childProduct {
   price: number;
   image: string;
   stock: number;
+  discount: number;
+  status: string;
 }
 
 export interface Category {

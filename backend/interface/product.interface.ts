@@ -3,6 +3,8 @@ export interface childProductInput {
   price: number;
   image: string;
   stock: number;
+  status: string;
+  discount: number;
 }
 
 export interface tagInput {
@@ -24,3 +26,5 @@ export interface productInputInterface {
   discount: number;
   status: "Available" | "Out of stock" | "Draft";
 }
+
+

@@ -3,7 +3,9 @@ import type {
   QueryOrderManagement,
   SourceOrderCreatedInput,
 } from "../interface/order.interface.js";
+import { childProduct } from "../model/product.model.js";
 import { OrderReposioty } from "../repository/order.repository.js";
+import { productRepository } from "../repository/product.repository.js";
 import Order from "../schema/order.schema.js";
 import Product from "../schema/product.schema.js";
 import User from "../schema/user.schema.js";
@@ -25,7 +27,6 @@ export const OrderService = {
     let subTotal = 0,
       totalPrice = 0;
 
-    console.log("order serivce");
 
     const userExisting = await User.findById(userId);
     if (!userExisting) throw new Error("UserId not found");
@@ -39,8 +40,11 @@ export const OrderService = {
     const itemMap = new Map<string, OrderItem>();
     let discountAmount = 0;
     for (const item of data.items) {
-      const productExisiting = await Product.findById(item.productId);
+      const productExisiting = await productRepository.findSpecificProductById(
+        item.productId,
+      );
       if (!productExisiting) throw new Error("ProductId not found");
+      else if (productExisiting.status === "Out of stock") continue;
 
       const variantExisiting = await Variant.findById(item.variantId);
       if (!variantExisiting) throw new Error("VariantId not found");
@@ -50,14 +54,36 @@ export const OrderService = {
       subTotal +=
         variantExisiting.price *
         item.quantity *
-        (1 - productExisiting.discount / 100);
+        (1 - variantExisiting.discount / 100);
 
       discountAmount +=
-        (productExisiting.discount / 100) * variantExisiting.price;
+        (variantExisiting.discount / 100) * variantExisiting.price;
       const key = item.variantId;
 
-      await Product.updateOne({ _id: item.productId }, { $inc: { total: -1 } });
-      await Variant.updateOne({ _id: item.variantId }, { $inc: { stock: -1 } });
+      await Product.updateOne(
+        { _id: item.productId },
+        { $inc: { sold: item.quantity } }, // sold + quantity
+      );
+      await Variant.updateOne({ _id: item.variantId }, { $inc: { stock: -item.quantity } }); // stock -= quantity
+
+      if (variantExisiting.stock <= 0) {
+        variantExisiting.status = "Out of stock";
+        await variantExisiting.save();
+      }
+
+      let totalVariantAvailable = 0;
+
+      for (const child of productExisiting.childProduct) {
+        const variant = await Variant.findById(child);
+        if (variant && variant.stock > 0) {
+          totalVariantAvailable++;
+        }
+      }
+
+      if (totalVariantAvailable === 0) {
+        productExisiting.status = "Out of stock";
+        await productExisiting.save(); 
+      }
 
       if (itemMap.has(key)) {
         itemMap.get(key)!.quantity += item.quantity;

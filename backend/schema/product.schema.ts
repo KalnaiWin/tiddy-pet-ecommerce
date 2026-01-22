@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import "./category.schema.js";
 import "./brand.schema.js";
+import "./variant.schema.js";
 
 const productSchema = new mongoose.Schema(
   {

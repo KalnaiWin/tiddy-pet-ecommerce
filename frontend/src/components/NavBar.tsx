@@ -27,18 +27,24 @@ const NavBar = () => {
         </span>
       </Link>
       <div className="flex items-center gap-3 justify-end">
-        <Link to={"/store"} className="md:block hidden hover:text-orange-600" title="Store">
+        <Link
+          to={"/store"}
+          className="md:block hidden hover:text-orange-600"
+          title="Store"
+        >
           <Store />
         </Link>
         <button className="hover:text-orange-600">
           <Bell />
         </button>
-        <Link to={"/cart"} className=" relative" title="Cart">
-          <p className="absolute -top-2.5 -right-2 bg-orange-600 px-1.5 text-sm rounded-full text-white">
-            {cartArray.length}
-          </p>
-          <ShoppingCart className="hover:text-orange-600 cursor-pointer" />
-        </Link>
+        {currentUser?.role === "CUSTOMER" && (
+          <Link to={"/cart"} className=" relative" title="Cart">
+            <p className="absolute -top-2.5 -right-2 bg-orange-600 px-1.5 text-sm rounded-full text-white">
+              {cartArray.length}
+            </p>
+            <ShoppingCart className="hover:text-orange-600 cursor-pointer" />
+          </Link>
+        )}
         {!currentUser ? <ButtonAuth /> : <ButtonMenu />}
       </div>
     </div>

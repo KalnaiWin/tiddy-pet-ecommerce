@@ -17,7 +17,6 @@ const SkeletonStore = () => {
         ))}
       </div>
 
-      {/* Pagination Skeleton */}
       <div className="flex justify-center items-center gap-2 mt-10">
         <div className="w-16 h-8 bg-slate-200 rounded animate-pulse" />
         <div className="w-20 h-6 bg-slate-200 rounded animate-pulse" />

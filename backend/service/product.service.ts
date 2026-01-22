@@ -8,6 +8,8 @@ import {
 import type { productInputInterface } from "../interface/product.interface.js";
 import Product from "../schema/product.schema.js";
 import Variant from "../schema/variant.schema.js";
+import Brand from "../schema/brand.schema.js";
+import Category from "../schema/category.schema.js";
 
 export const productService = {
   getAllProducts: async (page: number, limit: number, name: string) => {
@@ -24,7 +26,7 @@ export const productService = {
     const productsFromDb = await productRepository.findAllProducts(
       skip,
       limit,
-      normalizedName === "ALL" ? "" : normalizedName
+      normalizedName === "ALL" ? "" : normalizedName,
     );
     const parsedProducts = getAllAdminProductSchema.parse(productsFromDb);
     await redis.set(cacheKey, JSON.stringify(parsedProducts), { EX: 60 });
@@ -52,6 +54,8 @@ export const productService = {
     if (!createProductSchema.parse(data))
       throw new Error("Error input product");
     const redis = getRedis();
+    let maxDiscount = 0;
+    let total = 0;
     if (data.minPrice && data?.minPrice > data.maxPrice)
       throw new Error("Invalid min, max price");
     else if (data.discount < 0 || data.discount > 100 || data.total < 0)
@@ -63,11 +67,20 @@ export const productService = {
       ) {
         throw new Error("Invalid price of child product");
       }
+      total += item.stock;
+      maxDiscount = Math.max(maxDiscount, item.discount);
     });
     const brandId = await productRepository.findOrCreateBrand(data.brand);
     const categoryIds = await productRepository.findOrCreateCategory(
-      data.category
+      data.category,
     );
+
+    if (total !== data.total)
+      throw new Error("Sum total of child should be equal to product stock");
+    else if (maxDiscount > data.discount)
+      throw new Error(
+        "Max discount of child should be less than product discount",
+      );
 
     const product = await Product.create({
       name: data.name,
@@ -89,7 +102,9 @@ export const productService = {
         price: item.price,
         image: item.image,
         stock: item.stock,
-      }))
+        status: item.status,
+        discount: item.discount,
+      })),
     );
 
     product.childProduct = variants.map((v) => v._id);
@@ -116,6 +131,29 @@ export const productService = {
   },
 
   deleteOldProduct: async (productId: string) => {
-    return Product.findByIdAndDelete(productId);
+    const products = await Product.findById(productId);
+    if (!products) throw new Error("Product not found");
+
+    // Delete variant
+    for (const variant of products?.childProduct) {
+      await Variant.findByIdAndDelete(variant._id);
+    }
+
+    await Product.findByIdAndDelete(productId);
+
+    // Deleye brand
+    const countBrand = await Product.countDocuments({
+      brand: products.brand._id,
+    });
+    if (countBrand <= 0) await Brand.findByIdAndDelete(products.brand._id);
+
+    // Deleye category
+    for (const cate of products.category) {
+      const countCategory = await Product.countDocuments({
+        category: cate._id,
+      });
+      if (countCategory <= 0) await Category.findByIdAndDelete(cate._id);
+    }
+    return true;
   },
 };

@@ -6,6 +6,7 @@ export const childProduct = z.object({
   price: z.number().min(0),
   image: z.string(),
   stock: z.number().min(0),
+  status: z.string(),
 });
 
 export const tagSchema = z.object({

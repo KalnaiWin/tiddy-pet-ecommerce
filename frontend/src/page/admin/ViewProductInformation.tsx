@@ -34,7 +34,7 @@ const ViewProductInformation = ({ productId }: Props) => {
                 </h1>
                 <div
                   className={`${StatusProduct(
-                    detail.status || ""
+                    detail.status || "",
                   )} flex items-center rounded-md font-semibold text-xs w-fit px-2 py-0.5`}
                 >
                   <Dot className="w-4 h-4" />
@@ -126,6 +126,13 @@ const ViewProductInformation = ({ productId }: Props) => {
                       </span>
                       <span>
                         Stock: <b className="text-slate-700">{child.stock}</b>
+                      </span>
+                      <span>
+                        Discount:{" "}
+                        <b className="text-green-700">{child.discount}</b>
+                      </span>
+                      <span>
+                        Status: <b className="text-slate-700">{child.status}</b>
                       </span>
                     </div>
                   </div>
