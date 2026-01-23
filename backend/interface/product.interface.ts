@@ -27,4 +27,18 @@ export interface productInputInterface {
   status: "Available" | "Out of stock" | "Draft";
 }
 
+import { Types } from "mongoose";
 
+export interface ProductUpdateDB {
+  name: string;
+  description: string;
+  total: number;
+  minPrice: number;
+  maxPrice: number;
+  imageProduct: string[];
+  childProduct: Types.ObjectId[]; 
+  category: Types.ObjectId[];
+  brand: Types.ObjectId;
+  discount: number;
+  status: "Available" | "Out of stock" | "Draft";
+}

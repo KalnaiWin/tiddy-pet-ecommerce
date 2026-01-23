@@ -1,10 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../lib/axios";
-import type {
-  CreateProductPayload,
-  EditProductPayload,
-  GetCategoryAndBrand,
-  ProductInfo,
+import {
+  type AnalyticProduct,
+  type CreateProductPayload,
+  type EditProductPayload,
+  type GetCategoryAndBrand,
+  type ProductInfo,
 } from "../types/InterfaceProduct";
 
 export const getAllProducts = createAsyncThunk<
@@ -106,6 +107,21 @@ export const viewProductDetail = createAsyncThunk<
 >("store/viewProductDetail", async ({ id }, { rejectWithValue }) => {
   try {
     const res = await axiosInstance.get(`/product/view/${id}`);
+    return res.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message || "Delete product failed",
+    );
+  }
+});
+
+export const getPreviousDataOfProduct = createAsyncThunk<
+  AnalyticProduct[],
+  void,
+  { rejectValue: string }
+>("analytic/getPreviousDataOfProduct", async (_, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.get("/analytic/product");
     return res.data;
   } catch (error: any) {
     return rejectWithValue(

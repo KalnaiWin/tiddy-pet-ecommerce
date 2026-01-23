@@ -51,6 +51,15 @@ export interface ProductInfo {
   status?: "Available" | "Out of stock" | "Draft";
 }
 
+export interface AnalyticProduct {
+  _id: string;
+  name: string;
+  sold: string;
+  total: number;
+  revenue: number;
+  currentTotal: number;
+}
+
 export interface ProductState {
   products: ProductInfo[] | null;
   status: "idle" | "loading" | "succeeded" | "failed";
@@ -64,6 +73,8 @@ export interface ProductState {
   detail: ProductInfo | null;
   detailStatus: "idle" | "loading" | "succeeded" | "failed";
   editStatus: "idle" | "loading" | "succeeded" | "failed";
+  analyticProduct: AnalyticProduct[] | [];
+  analy: "idle" | "loading" | "succeeded" | "failed";
 }
 
 export interface CreateProductPayload {

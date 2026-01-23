@@ -116,8 +116,6 @@ export const productService = {
   },
 
   editOldProduct: async (productId: string, data: productInputInterface) => {
-    console.log(data);
-
     const existingProduct = await Product.findById(productId);
     if (!existingProduct) throw new Error("This product is not found");
 

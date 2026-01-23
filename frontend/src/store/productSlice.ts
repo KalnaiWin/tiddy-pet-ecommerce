@@ -7,6 +7,7 @@ import {
   getAllBrands,
   getAllCategories,
   getAllProducts,
+  getPreviousDataOfProduct,
   viewProductDetail,
 } from "../feature/productThunk";
 
@@ -27,6 +28,9 @@ const initialState: ProductState = {
 
   detail: null,
   detailStatus: "idle",
+
+  analyticProduct: [],
+  analy: "idle",
 };
 
 export const productSlice = createSlice({
@@ -41,8 +45,20 @@ export const productSlice = createSlice({
   },
 
   extraReducers(builder) {
-    // ================== VIEW PRODUCT DETAIL ==================
+    // ================== GET ANALYTIC PRODUCTS INFORMATION ==================
+    builder
+      .addCase(getPreviousDataOfProduct.pending, (state) => {
+        state.analy = "loading";
+      })
+      .addCase(getPreviousDataOfProduct.fulfilled, (state, action) => {
+        state.analy = "succeeded";
+        state.analyticProduct = action.payload;
+      })
+      .addCase(getPreviousDataOfProduct.rejected, (state) => {
+        state.analy = "failed";
+      });
 
+    // ================== VIEW PRODUCT DETAIL ==================
     builder
       .addCase(viewProductDetail.pending, (state) => {
         state.detailStatus = "loading";
@@ -65,7 +81,7 @@ export const productSlice = createSlice({
         state.deletingStaus = "succeeded";
         if (state.products) {
           state.products = state.products.filter(
-            (p) => p._id !== action.meta.arg.id
+            (p) => p._id !== action.meta.arg.id,
           );
         }
       })
@@ -101,7 +117,7 @@ export const productSlice = createSlice({
         state.detail = action.payload;
         if (state.products) {
           const index = state.products.findIndex(
-            (p) => p._id === action.payload._id
+            (p) => p._id === action.payload._id,
           );
           if (index !== -1) {
             state.products[index] = action.payload;

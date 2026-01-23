@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import type { childProduct, ProductInfo } from "../../types/InterfaceProduct";
-import { DollarSign, Shield, ShoppingCart, Star, Truck } from "lucide-react";
+import { Shield, ShoppingCart, Star, Truck } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store";
 import { useEffect, useRef, useState } from "react";
@@ -27,7 +27,7 @@ export const ProductInformation = ({ product }: ProductInformationProps) => {
   } = product;
 
   return (
-    <div className="w-full bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition h-fit hover:-translate-y-1">
+    <div className="w-full bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition h-full hover:-translate-y-1">
       {/* Image */}
       <div className="relative h-56 w-full">
         <img
@@ -44,7 +44,7 @@ export const ProductInformation = ({ product }: ProductInformationProps) => {
       </div>
 
       {/* Content */}
-      <div className=" p-2 flex flex-col gap-1">
+      <div className=" p-2 flex flex-col gap-1 justify-between">
         {/* Name */}
         <h3 className="text-lg font-semibold line-clamp-2">{name}</h3>
 
@@ -78,18 +78,17 @@ export const ProductInformation = ({ product }: ProductInformationProps) => {
           </div>
         </div>
 
-        <div className="flex justify-between">
+        <div className="flex justify-between text-sm">
           {/* Price */}
           <div className="flex items-center gap-1 font-semibold text-orange-600">
-            <DollarSign className="size-4" />
             {minPrice ? (
               <>
-                <span>{minPrice}</span>
+                <span>{formatVND(minPrice)}</span>
                 <span>-</span>
-                <span>{maxPrice}</span>
+                <span>{formatVND(maxPrice)}</span>
               </>
             ) : (
-              <span>{maxPrice}</span>
+              <span>{formatVND(maxPrice)}</span>
             )}
           </div>
 

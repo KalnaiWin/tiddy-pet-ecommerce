@@ -5,7 +5,7 @@ import { PackageSearch, Search } from "lucide-react";
 import { SocialNetwork } from "../../types/InterfaceProduct";
 import { Link } from "react-router-dom";
 import { getAllProducts } from "../../feature/productThunk";
-import { ProductInformation } from "../../components/ProductInformation";
+import { ProductInformation } from "../global/ProductInformation";
 import SkeletonStore from "../../components/common/(customer)/SkeletonStore";
 
 export const StorePage = () => {
