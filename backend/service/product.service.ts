@@ -5,7 +5,10 @@ import {
   getAllAdminProductSchema,
   getSpecificProduct,
 } from "../model/product.model.js";
-import type { productInputInterface } from "../interface/product.interface.js";
+import type {
+  productInputInterface,
+  ProductUpdateDB,
+} from "../interface/product.interface.js";
 import Product from "../schema/product.schema.js";
 import Variant from "../schema/variant.schema.js";
 import Brand from "../schema/brand.schema.js";
@@ -54,7 +57,6 @@ export const productService = {
     if (!createProductSchema.parse(data))
       throw new Error("Error input product");
     const redis = getRedis();
-    let maxDiscount = 0;
     let total = 0;
     if (data.minPrice && data?.minPrice > data.maxPrice)
       throw new Error("Invalid min, max price");
@@ -68,7 +70,6 @@ export const productService = {
         throw new Error("Invalid price of child product");
       }
       total += item.stock;
-      maxDiscount = Math.max(maxDiscount, item.discount);
     });
     const brandId = await productRepository.findOrCreateBrand(data.brand);
     const categoryIds = await productRepository.findOrCreateCategory(
@@ -77,10 +78,6 @@ export const productService = {
 
     if (total !== data.total)
       throw new Error("Sum total of child should be equal to product stock");
-    else if (maxDiscount > data.discount)
-      throw new Error(
-        "Max discount of child should be less than product discount",
-      );
 
     const product = await Product.create({
       name: data.name,
@@ -114,20 +111,51 @@ export const productService = {
     if (keys.length > 0) {
       await redis.del(keys);
     }
+    console.log(product);
     return product;
   },
 
   editOldProduct: async (productId: string, data: productInputInterface) => {
+    console.log(data);
+
     const existingProduct = await Product.findById(productId);
     if (!existingProduct) throw new Error("This product is not found");
 
-    const parsed = createProductSchema.parse(data);
-    const updatedProduct = await Product.findByIdAndUpdate(productId, parsed, {
-      new: true,
-      runValidators: true,
-    });
+    const variants = await Variant.insertMany(
+      data.childProduct.map((v) => ({
+        ...v,
+        productId,
+      })),
+    );
 
-    return updatedProduct;
+    const categoryIds = await Promise.all(
+      data.category.map(async (c) => {
+        const existing = await Category.findOne({ slug: c.slug });
+        return existing ? existing._id : (await Category.create(c))._id;
+      }),
+    );
+
+    const brand =
+      (await Brand.findOne({ slug: data.brand.slug })) ??
+      (await Brand.create(data.brand));
+
+    const updateData: ProductUpdateDB = {
+      ...data,
+      childProduct: variants.map((v) => v._id),
+      category: categoryIds,
+      brand: brand._id,
+    };
+
+    const updateResult = await Product.findByIdAndUpdate(
+      productId,
+      updateData,
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    return updateResult;
   },
 
   deleteOldProduct: async (productId: string) => {
