@@ -3,7 +3,6 @@ import type {
   QueryOrderManagement,
   SourceOrderCreatedInput,
 } from "../interface/order.interface.js";
-import { childProduct } from "../model/product.model.js";
 import { OrderReposioty } from "../repository/order.repository.js";
 import { productRepository } from "../repository/product.repository.js";
 import Order from "../schema/order.schema.js";
@@ -23,10 +22,16 @@ export const OrderService = {
     }
   },
 
+  getSpecificOrderForAdmin: async (customerId: string) => {
+    const exsitingOrder = await Order.findById(customerId);
+    if (!exsitingOrder) throw new Error("Order not found");
+    const result = await OrderReposioty.findSpecificOrderForAdmin(customerId);
+    return result;
+  },
+
   createNewOrder: async (userId: string, data: SourceOrderCreatedInput) => {
     let subTotal = 0,
       totalPrice = 0;
-
 
     const userExisting = await User.findById(userId);
     if (!userExisting) throw new Error("UserId not found");
@@ -51,20 +56,25 @@ export const OrderService = {
       else if (variantExisiting.stock < item.quantity)
         throw new Error("Not enough variant");
 
-      subTotal +=
-        variantExisiting.price *
-        item.quantity *
-        (1 - variantExisiting.discount / 100);
+      subTotal += variantExisiting.price * item.quantity;
+      console.log(subTotal);
 
       discountAmount +=
-        (variantExisiting.discount / 100) * variantExisiting.price;
+        variantExisiting.price *
+        item.quantity *
+        (variantExisiting.discount / 100);
+
       const key = item.variantId;
+      console.log(discountAmount);
 
       await Product.updateOne(
         { _id: item.productId },
         { $inc: { sold: item.quantity } }, // sold + quantity
       );
-      await Variant.updateOne({ _id: item.variantId }, { $inc: { stock: -item.quantity } }); // stock -= quantity
+      await Variant.updateOne(
+        { _id: item.variantId },
+        { $inc: { stock: -item.quantity } },
+      ); // stock -= quantity
 
       if (variantExisiting.stock <= 0) {
         variantExisiting.status = "Out of stock";
@@ -82,7 +92,7 @@ export const OrderService = {
 
       if (totalVariantAvailable === 0) {
         productExisiting.status = "Out of stock";
-        await productExisiting.save(); 
+        await productExisiting.save();
       }
 
       if (itemMap.has(key)) {
@@ -98,7 +108,7 @@ export const OrderService = {
     }
 
     let voucherAmount = voucherExsiting ? voucherExsiting.discount : 0;
-    totalPrice = subTotal - voucherAmount + data.shippingFee;
+    totalPrice = subTotal - discountAmount - voucherAmount + data.shippingFee;
 
     await User.updateOne({ _id: userId }, { $inc: { totalSpend: totalPrice } });
 
@@ -118,6 +128,7 @@ export const OrderService = {
         status: "PAID",
         paidAt: new Date(),
       },
+      status: "CONFIRMED",
       shipping: {
         address: userExisting.address,
         phone: userExisting.phone,
@@ -127,6 +138,46 @@ export const OrderService = {
       ),
     });
 
+    console.log(createdOrder);
+
     return createdOrder;
+  },
+
+  selectShipper: async (orderId: string, shipperId: string) => {
+    const exsitingShipper = await User.findById(shipperId);
+    if (!exsitingShipper) throw new Error("Shipper not found");
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      {
+        $set: {
+          "shipping.shipper": exsitingShipper._id,
+          "shipping.assignedAt": new Date(),
+          status: "ASSIGNED",
+        },
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+    return updatedOrder;
+  },
+
+  dropShipperSelected: async (orderId: string) => {
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      {
+        $set: {
+          "shipping.shipper": null,
+          "shipping.assignedAt": new Date(),
+          status: "CONFIRMED",
+        },
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+    return updatedOrder;
   },
 };

@@ -1,5 +1,8 @@
 import { Types } from "mongoose";
-import type { editAccountCustomer, updateProfileInterface } from "../interface/account.interface.js";
+import type {
+  editAccountCustomer,
+  updateProfileInterface,
+} from "../interface/account.interface.js";
 import User from "../schema/user.schema.js";
 
 export const AccountRepository = {
@@ -7,12 +10,16 @@ export const AccountRepository = {
     role: string,
     skip: number,
     limit: number,
-    email: string
+    email: string,
+    verify: string,
   ) => {
     const filter: any = { role };
 
     if (email && email.trim() !== "") {
       filter.email = { $regex: email, $options: "i" };
+    }
+    if (role === "SHIPPER" && verify === "APPROVED") {
+      filter["shipper_info.verification_status"] = "APPROVED";
     }
 
     return User.find(filter)
@@ -46,7 +53,7 @@ export const AccountRepository = {
 
   findUserByIdAndUpdateProfile: async (
     userId: string,
-    data: updateProfileInterface | editAccountCustomer
+    data: updateProfileInterface | editAccountCustomer,
   ) => {
     return User.findByIdAndUpdate(userId, data);
   },

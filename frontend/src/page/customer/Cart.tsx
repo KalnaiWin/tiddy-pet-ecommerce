@@ -33,6 +33,7 @@ const Cart = () => {
     if (!item?.variantId) return;
     subTotal += item?.price * item.quantity;
   });
+  console.log(subTotal);
 
   let discount = 0;
   cartArray.forEach((item) => {
@@ -40,6 +41,8 @@ const Cart = () => {
 
     discount += item?.price * item.quantity * (item?.productDiscount / 100);
   });
+
+  const total = subTotal - discount;
 
   const checkOutCart: CheckOut = {
     userId: String(currentUser?._id),
@@ -206,7 +209,7 @@ const Cart = () => {
             <div className="flex w-full justify-between mt-5">
               <h2 className="text-2xl font-black">Total</h2>
               <p className="font-bold text-xl text-orange-600">
-                {formatVND(subTotal - discount)}
+                {formatVND(total)}
               </p>
             </div>
             <button

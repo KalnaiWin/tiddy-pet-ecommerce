@@ -16,11 +16,17 @@ export const AccountService = {
       skip,
       limit,
       email,
+      "",
     );
     return users;
   },
 
-  getAllShipper: async (page: number, limit: number, email: string) => {
+  getAllShipper: async (
+    page: number,
+    limit: number,
+    email: string,
+    verify: string,
+  ) => {
     if (page < 1 || limit < 1)
       throw new Error("Incorrect page and limit number");
 
@@ -30,6 +36,7 @@ export const AccountService = {
       skip,
       limit,
       email,
+      verify,
     );
 
     return users;

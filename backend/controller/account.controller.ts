@@ -34,8 +34,9 @@ export const getAllShippers = async (req: Request, res: Response) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 10;
   const email = String(req.query.email) || "";
+  const verify = String(req.query.verify) || "";
   try {
-    const users = await AccountService.getAllShipper(page, limit, email);
+    const users = await AccountService.getAllShipper(page, limit, email, verify);
     const allUsers = lisShipperInfo.parse(users);
     if (!allUsers)
       return res

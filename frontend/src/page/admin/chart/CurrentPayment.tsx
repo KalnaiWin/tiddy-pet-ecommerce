@@ -18,18 +18,20 @@ const CurrentPayment = () => {
         payment: "PAID",
       }),
     );
-  }, [dispatch, orders]);
+  }, [dispatch]);
 
   return (
     <div className="flex flex-col bg-white rounded-md">
-      <h1 className="p-4 font-black">Recent Customers</h1>
+      <h1 className="p-4 font-black bg-slate-100 rounded-t-md">
+        Recent Customers
+      </h1>
       <div>
         {orders && orders.length ? (
           <div>
             {orders.map((item) => (
               <div
                 key={item._id}
-                className="flex justify-between p-2 items-center hover:bg-slate-100"
+                className="flex justify-between p-2 items-center hover:bg-slate-50"
               >
                 <div className="flex items-center gap-2">
                   <div className="rounded-full">
@@ -44,7 +46,9 @@ const CurrentPayment = () => {
                     <p>{item.user.email}</p>
                   </div>
                 </div>
-                <div>{formatVND(item.totalPrice)}</div>
+                <div className="text-green-500 font-medium">
+                  {formatVND(item.totalPrice)}
+                </div>
               </div>
             ))}
           </div>

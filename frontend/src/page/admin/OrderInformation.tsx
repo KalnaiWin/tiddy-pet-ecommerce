@@ -9,6 +9,7 @@ import {
   paymentStatusColor,
   statusOrderColor,
 } from "../../types/HelperFunction";
+import { Link } from "react-router-dom";
 
 const OrderInformation = () => {
   const { orders } = useSelector((state: RootState) => state.order);
@@ -187,13 +188,14 @@ const OrderInformation = () => {
                   </div>
                 </td>
                 <td className="px-6 py-4 text-right">
-                  <button
-                    className="p-2 rounded hover:bg-slate-50 justify-center transition flex items-center gap-2 w-full"
+                  <Link
+                    to={`/admin/order/${order._id}`}
+                    className="p-2 rounded hover:bg-slate-700 justify-center transition flex items-center gap-2 w-full bg-slate-950 text-white"
                     title="View order"
                   >
                     <Eye size={18} />
                     <p>View</p>
-                  </button>
+                  </Link>
                 </td>
               </tr>
             ))}

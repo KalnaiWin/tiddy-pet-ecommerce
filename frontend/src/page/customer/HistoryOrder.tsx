@@ -51,6 +51,8 @@ const HistoryOrder = () => {
     );
   }, [dispatch, page, limit, filter.search, filter.status, filter.payment]);
 
+  console.log(orders);
+
   return (
     <div className="p-10">
       <div className="md:flex sm:flex-1 flex-1 flex-col justify-between w-full mb-5">
@@ -314,7 +316,7 @@ const HistoryOrder = () => {
                     <div className="w-full sm:w-auto text-right">
                       <div className="flex justify-between sm:justify-end gap-10 text-xs text-gray-500 mb-1">
                         <span>Subtotal</span>
-                        <span>{formatVND(order.totalPrice)}</span>
+                        <span>{formatVND(order.subTotal)}</span>
                       </div>
                       <div className="flex justify-between sm:justify-end gap-10 text-xs text-gray-500 mb-1">
                         <span>Discount</span>

@@ -24,14 +24,14 @@ type Props = {
 
 const TableListShipper = ({ email, setIsView, setIsEdit }: Props) => {
   const { users, error, usersStatus, updatingStatus } = useSelector(
-    (state: RootState) => state.user
+    (state: RootState) => state.user,
   );
   const dispatch = useDispatch<AppDispatch>();
   const [page, setPage] = useState(1);
   const limit = 10;
 
   useEffect(() => {
-    dispatch(getAllShippers({ page, limit, email }));
+    dispatch(getAllShippers({ page, limit, email, verify: "" }));
   }, [dispatch, page, limit, email, updatingStatus === "succeeded"]);
 
   if (usersStatus === "loading") {
@@ -109,7 +109,7 @@ const TableListShipper = ({ email, setIsView, setIsEdit }: Props) => {
                   <td className="px-6 py-4">
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${StatusColor(
-                        user.status
+                        user.status,
                       )}`}
                     >
                       <Dot />
@@ -119,7 +119,7 @@ const TableListShipper = ({ email, setIsView, setIsEdit }: Props) => {
                   <td className="px-6 py-4">
                     <p
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${VerifyStatus(
-                        user?.shipper_info?.verification_status
+                        user?.shipper_info?.verification_status,
                       )}`}
                     >
                       <Dot />

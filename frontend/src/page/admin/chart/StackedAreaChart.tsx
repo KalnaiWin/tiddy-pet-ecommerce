@@ -1,3 +1,4 @@
+import { useDispatch, useSelector } from "react-redux";
 import {
   ComposedChart,
   Bar,
@@ -7,20 +8,39 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-
-const data = [
-  { date: "01/01", orders: 1, revenue: 200000 },
-  { date: "02/01", orders: 5, revenue: 1200000 },
-  { date: "03/01", orders: 2, revenue: 30000 },
-  { date: "04/01", orders: 6, revenue: 750000 },
-  { date: "05/01", orders: 9, revenue: 2000000 },
-  { date: "06/01", orders: 3, revenue: 1500000 },
-  { date: "07/01", orders: 1, revenue: 350000 },
-];
+import type { AppDispatch, RootState } from "../../../store";
+import { useEffect, useMemo } from "react";
+import { getTotalRevenueOrder } from "../../../feature/orderThunk";
+import { formatVND } from "../../../types/HelperFunction";
 
 export default function StackedAreaChart() {
+  const { revenue, revenueStatus } = useSelector(
+    (state: RootState) => state.order,
+  );
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    if (revenueStatus === "idle") {
+      dispatch(getTotalRevenueOrder({ time: "day" }));
+    }
+  }, [revenue, dispatch]);
+
+  const data = useMemo(() => {
+    if (!revenue) return [];
+    return revenue.map((item) => {
+      const [day, month] = item.label.split("-");
+      return {
+        date: `${day}/${month}`,
+        orders: item.totalOrder,
+        revenue: item.revenue,
+      };
+    });
+  }, [revenue]);
+
+  console.log(revenue);
+
   return (
-    <div className="bg-white p-5 rounded-xl">
+    <div className="bg-orange-50 p-5 rounded-xl">
       <h1 className="flex justify-center w-full text-2xl font-semibold mb-10 text-green-600">
         Revenue and Orders
       </h1>
@@ -29,32 +49,19 @@ export default function StackedAreaChart() {
           data={data}
           margin={{ top: 10, right: 40, left: 0, bottom: 20 }}
         >
-          <XAxis
-            dataKey="date"
-            label={{ value: "Date", position: "bottom" }}
-          />
-          <YAxis
-            yAxisId="orders"
-            orientation="left"
-            allowDecimals={false}
-            label={{
-              value: "Orders",
-              angle: -90,
-              position: "outside",
-            }}
-          />
+          <XAxis dataKey="date" label={{ value: "Date", position: "bottom" }} />
           <YAxis
             yAxisId="revenue"
             orientation="right"
-            tickFormatter={(v) => `${v / 1000}k`}
+            tickFormatter={(v) => formatVND(v)}
             label={{
-              value: "Revenue",
+              value: "Revenue (VND)",
               angle: 90,
               position: "right",
             }}
           />
           <Tooltip />
-          <Bar yAxisId="orders" dataKey="orders" name="Orders" barSize={24} />
+          <Bar yAxisId="orders" dataKey="orders" name="Orders" barSize={24} color="#456789" />
           <Line
             yAxisId="revenue"
             dataKey="revenue"

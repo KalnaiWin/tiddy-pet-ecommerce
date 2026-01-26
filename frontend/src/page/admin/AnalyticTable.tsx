@@ -46,6 +46,7 @@ const AnalyticTable = () => {
           </button>
         ))}
       </div>
+      {/* General information */}
       <div className="grid md:grid-cols-5 gap-2 w-full my-5">
         <div className="flex flex-col bg-white p-3 rounded-md">
           <h1 className="uppercase text-slate-700">Total Revenue</h1>
@@ -100,51 +101,9 @@ const AnalyticTable = () => {
       </div>
       <div className="flex flex-col">
         <StackedAreaChart />
-        <div className="flex justify-between gap-5 my-10">
-          <div className="w-1/2 flex flex-col justify-center items-center bg-white py-5 rounded-xl">
-            <h1 className="flex w-full justify-center font-semibold mb-5">
-              Order Status Distribution
-            </h1>
-            <div className="flex w-full pr-10 gap-10 items-center">
-              <PieChartWithPaddingAngle />
-              <div className="flex flex-col gap-2 w-full">
-                <div className="flex justify-between w-full">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-green-600 rounded-full" />
-                    Delivered
-                  </div>
-                  <p>100</p>
-                </div>
-                <div className="flex justify-between w-full">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-blue-600 rounded-full" />
-                    Shipped
-                  </div>
-                  <p>100</p>
-                </div>
-                <div className="flex justify-between w-full">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-orange-600 rounded-full" />
-                    Paid
-                  </div>
-                  <p>100</p>
-                </div>
-                <div className="flex justify-between w-full">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-gray-600 rounded-full" />
-                    Pending
-                  </div>
-                  <p>100</p>
-                </div>
-                <div className="flex justify-between w-full">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-red-600 rounded-full" />
-                    Cancelled
-                  </div>
-                  <p>100</p>
-                </div>
-              </div>
-            </div>
+        <div className="flex justify-between gap-5 my-10 h-64">
+          <div className="w-2/3">
+            <PieChartWithPaddingAngle />
           </div>
           <div className="w-1/2 flex flex-col justify-center items-center bg-white py-5 rounded-xl">
             <h1>Payment Gateway Performance</h1>

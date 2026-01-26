@@ -59,7 +59,7 @@ const userSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["INACTIVE", "ACTIVE", "BANNED", "BUSY"],
-      default: "INACTIVE",
+      default: "ACTIVE",
     },
     totalSpend: {
       type: Number,

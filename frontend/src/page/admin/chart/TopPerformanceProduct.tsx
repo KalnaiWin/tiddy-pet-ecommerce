@@ -44,7 +44,6 @@ const TopPerformanceProduct = () => {
                   : statusTotal >= 80 && statusTotal <= 100
                     ? "Low stock"
                     : "Out of stock";
-              console.log(statusTotal);
 
               return (
                 <tr

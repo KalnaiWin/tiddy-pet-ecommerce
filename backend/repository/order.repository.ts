@@ -37,6 +37,132 @@ export const OrderReposioty = {
     ]);
   },
 
+  findSpecificOrderForAdmin: async (orderId: string) => {
+    return await Order.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(orderId),
+        },
+      },
+      { $unwind: "$items" },
+      {
+        $lookup: {
+          from: "products",
+          localField: "items.productId",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      {
+        $unwind: "$product",
+      },
+      {
+        $lookup: {
+          from: "variants",
+          localField: "items.variantId",
+          foreignField: "_id",
+          as: "variant",
+        },
+      },
+      {
+        $unwind: "$variant",
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "customer",
+        },
+      },
+      { $unwind: "$customer" },
+      {
+        $lookup: {
+          from: "users",
+          localField: "shipping.shipper",
+          foreignField: "_id",
+          as: "shipper",
+        },
+      },
+      {
+        $unwind: {
+          path: "$shipper",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $match: {
+          "customer.role": "CUSTOMER",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          user: {
+            _id: "$customer._id",
+            name: "$customer.name",
+            email: "$customer.email",
+            role: "$customer.role",
+            image_profile: "$customer.image_profile",
+          },
+          items: {
+            product: {
+              _id: "$product._id",
+              name: "$product.name",
+            },
+            variant: {
+              _id: "$variant._id",
+              name: "$variant.name",
+              price: "$variant.price",
+              image: "$variant.image",
+              discount: "$variant.discount",
+            },
+            quantity: "$items.quantity",
+            price: "$items.price",
+          },
+          otherPrice: 1,
+          totalPrice: 1,
+          subTotal: 1,
+          payment: 1,
+          shipping: {
+            address: "$customer.address",
+            phone: "$customer.phone",
+            note: "$customer.note",
+            shipper: {
+              _id: "$shipper._id",
+              name: "$shipper.name",
+              email: "$shipper.email",
+              role: "$shipper.role",
+              phone: "$shipper.phone",
+              address: "$shipper.address",
+              image_profile: "$shipper.image_profile",
+              shipper_info: "$shipper.shipper_info",
+            },
+            assignedAt: "$shipping.assignedAt",
+          },
+          predictedDayShipping: 1,
+          status: 1,
+          cancel: 1,
+          deliveryFailed: 1,
+          createdAt: 1,
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          user: { $first: "$user" },
+          items: { $push: "$items" },
+          otherPrice: { $first: "$otherPrice" },
+          totalPrice: { $first: "$totalPrice" },
+          subTotal: { $first: "$subTotal" },
+          payment: { $first: "$payment" },
+          shipping: { $first: "$shipping" },
+          status: { $first: "$status" },
+        },
+      },
+    ]);
+  },
+
   filterAllOrdersForCustomer: async (
     query: QueryOrderManagement,
     userId: string,
@@ -60,11 +186,6 @@ export const OrderReposioty = {
         },
       },
       { $unwind: "$user" },
-      // {
-      //   $addFields: {
-      //     orderIdString: { $toString: "$_id" },
-      //   },
-      // },
       {
         $addFields: {
           items: {
@@ -123,6 +244,7 @@ export const OrderReposioty = {
           _id: 1,
           // orderId: "$orderIdString",
           items: 1,
+          subTotal: 1,
           totalPrice: 1,
           status: 1,
           createdAt: 1,

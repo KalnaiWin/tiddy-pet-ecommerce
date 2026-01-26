@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { HomePage } from "../page/global/Home/HomePage";
 import { MainLayout } from "../layout/MainLayout";
 import { StorePage } from "../page/customer/StorePage";
-import { ProductDetails } from "../components/ProductInformation";
+import { ProductDetails } from "../page/global/ProductInformation";
 import Cart from "../page/customer/Cart";
 import SuccessPage from "../page/global/SuccessPage";
 import CancelPage from "../page/global/CancelPage";

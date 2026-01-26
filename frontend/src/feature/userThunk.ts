@@ -87,17 +87,18 @@ export const getAllUsers = createAsyncThunk<
 
 export const getAllShippers = createAsyncThunk<
   UserInfo[],
-  { page: number; limit: number; email?: string },
+  { page: number; limit: number; email?: string; verify: string },
   { rejectValue: string }
 >(
   "account/getAllShippers",
-  async ({ page, limit, email }, { rejectWithValue }) => {
+  async ({ page, limit, email, verify }, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.get(`/account/shipper`, {
         params: {
           page,
           limit,
           email,
+          verify,
         },
       });
       return res.data;

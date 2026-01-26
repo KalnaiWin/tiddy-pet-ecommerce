@@ -1,3 +1,16 @@
+import {
+  Ban,
+  CheckCheck,
+  CheckCircle,
+  Clock,
+  HelpCircle,
+  List,
+  Package,
+  Truck,
+  UserCheck,
+  XCircle,
+} from "lucide-react";
+
 export const StatusColor = (text: string) => {
   switch (text) {
     case "ACTIVE":
@@ -95,6 +108,31 @@ export const statusOrderColor = (status: string) => {
   }
 };
 
+export const statusOrderIcon = (status: string) => {
+  switch (status) {
+    case "PENDING":
+      return Clock;
+    case "CONFIRMED":
+      return CheckCircle;
+    case "ASSIGNED":
+      return UserCheck;
+    case "PICKING":
+      return Package;
+    case "SHIPPING":
+      return Truck;
+    case "DELIVERED":
+      return CheckCheck;
+    case "FAILED":
+      return XCircle;
+    case "CANCELLED":
+      return Ban;
+    case "ALL":
+      return List;
+    default:
+      return HelpCircle;
+  }
+};
+
 export const paymentStatusColor = (status: string): string => {
   switch (status) {
     case "UNPAID":
@@ -115,4 +153,29 @@ export const generateOrderCode = (orderId: string, userId: string) => {
   const orderPart = orderId.slice(-4).toUpperCase();
 
   return `U${userPart}-O${orderPart}`;
+};
+
+export const fillColorStatusOrder = (status: string): string => {
+  switch (status) {
+    case "PENDING":
+      return "#FACC15"; // yellow-400
+    case "CONFIRMED":
+      return "#3B82F6"; // blue-500
+    case "ASSIGNED":
+      return "#6366F1"; // indigo-500
+    case "PICKING":
+      return "#8B5CF6"; // purple-500
+    case "SHIPPING":
+      return "#06B6D4"; // cyan-500
+    case "DELIVERED":
+      return "#22C55E"; // green-500
+    case "FAILED":
+      return "#EF4444"; // red-500
+    case "CANCELLED":
+      return "#991B1B"; // red-800
+    case "ALL":
+      return "#F97316"; // orange-500
+    default:
+      return "#64748B"; // slate-500
+  }
 };

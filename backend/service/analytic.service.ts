@@ -15,4 +15,7 @@ export const AnalyticService = {
   getPreviousDataOfProduct: async () => {
     return await AnalyticRepository.findMostProductsSold();
   },
+  getOrderStatusDistribution: async () => {
+    return await AnalyticRepository.getOrderStatusDistribution();
+  },
 };
