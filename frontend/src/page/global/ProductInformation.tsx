@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { viewProductDetail } from "../../feature/productThunk";
 import { addItemToCart } from "../../feature/cartThunk";
 import { formatVND } from "../../types/HelperFunction";
+import toast from "react-hot-toast";
 
 interface ProductInformationProps {
   product: ProductInfo;
@@ -105,7 +106,9 @@ export const ProductInformation = ({ product }: ProductInformationProps) => {
 export const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
 
-  const { detail } = useSelector((state: RootState) => state.product);
+  const { detail, detailStatus } = useSelector(
+    (state: RootState) => state.product,
+  );
   const dispatch = useDispatch<AppDispatch>();
 
   const navigate = useNavigate();
@@ -148,6 +151,8 @@ export const ProductDetails = () => {
     detail?.maxPrice != null
       ? Math.ceil((detail.maxPrice * (1 - discount / 100)) / 1000) * 1000
       : 0;
+
+  if (detailStatus === "loading") return <p>Loading...</p>;
 
   return (
     <div className="space-y-4 px-30">
@@ -328,7 +333,16 @@ export const ProductDetails = () => {
               <span className="w-28 text-gray-500 ">Số Lượng</span>
               <div className="flex items-center border border-gray-200 rounded-sm">
                 <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  onClick={() => {
+                    if (
+                      selectedVariantId &&
+                      quantity >= selectedVariantId.stock
+                    ) {
+                      setQuantity(selectedVariantId.stock);
+                    } else {
+                      setQuantity(Math.max(1, quantity - 1));
+                    }
+                  }}
                   className="px-3 py-1 border-r border-gray-200 hover:bg-gray-50"
                 >
                   -
@@ -347,7 +361,23 @@ export const ProductDetails = () => {
                 </button>
               </div>
               <span className="ml-4 text-gray-500">
-                {detail?.total} sản phẩm có sẵn
+                {selectedVariantId ? (
+                  <div>
+                    {selectedVariantId.stock <= 0 ? (
+                      <p className="text-red-500">Hết hàng</p>
+                    ) : (
+                      <p>{selectedVariantId?.stock} sản phẩm có sẵn</p>
+                    )}
+                  </div>
+                ) : (
+                  <div>
+                    {detail && detail?.total <= 0 ? (
+                      <p className="text-red-500">Hết hàng</p>
+                    ) : (
+                      <p>{detail?.total} sản phẩm có sẵn</p>
+                    )}
+                  </div>
+                )}
               </span>
             </div>
 
@@ -356,15 +386,23 @@ export const ProductDetails = () => {
               ref={wrapperRef}
             >
               <button
-                onClick={() =>
-                  dispatch(
-                    addItemToCart({
-                      productId: detail?._id as string,
-                      variantId: selectedVariantId?._id as string,
-                      quantity: quantity,
-                    }),
-                  )
-                }
+                onClick={() => {
+                  if (
+                    selectedVariantId &&
+                    quantity <= selectedVariantId?.stock
+                  ) {
+                    dispatch(
+                      addItemToCart({
+                        productId: detail?._id as string,
+                        variantId: selectedVariantId?._id as string,
+                        quantity: quantity,
+                      }),
+                    );
+                  } else {
+                    toast.error("This variant is out of stock ");
+                    setQuantity(0);
+                  }
+                }}
                 disabled={!selectedVariantId}
                 className={`flex-1 flex items-center justify-center space-x-2 border border-orange-600 bg-orange-50 text-orange-600 py-3 rounded-sm hover:bg-orange-100 transition-colors ${
                   !selectedVariantId ? "cursor-not-allowed" : "cursor-pointer"

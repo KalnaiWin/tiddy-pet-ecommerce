@@ -51,8 +51,6 @@ const HistoryOrder = () => {
     );
   }, [dispatch, page, limit, filter.search, filter.status, filter.payment]);
 
-  console.log(orders);
-
   return (
     <div className="p-10">
       <div className="md:flex sm:flex-1 flex-1 flex-col justify-between w-full mb-5">

@@ -57,7 +57,6 @@ export const OrderService = {
         throw new Error("Not enough variant");
 
       subTotal += variantExisiting.price * item.quantity;
-      console.log(subTotal);
 
       discountAmount +=
         variantExisiting.price *
@@ -65,20 +64,31 @@ export const OrderService = {
         (variantExisiting.discount / 100);
 
       const key = item.variantId;
-      console.log(discountAmount);
 
       await Product.updateOne(
         { _id: item.productId },
         { $inc: { sold: item.quantity } }, // sold + quantity
       );
-      await Variant.updateOne(
-        { _id: item.variantId },
-        { $inc: { stock: -item.quantity } },
-      ); // stock -= quantity
+      const updatedVariant = await Variant.findOneAndUpdate(
+        {
+          _id: item.variantId,
+          stock: { $gte: item.quantity },
+        },
+        {
+          $inc: { stock: -item.quantity },
+        },
+        { new: true },
+      );
 
-      if (variantExisiting.stock <= 0) {
-        variantExisiting.status = "Out of stock";
-        await variantExisiting.save();
+      if (!updatedVariant) {
+        throw new Error("Not enough stock");
+      }
+
+      if (updatedVariant.stock === 0) {
+        await Variant.updateOne(
+          { _id: item.variantId },
+          { $set: { status: "Out of stock" } },
+        );
       }
 
       let totalVariantAvailable = 0;
