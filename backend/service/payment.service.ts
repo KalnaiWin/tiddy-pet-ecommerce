@@ -3,9 +3,13 @@ import type { CheckOutInput } from "../interface/order.interface.js";
 import { ENV } from "../config/env.js";
 import { stripe } from "../config/stripe.js";
 import { getRedis } from "../config/redis.js";
+import Order from "../schema/order.schema.js";
+import { productRepository } from "../repository/product.repository.js";
+import Variant from "../schema/variant.schema.js";
+import Product from "../schema/product.schema.js";
 
 export const PaymentService = {
-  checkoutOrder: async (data: CheckOutInput) => {
+  checkoutOrder: async (data: CheckOutInput, orderId: string) => {
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] =
       data.items.map((item) => ({
         price_data: {
@@ -31,10 +35,75 @@ export const PaymentService = {
       success_url: `${ENV.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${ENV.CLIENT_URL}/cancel`,
       metadata: {
+        orderId: orderId,
         userId: data.userId,
       },
     });
 
+    const exsitingOrder = await Order.findById(orderId);
+    if (!exsitingOrder) throw new Error("Order not found");
+
+    for (const item of exsitingOrder.items) {
+      const productExisiting = await productRepository.findSpecificProductById(
+        String(item.productId._id),
+      );
+      if (!productExisiting) throw new Error("ProductId not found");
+      else if (productExisiting.status === "Out of stock") continue;
+      const variantExisiting = await Variant.findById(item.variantId);
+      if (!variantExisiting) throw new Error("VariantId not found");
+      else if (variantExisiting.stock < Number(item.quantity))
+        throw new Error("Not enough variant");
+
+      await Product.updateOne(
+        { _id: item.productId },
+        { $inc: { sold: item.quantity } }, // sold + quantity
+      );
+      const updatedVariant = await Variant.findOneAndUpdate(
+        {
+          _id: variantExisiting._id,
+        },
+        {
+          $inc: { stock: -Number(item.quantity) },
+        },
+        { new: true },
+      );
+
+      if (!updatedVariant) {
+        throw new Error("Not enough stock");
+      }
+
+      if (variantExisiting.stock === 0) {
+        await Variant.updateOne(
+          { _id: item.variantId },
+          { $set: { status: "Out of stock" } },
+        );
+      }
+
+      let totalVariantAvailable = 0;
+
+      for (const child of productExisiting.childProduct) {
+        const variant = await Variant.findById(child);
+        if (variant && variant.stock > 0) {
+          totalVariantAvailable++;
+        }
+      }
+
+      if (totalVariantAvailable === 0) {
+        productExisiting.status = "Out of stock";
+        await productExisiting.save();
+      }
+    }
+
+    await Order.findByIdAndUpdate(exsitingOrder._id, {
+      status: "CONFIRMED",
+      payment: {
+        method: "ONLINE",
+        status: "PAID",
+        paidAt: new Date(),
+      },
+    });
+
+    await exsitingOrder.save();
     return session.url;
   },
 
@@ -68,9 +137,6 @@ export const PaymentService = {
 
       createdAt: new Date(session.created * 1000),
     };
-
-    const redis = getRedis();
-    await redis.del(`cart:user:${session.metadata?.userId}`);
 
     return orderHistory;
   },

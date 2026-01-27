@@ -18,7 +18,7 @@ export const App = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser && currentUser.role === "CUSTOMER") {
       dispatch(getAllItemsFromCart());
     }
   }, [currentUser, dispatch]);

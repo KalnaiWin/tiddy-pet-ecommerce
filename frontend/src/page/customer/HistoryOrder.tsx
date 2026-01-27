@@ -16,13 +16,22 @@ import {
   paymentStatusColor,
   statusOrderColor,
 } from "../../types/HelperFunction";
-import { PaymentStatusOrder, StatusOrder } from "../../types/InterfaceOrder";
-import { Link } from "react-router-dom";
+import {
+  PaymentStatusOrder,
+  StatusOrder,
+  type CheckOut,
+  type OrderInfo,
+} from "../../types/InterfaceOrder";
+import { Link, useNavigate } from "react-router-dom";
+import { checkoutCart } from "../../feature/paymentThunk";
+import { getAllItemsFromCart } from "../../feature/cartThunk";
+import { resetStatusCart } from "../../store/cartSlice";
 
 const HistoryOrder = () => {
   const { orders } = useSelector((state: RootState) => state.order);
-
+  const { currentUser } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   const [isExpanded, setIsExpanded] = useState<string | null>(null);
 
@@ -40,6 +49,13 @@ const HistoryOrder = () => {
   });
 
   useEffect(() => {
+    dispatch(getAllItemsFromCart());
+    return () => {
+      dispatch(resetStatusCart());
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
     dispatch(
       getAllOrders({
         page,
@@ -50,6 +66,45 @@ const HistoryOrder = () => {
       }),
     );
   }, [dispatch, page, limit, filter.search, filter.status, filter.payment]);
+
+  const handleCheckOut = async (order: OrderInfo) => {
+    if (!order) {
+      alert("Choose order to check out");
+      return;
+    }
+    if (!order.items || !Array.isArray(order.items)) {
+      alert("Order items are invalid");
+      return;
+    }
+    const itemsMapping = order.items;
+    const checkOutCart: CheckOut = {
+      userId: String(currentUser?._id),
+      items: itemsMapping.map((item) => ({
+        name: item.variant.name,
+        image: [item.variant.image],
+        price: Math.round(
+          item.price *
+            (1 -
+              (item.variant.discount / 100 +
+                (Number(order.voucher?.discount) || 0) / 100)),
+        ),
+        quantity: item.quantity,
+      })),
+    };
+    console.log(checkOutCart);
+
+    const result = await dispatch(
+      checkoutCart({
+        data: checkOutCart,
+        orderId: order._id,
+      }),
+    );
+    if (!result.payload) {
+      alert("Check out error");
+      return;
+    }
+    navigate(result.payload);
+  };
 
   return (
     <div className="p-10">
@@ -144,203 +199,229 @@ const HistoryOrder = () => {
         </div>
       </div>
       {orders && orders.length > 0 ? (
-        orders.map((order) => (
-          <div
-            key={order._id}
-            className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow my-5"
-          >
-            {/* Header Info */}
-            <div className="p-4 sm:p-6 flex flex-wrap items-start justify-between gap-4 border-b border-gray-100 bg-slate-50/50">
-              <div className="flex flex-wrap gap-4 sm:gap-8">
-                <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
-                    Order ID
-                  </p>
-                  <p className="text-sm font-bold text-gray-900">
-                    {generateOrderCode(order._id, order.user._id)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
-                    Date Placed
-                  </p>
-                  <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
-                    <Calendar className="w-3.5 h-3.5" />
-                    {new Date(order.createdAt).toLocaleDateString("vi-VN")}
+        orders.map((order) => {
+          return (
+            <div
+              key={order._id}
+              className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow my-5"
+            >
+              {/* Header Info */}
+              <div className="p-4 sm:p-6 flex flex-wrap items-start justify-between gap-4 border-b border-gray-100 bg-slate-50/50">
+                <div className="flex flex-wrap gap-4 sm:gap-8">
+                  <div>
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                      Order ID
+                    </p>
+                    <p className="text-sm font-bold text-gray-900">
+                      {generateOrderCode(order._id, order.user._id)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                      Date Placed
+                    </p>
+                    <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                      <Calendar className="w-3.5 h-3.5" />
+                      {new Date(order.createdAt).toLocaleDateString("vi-VN")}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                      Total Amount
+                    </p>
+                    <p className="text-sm font-bold text-gray-900">
+                      {formatVND(order.totalPrice)}
+                    </p>
                   </div>
                 </div>
-                <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
-                    Total Amount
-                  </p>
-                  <p className="text-sm font-bold text-gray-900">
-                    {formatVND(order.totalPrice)}
-                  </p>
-                </div>
-              </div>
 
-              <div className="flex gap-2">
-                <div className="flex flex-col items-center gap-1">
-                  <p className="text-xs font-semibold tracking-widest text-slate-600 uppercase">
-                    Status
-                  </p>
-                  <span
-                    className={`px-3 py-1 text-xs font-bold rounded-full border ${statusOrderColor(order.status)}`}
+                <div className="flex gap-2">
+                  <div className="flex flex-col items-center gap-1">
+                    <p className="text-xs font-semibold tracking-widest text-slate-600 uppercase">
+                      Status
+                    </p>
+                    <span
+                      className={`px-3 py-1 text-xs font-bold rounded-full border ${statusOrderColor(order.status)}`}
+                    >
+                      {order.status}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <p className="text-xs font-semibold tracking-widest text-slate-600 uppercase">
+                      Payment
+                    </p>
+                    <span
+                      className={`px-3 py-1 text-xs font-bold rounded-full border ${paymentStatusColor(order.payment.status.toUpperCase())}`}
+                    >
+                      {order.payment.status}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => handleToggle(order._id)}
+                    className="flex items-center gap-1 text-xs font-semibold text-orange-600 hover:text-orange-700 transition-colors"
                   >
-                    {order.status}
-                  </span>
+                    {isExpanded === order._id ? (
+                      <ChevronUp className="w-4 h-4" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4" />
+                    )}
+                    {isExpanded === order._id ? "Hide Details" : "View Details"}
+                  </button>
                 </div>
-                <div className="flex flex-col items-center gap-1">
-                  <p className="text-xs font-semibold tracking-widest text-slate-600 uppercase">
-                    Payment
-                  </p>
-                  <span
-                    className={`px-3 py-1 text-xs font-bold rounded-full border ${paymentStatusColor(order.payment.status.toUpperCase())}`}
+              </div>
+
+              <div className="p-4 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="flex -space-x-3 overflow-hidden">
+                    {order.items &&
+                      order.items.map((item, idx) => (
+                        <img
+                          key={`${item?.variant?._id}+${idx}`}
+                          src={item?.variant?.image || "/src/asset/Empty.webp"}
+                          alt={item?.variant?.name}
+                          className="inline-block h-12 w-12 rounded-lg ring-2 ring-white object-cover bg-gray-100"
+                        />
+                      ))}
+                    {order.items.length > 3 && (
+                      <div className="inline-flex items-center justify-center h-12 w-12 rounded-lg ring-2 ring-white bg-gray-200 text-xs font-bold text-gray-600">
+                        +{order.items.length - 3}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <p className="text-sm font-medium text-gray-900">
+                      {`${order.items.length} items`}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Track package for status updates
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3">
+                  <div
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium ${order.payment.status === "UNPAID" ? "text-red-800 bg-red-300" : "text-green-800 bg-green-300"}`}
                   >
-                    {order.payment.status}
-                  </span>
-                </div>
-                <button
-                  onClick={() => handleToggle(order._id)}
-                  className="flex items-center gap-1 text-xs font-semibold text-orange-600 hover:text-orange-700 transition-colors"
-                >
-                  {isExpanded === order._id ? (
-                    <ChevronUp className="w-4 h-4" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4" />
+                    <CreditCard className="w-3.5 h-3.5" />
+                    {order.payment.status === "UNPAID" ? (
+                      <p>Unpaid</p>
+                    ) : (
+                      <p>Paid via {order.payment.method}</p>
+                    )}
+                  </div>
+                  {order.payment.status.toUpperCase() === "UNPAID" && (
+                    <button
+                      className="flex-1 sm:flex-none px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2 hover:opacity-80 cursor-pointer"
+                      onClick={() => handleCheckOut(order)}
+                    >
+                      Track Order
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
                   )}
-                  {isExpanded === order._id ? "Hide Details" : "View Details"}
-                </button>
-              </div>
-            </div>
-
-            <div className="p-4 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="flex items-center gap-4">
-                <div className="flex -space-x-3 overflow-hidden">
-                  {order.items &&
-                    order.items.map((item, idx) => (
-                      <img
-                        key={`${item?.variant?._id}+${idx}`}
-                        src={item?.variant?.image || "/src/asset/Empty.webp"}
-                        alt={item?.variant?.name}
-                        className="inline-block h-12 w-12 rounded-lg ring-2 ring-white object-cover bg-gray-100"
-                      />
-                    ))}
-                  {order.items.length > 3 && (
-                    <div className="inline-flex items-center justify-center h-12 w-12 rounded-lg ring-2 ring-white bg-gray-200 text-xs font-bold text-gray-600">
-                      +{order.items.length - 3}
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-col">
-                  <p className="text-sm font-medium text-gray-900">
-                    {`${order.items.length} items`}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    Track package for status updates
-                  </p>
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3">
-                <div
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium ${order.payment.status === "UNPAID" ? "text-red-800 bg-red-300" : "text-green-800 bg-green-300"}`}
-                >
-                  <CreditCard className="w-3.5 h-3.5" />
-                  {order.payment.status === "UNPAID" ? (
-                    <p>Unpaid</p>
-                  ) : (
-                    <p>Paid via {order.payment.method}</p>
-                  )}
-                </div>
-                <button className="flex-1 sm:flex-none px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
-                  Track Order
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-
-            {isExpanded === order._id && (
-              <div className="px-4 sm:px-6 pb-6 pt-2 animate-in fade-in duration-300">
-                <div className="bg-slate-50 rounded-xl p-4 border border-gray-100">
-                  <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 border-b border-gray-200 pb-2">
-                    Item Breakdown
-                  </h4>
-                  <div className="space-y-4">
-                    {order.items.map((item, idx) => (
-                      <div
-                        key={`${item.productId}+${idx}`}
-                        className="flex items-center justify-between"
-                      >
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={item.variant?.image || "/src/asset/Empty.webp"}
-                            alt={item.variant?.name || ""}
-                            className="w-10 h-10 rounded border bg-white object-cover"
-                          />
-                          <div>
-                            <p className="text-sm font-semibold text-gray-800">
-                              {item.variant.name}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              Quantity: {item.quantity}
-                            </p>
+              {isExpanded === order._id && (
+                <div className="px-4 sm:px-6 pb-6 pt-2 animate-in fade-in duration-300">
+                  <div className="bg-slate-50 rounded-xl p-4 border border-gray-100">
+                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 border-b border-gray-200 pb-2">
+                      Item Breakdown
+                    </h4>
+                    <div className="space-y-4">
+                      {order.items.map((item, idx) => (
+                        <div
+                          key={`${item.productId}+${idx}`}
+                          className="flex items-center justify-between"
+                        >
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={
+                                item.variant?.image || "/src/asset/Empty.webp"
+                              }
+                              alt={item.variant?.name || ""}
+                              className="w-10 h-10 rounded border bg-white object-cover"
+                            />
+                            <div>
+                              <p className="text-sm font-semibold text-gray-800">
+                                {item.variant.name}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                Quantity: {item.quantity}
+                              </p>
+                            </div>
                           </div>
+                          <p className="text-sm font-bold text-gray-900">
+                            {formatVND(item.price * item.quantity)}
+                          </p>
                         </div>
-                        <p className="text-sm font-bold text-gray-900">
-                          {formatVND(item.price * item.quantity)}
+                      ))}
+                    </div>
+
+                    <div className="mt-6 pt-4 border-t border-gray-200 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
+                      <div className="text-xs text-gray-500">
+                        <p>
+                          Ordered by:
+                          <span className="font-semibold text-gray-700">
+                            {" "}
+                            {order.user.name}
+                          </span>
+                        </p>
+                        <p>
+                          Email:
+                          <span className="font-semibold text-gray-700">
+                            {" "}
+                            {order.user.email}
+                          </span>
                         </p>
                       </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-6 pt-4 border-t border-gray-200 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-                    <div className="text-xs text-gray-500">
-                      <p>
-                        Ordered by:
-                        <span className="font-semibold text-gray-700">
-                          {" "}
-                          {order.user.name}
-                        </span>
-                      </p>
-                      <p>
-                        Email:
-                        <span className="font-semibold text-gray-700">
-                          {" "}
-                          {order.user.email}
-                        </span>
-                      </p>
-                    </div>
-                    <div className="w-full sm:w-auto text-right">
-                      <div className="flex justify-between sm:justify-end gap-10 text-xs text-gray-500 mb-1">
-                        <span>Subtotal</span>
-                        <span>{formatVND(order.subTotal)}</span>
-                      </div>
-                      <div className="flex justify-between sm:justify-end gap-10 text-xs text-gray-500 mb-1">
-                        <span>Discount</span>
-                        <span className="text-green-600">
-                          -{formatVND(order.otherPrice.discount)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between sm:justify-end gap-10 text-xs text-gray-500 mb-2">
-                        <span>Shipping</span>
-                        <span className="text-green-600">
-                          {order.otherPrice.shippingFee === 0
-                            ? "Free"
-                            : order.otherPrice.shippingFee}
-                        </span>
-                      </div>
-                      <div className="flex justify-between sm:justify-end gap-10 text-sm font-bold text-gray-900 border-t border-gray-100 pt-2">
-                        <span>Order Total</span>
-                        <span>{formatVND(order.totalPrice)}</span>
+                      <div className="w-full sm:w-auto text-right">
+                        <div className="flex justify-between sm:justify-end gap-10 text-xs text-gray-500 mb-1">
+                          <span>Subtotal</span>
+                          <span>{formatVND(order.subTotal)}</span>
+                        </div>
+                        <div className="flex justify-between sm:justify-end gap-10 text-xs text-gray-500 mb-1">
+                          <span>Discount</span>
+                          <span className="text-green-600">
+                            -{formatVND(order.otherPrice.discount)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between sm:justify-end gap-10 text-xs text-gray-500 mb-2">
+                          <span>Shipping</span>
+                          <span className="text-green-600">
+                            {order.otherPrice.shippingFee === 0
+                              ? "Free"
+                              : order.otherPrice.shippingFee}
+                          </span>
+                        </div>
+                        <div className="flex justify-between sm:justify-end gap-10 text-xs text-gray-500 mb-2">
+                          <span>Voucher</span>
+                          <span className="text-green-600">
+                            {order.voucher?._id ? (
+                              <p>
+                                -{formatVND(
+                                  Math.round(
+                                    order.subTotal *
+                                      (Number(order.voucher.discount) / 100),
+                                  ),
+                                )}
+                              </p>
+                            ) : (
+                              <p>0</p>
+                            )}
+                          </span>
+                        </div>
+                        <div className="flex justify-between sm:justify-end gap-10 text-sm font-bold text-gray-900 border-t border-gray-100 pt-2">
+                          <span>Order Total</span>
+                          <span>{formatVND(order.totalPrice)}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
-        ))
+              )}
+            </div>
+          );
+        })
       ) : (
         <div className="flex flex-col items-center justify-center py-24 border border-dashed border-gray-200 rounded-2xl bg-gray-50/30">
           <div className="text-gray-300 mb-4">

@@ -10,6 +10,7 @@ import {
   UserCheck,
   XCircle,
 } from "lucide-react";
+import type { Vouchers } from "./InterfaceVoucher";
 
 export const StatusColor = (text: string) => {
   switch (text) {
@@ -178,4 +179,15 @@ export const fillColorStatusOrder = (status: string): string => {
     default:
       return "#64748B"; // slate-500
   }
+};
+
+export const getVoucherStatus = (voucher: Vouchers) => {
+  const todayStr = new Date().toISOString();
+
+  const from = voucher.validDay.dateFrom;
+  const to = voucher.validDay.dateTo;
+
+  if (todayStr < from) return "Upcoming";
+  if (todayStr > to) return "Expired";
+  return "Active";
 };

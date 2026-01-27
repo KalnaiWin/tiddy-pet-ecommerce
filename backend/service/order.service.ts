@@ -1,3 +1,4 @@
+import { getRedis } from "../config/redis.js";
 import type {
   OrderItem,
   QueryOrderManagement,
@@ -22,10 +23,10 @@ export const OrderService = {
     }
   },
 
-  getSpecificOrderForAdmin: async (customerId: string) => {
-    const exsitingOrder = await Order.findById(customerId);
+  getSpecificOrderForAdmin: async (orderId: string) => {
+    const exsitingOrder = await Order.findById(orderId);
     if (!exsitingOrder) throw new Error("Order not found");
-    const result = await OrderReposioty.findSpecificOrderForAdmin(customerId);
+    const result = await OrderReposioty.findSpecificOrderForAdmin(orderId);
     return result;
   },
 
@@ -38,7 +39,7 @@ export const OrderService = {
 
     let voucherExsiting = null;
     if (data.voucherId !== "") {
-      voucherExsiting = await Voucher.findById(data.voucherId);
+      voucherExsiting = await Voucher.findOne({ code: data.voucherId });
       if (!voucherExsiting) throw new Error("VoucherId not found");
     }
 
@@ -65,46 +66,6 @@ export const OrderService = {
 
       const key = item.variantId;
 
-      await Product.updateOne(
-        { _id: item.productId },
-        { $inc: { sold: item.quantity } }, // sold + quantity
-      );
-      const updatedVariant = await Variant.findOneAndUpdate(
-        {
-          _id: item.variantId,
-          stock: { $gte: item.quantity },
-        },
-        {
-          $inc: { stock: -item.quantity },
-        },
-        { new: true },
-      );
-
-      if (!updatedVariant) {
-        throw new Error("Not enough stock");
-      }
-
-      if (updatedVariant.stock === 0) {
-        await Variant.updateOne(
-          { _id: item.variantId },
-          { $set: { status: "Out of stock" } },
-        );
-      }
-
-      let totalVariantAvailable = 0;
-
-      for (const child of productExisiting.childProduct) {
-        const variant = await Variant.findById(child);
-        if (variant && variant.stock > 0) {
-          totalVariantAvailable++;
-        }
-      }
-
-      if (totalVariantAvailable === 0) {
-        productExisiting.status = "Out of stock";
-        await productExisiting.save();
-      }
-
       if (itemMap.has(key)) {
         itemMap.get(key)!.quantity += item.quantity;
       } else {
@@ -117,7 +78,9 @@ export const OrderService = {
       }
     }
 
-    let voucherAmount = voucherExsiting ? voucherExsiting.discount : 0;
+    let voucherAmount = voucherExsiting
+      ? subTotal * (voucherExsiting.discount / 100)
+      : 0;
     totalPrice = subTotal - discountAmount - voucherAmount + data.shippingFee;
 
     await User.updateOne({ _id: userId }, { $inc: { totalSpend: totalPrice } });
@@ -130,15 +93,15 @@ export const OrderService = {
         discount: discountAmount,
         shippingFee: data.shippingFee,
       },
-      voucher: data.voucherId || null,
+      voucher: voucherExsiting ? voucherExsiting._id : null,
       totalPrice: totalPrice,
       subTotal: subTotal,
       payment: {
-        method: "ONLINE",
-        status: "PAID",
+        method: "COD",
+        status: "UNPAID",
         paidAt: new Date(),
       },
-      status: "CONFIRMED",
+      status: "PENDING",
       shipping: {
         address: userExisting.address,
         phone: userExisting.phone,
@@ -148,7 +111,8 @@ export const OrderService = {
       ),
     });
 
-    console.log(createdOrder);
+    const redis = getRedis();
+    await redis.del(`cart:user:${userId}`);
 
     return createdOrder;
   },

@@ -5,11 +5,11 @@ import type { InfoPayment } from "../types/InterfacePayment";
 
 export const checkoutCart = createAsyncThunk<
   string,
-  CheckOut,
+  { data: CheckOut; orderId: string },
   { rejectValue: string }
->("payment/checkoutCart", async (data: CheckOut, { rejectWithValue }) => {
+>("payment/checkoutCart", async ({ data, orderId }, { rejectWithValue }) => {
   try {
-    const res = await axiosInstance.post("/payment/checkout", data);
+    const res = await axiosInstance.post(`/payment/checkout/${orderId}`, data);
     return res.data;
   } catch (error: any) {
     return rejectWithValue(error.response?.data || "Error");

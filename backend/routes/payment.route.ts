@@ -10,7 +10,7 @@ const router = express.Router();
 
 // router.use();
 
-router.post("/checkout", authorizeJWT, arcjetProtection, checkoutOrder);
+router.post("/checkout/:id", authorizeJWT, arcjetProtection, checkoutOrder);
 router.get("/successfull", verifySuccessfulPayment);
 
 export default router;

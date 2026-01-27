@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   deleteItemFromCart,
   getAllItemsFromCart,
@@ -8,16 +8,16 @@ import {
 import { ArrowRight, Loader, ShoppingBag, Sparkles, Trash } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { formatVND } from "../../types/HelperFunction";
-import type { CheckOut, OrderCreateInput } from "../../types/InterfaceOrder";
-import { checkoutCart } from "../../feature/paymentThunk";
+import type { OrderCreateInput } from "../../types/InterfaceOrder";
 import { createOrder } from "../../feature/orderThunk";
 import SkeletonCart from "../../components/common/(customer)/SkeletonCart";
 import { resetStatusCart } from "../../store/cartSlice";
+import toast from "react-hot-toast";
 
 const Cart = () => {
   const { cartArray, status } = useSelector((state: RootState) => state.cart);
   const { checkoutStatus } = useSelector((state: RootState) => state.payment);
-  const { currentUser } = useSelector((state: RootState) => state.user);
+  const [voucher, setVoucher] = useState("");
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
@@ -33,7 +33,6 @@ const Cart = () => {
     if (!item?.variantId) return;
     subTotal += item?.price * item.quantity;
   });
-  console.log(subTotal);
 
   let discount = 0;
   cartArray.forEach((item) => {
@@ -44,15 +43,15 @@ const Cart = () => {
 
   const total = subTotal - discount;
 
-  const checkOutCart: CheckOut = {
-    userId: String(currentUser?._id),
-    items: cartArray.map((item) => ({
-      name: item.variantName,
-      image: [item.image],
-      price: Math.round(item.price * (1 - item.productDiscount / 100)),
-      quantity: item.quantity,
-    })),
-  };
+  // const checkOutCart: CheckOut = {
+  //   userId: String(currentUser?._id),
+  //   items: cartArray.map((item) => ({
+  //     name: item.variantName,
+  //     image: [item.image],
+  //     price: Math.round(item.price * (1 - item.productDiscount / 100)),
+  //     quantity: item.quantity,
+  //   })),
+  // };
 
   const orderCartInput: OrderCreateInput = {
     items: cartArray.map((item) => ({
@@ -61,7 +60,7 @@ const Cart = () => {
       quantity: item.quantity,
     })),
     shippingFee: 0,
-    voucherId: "",
+    voucherId: voucher,
   };
 
   if (status === "loading") return <SkeletonCart />;
@@ -198,12 +197,11 @@ const Cart = () => {
               <div className="flex gap-2 md:flex-row flex-col">
                 <input
                   type="text"
-                  className="md:w-[90%] w-full rounded-md indent-2 border-2 py-1"
+                  className="w-full rounded-md indent-2 border-2 py-1"
                   placeholder="Enter code"
+                  value={voucher}
+                  onChange={(e) => setVoucher(e.target.value)}
                 />
-                <button className="md:w-[10%] w-full bg-orange-600 text-white rounded-md py-2">
-                  Apply
-                </button>
               </div>
             </div>
             <div className="flex w-full justify-between mt-5">
@@ -214,21 +212,22 @@ const Cart = () => {
             </div>
             <button
               onClick={async () => {
-                await dispatch(createOrder(orderCartInput));
-                const url = await dispatch(checkoutCart(checkOutCart));
-                if (!url.payload) return alert("Check out error");
-                navigate(url.payload);
-              }} // test payment and create order
+                const res = await dispatch(createOrder(orderCartInput));
+                if (res) {
+                  toast.success("Created order successfully");
+                  navigate("/history");
+                }
+              }}
               className={`${checkoutStatus === "loading" ? "cursor-not-allowed bg-orange-300" : "hover:bg-orange-300 hover:text-orange-500 cursor-pointer bg-orange-500"} w-full py-5 rounded-md font-black text-white flex items-center justify-center`}
               disabled={checkoutStatus === "loading"}
             >
               {checkoutStatus === "loading" ? (
                 <div className="flex gap-2">
                   <Loader className="animate-spin" />
-                  <p>Sending</p>
+                  <p>Creating...</p>
                 </div>
               ) : (
-                <p>Checkout Here</p>
+                <p>Create Order</p>
               )}
             </button>
           </div>

@@ -168,7 +168,7 @@ export const OrderReposioty = {
     userId: string,
   ) => {
     const skip = (query.page - 1) * query.limit;
-    return await Order.aggregate([
+    const res = await Order.aggregate([
       {
         $lookup: {
           from: "users",
@@ -177,6 +177,21 @@ export const OrderReposioty = {
           as: "user",
         },
       },
+      {
+        $lookup: {
+          from: "vouchers",
+          localField: "voucher",
+          foreignField: "_id",
+          as: "voucher",
+        },
+      },
+      {
+        $unwind: {
+          path: "$voucher",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+
       {
         $lookup: {
           from: "variants",
@@ -216,10 +231,11 @@ export const OrderReposioty = {
                       },
                     },
                     in: {
-                      id: "$$v._id",
+                      _id: "$$v._id",
                       name: "$$v.name",
                       image: "$$v.image",
                       price: "$$v.price",
+                      discount: "$$v.discount",
                     },
                   },
                 },
@@ -242,7 +258,6 @@ export const OrderReposioty = {
         // 1: include, 0: exclude
         $project: {
           _id: 1,
-          // orderId: "$orderIdString",
           items: 1,
           subTotal: 1,
           totalPrice: 1,
@@ -252,6 +267,11 @@ export const OrderReposioty = {
 
           "payment.status": 1,
           "payment.method": 1,
+
+          voucher: {
+            _id: "$voucher._id",
+            discount: "$voucher.discount",
+          },
 
           user: {
             _id: "$user._id",
@@ -265,5 +285,7 @@ export const OrderReposioty = {
       { $skip: skip },
       { $limit: query.limit },
     ]);
+
+    return res;
   },
 };

@@ -8,6 +8,7 @@ import OrderInformation from "../page/admin/OrderInformation";
 import AdminProtect from "../layout/AdminProtect";
 import CreateProductPage from "../page/admin/CreateProductPage";
 import EditProductPage from "../page/admin/EditProductPage";
+import ViewOrderInformation from "../page/admin/ViewOrderInformation";
 
 export const AdminRoute = () => {
   return (
@@ -21,6 +22,7 @@ export const AdminRoute = () => {
           <Route path="create" element={<CreateProductPage />} />
           <Route path="edit/:id" element={<EditProductPage />} />
           <Route path="order" element={<OrderInformation />} />
+          <Route path="order/:id" element={<ViewOrderInformation />} />
         </Route>
       </Route>
     </Routes>

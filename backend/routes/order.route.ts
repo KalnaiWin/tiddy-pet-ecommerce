@@ -13,14 +13,14 @@ const router = express.Router();
 
 router.use(authorizeJWT, arcjetProtection);
 
-router.post("/create", createOrder);
+router.post("/create", authorizeRole("CUSTOMER"), createOrder);
 router.get("/", getAllOrders);
 
 //  Admin permission
 router.get("/:id", authorizeRole("ADMIN"), getSpecificOrderForAdmin);
 router.put("/select/:id", authorizeRole("ADMIN"), selectShipperDelivery);
 router.delete("/drop-shipper/:id", authorizeRole("ADMIN"), dropShipperSelected);
-router.put("/assign/:id", authorizeRole("ADMIN"));
+// router.put("/assign/:id", authorizeRole("ADMIN"));
 //  User permission
 
 //  Shipper permission

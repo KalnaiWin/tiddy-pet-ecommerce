@@ -5,6 +5,7 @@ export interface OrderVariant {
   name: string;
   image: string;
   price: string;
+  discount: number;
 }
 
 export interface ItemsOrder {
@@ -12,6 +13,11 @@ export interface ItemsOrder {
   variant: OrderVariant;
   quantity: number;
   price: number;
+}
+
+export interface VoucherDiscount {
+  _id: string;
+  discount: string;
 }
 
 export interface OrderInfo {
@@ -27,6 +33,7 @@ export interface OrderInfo {
     status: string;
     method: string;
   };
+  voucher: VoucherDiscount | null;
 }
 
 export interface OrderCreateInput {
