@@ -40,8 +40,8 @@ export default function StackedAreaChart() {
   console.log(revenue);
 
   return (
-    <div className="bg-orange-50 p-5 rounded-xl">
-      <h1 className="flex justify-center w-full text-2xl font-semibold mb-10 text-green-600">
+    <div className="bg-orange-50 rounded-xl">
+      <h1 className="flex justify-center w-full text-2xl font-semibold mb-5 text-green-600 bg-slate-100 p-2">
         Revenue and Orders
       </h1>
       <ResponsiveContainer width="100%" height={350}>
@@ -54,14 +54,15 @@ export default function StackedAreaChart() {
             yAxisId="revenue"
             orientation="right"
             tickFormatter={(v) => formatVND(v)}
-            label={{
-              value: "Revenue (VND)",
-              angle: 90,
-              position: "right",
-            }}
           />
           <Tooltip />
-          <Bar yAxisId="orders" dataKey="orders" name="Orders" barSize={24} color="#456789" />
+          <Bar
+            yAxisId="orders"
+            dataKey="orders"
+            name="Orders"
+            barSize={24}
+            color="#456789"
+          />
           <Line
             yAxisId="revenue"
             dataKey="revenue"
