@@ -34,3 +34,20 @@ export const createVoucher = createAsyncThunk<
     );
   }
 });
+
+export const deleteVoucher = createAsyncThunk<
+  Vouchers,
+  { voucherId: string },
+  { rejectValue: string }
+>("voucher/deleteVoucher", async ({ voucherId }, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.delete(`/voucher/delete/${voucherId}`);
+    toast.success("Deleted successfully");
+    return res.data;
+  } catch (error: any) {
+    toast.error("Deleted failed");
+    return rejectWithValue(
+      error.response?.data?.message || "Delete vouchers failed",
+    );
+  }
+});

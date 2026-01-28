@@ -1,11 +1,23 @@
 import { ArrowLeft, Menu } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { adminNavBarSelect } from "../types/InterfaceUser";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 const AdminNavBar = () => {
   const [isOpenMenu, setIsOpenMenu] = useState(false);
+
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpenMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className="bg-slate-800 text-white relative h-full flex md:block items-center w-full justify-between">
@@ -62,7 +74,8 @@ const AdminNavBar = () => {
               animate={{ y: 0 }}
               exit={{ y: "-100%" }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="absolute top-full left-0 bg-slate-800 w-full z-10 md:hidden"
+              className="absolute -top-1.5 left-0 bg-slate-800 w-full z-10 md:hidden"
+              ref={menuRef}
             >
               <div className="flex flex-col gap-2 p-4">
                 {adminNavBarSelect.map((item) => (

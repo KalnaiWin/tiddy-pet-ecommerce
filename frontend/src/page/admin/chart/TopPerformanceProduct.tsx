@@ -12,7 +12,7 @@ const TopPerformanceProduct = () => {
   }, [dispatch]);
 
   return (
-    <div className="flex flex-col bg-white rounded-md min-h-full">
+    <div className="flex flex-col bg-white rounded-t-md min-h-full">
       <h1 className="p-4 font-black">Top Performance Product</h1>
       <table className="w-full border border-slate-200 rounded-lg overflow-hidden">
         <thead className="bg-slate-50 border-b border-slate-200">

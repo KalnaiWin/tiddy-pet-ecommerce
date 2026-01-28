@@ -37,11 +37,9 @@ export default function StackedAreaChart() {
     });
   }, [revenue]);
 
-  console.log(revenue);
-
   return (
-    <div className="bg-orange-50 rounded-xl">
-      <h1 className="flex justify-center w-full text-2xl font-semibold mb-5 text-green-600 bg-slate-100 p-2">
+    <div className="bg-white rounded-xl">
+      <h1 className="flex justify-center w-full text-2xl font-semibold mb-5 bg-slate-100 p-2">
         Revenue and Orders
       </h1>
       <ResponsiveContainer width="100%" height={350}>

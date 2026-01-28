@@ -25,4 +25,10 @@ export const VoucherService = {
   getAllVouchers: async () => {
     return await Voucher.find({});
   },
+
+  deleteVoucher: async (voucherId: string) => {
+    const exsitingVoucher = await Voucher.findByIdAndDelete(voucherId);
+    if (!exsitingVoucher) throw new Error("Voucher not found");
+    return exsitingVoucher;
+  },
 };

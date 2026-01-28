@@ -10,11 +10,12 @@ import {
   signRefreshToken,
   verifyRefreshToken,
 } from "../utils/jwt.js";
+import { ENV } from "../config/env.js";
 
 export const authService = {
   register: async (data: authRegisterInterface) => {
     const { name, email, password, role } = data;
-    if (!["CUSTOMER", "ADMIN", "SHIPPER"].includes(role)) {
+    if (!["CUSTOMER", "SHIPPER"].includes(role)) {
       // validate role
       throw new Error("This role is not existed");
     }
@@ -26,6 +27,12 @@ export const authService = {
     if (!emailRegex.test(email)) {
       throw new Error("Invalid email format");
     }
+    let newRole = role;
+    for (const emailAdmin of ENV.EMAIL_ADMIN.split(";")) {
+      if (emailAdmin === email) {
+        newRole = "ADMIN";
+      }
+    }
     const existingUser = await authRepository.findUserByEmail(email); // check exsited user
     if (existingUser) {
       throw new Error("This email has been already used.");
@@ -36,7 +43,7 @@ export const authService = {
       name,
       email,
       password: hashedPassword,
-      role,
+      role: newRole,
     });
 
     const newUser = await authRepository.createAccount(infoNewUser);

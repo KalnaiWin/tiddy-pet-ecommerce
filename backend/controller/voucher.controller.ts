@@ -31,3 +31,17 @@ export const getAllVouchers = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const deletVoucher = async (req: Request, res: Response) => {
+  const { id: voucherId } = req.params;
+  try {
+    if (!voucherId)
+      return res.status(404).json({ message: "VoucherId not found" });
+    const result = await VoucherService.deleteVoucher(voucherId);
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({
+      message: error instanceof Error ? error.message : "Internal Server Error",
+    });
+  }
+};

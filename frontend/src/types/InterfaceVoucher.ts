@@ -1,4 +1,5 @@
 export interface Vouchers {
+  _id: string;
   code: string;
   discount: number;
   validDay: {

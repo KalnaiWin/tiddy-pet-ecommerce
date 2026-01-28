@@ -1,6 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { InitailVoucherState } from "../types/InterfaceVoucher";
-import { createVoucher, getAllVouchers } from "../feature/voucherThunk";
+import {
+  createVoucher,
+  deleteVoucher,
+  getAllVouchers,
+} from "../feature/voucherThunk";
 
 const initialState: InitailVoucherState = {
   vouchers: [],
@@ -13,6 +17,19 @@ export const voucherSlide = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
+    // ================ DELETE VOUCHERS ================
+    builder
+      .addCase(deleteVoucher.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteVoucher.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.vouchers.filter((id) => id._id === action.payload._id);
+      })
+      .addCase(deleteVoucher.rejected, (state) => {
+        state.status = "failed";
+      });
+
     // ================ GET ALL VOUCHERS ================
     builder
       .addCase(getAllVouchers.pending, (state) => {
@@ -26,7 +43,7 @@ export const voucherSlide = createSlice({
         state.status = "failed";
       });
 
-    // ================ GET ALL VOUCHERS ================
+    // ================ CREATE VOUCHERS ================
     builder
       .addCase(createVoucher.pending, (state) => {
         state.creatingStatus = "loading";

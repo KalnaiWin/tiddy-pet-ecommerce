@@ -10,7 +10,6 @@ import {
   LucideUser2,
   Package,
   PackageCheck,
-  Shield,
   ShoppingBag,
   ShoppingCart,
   StoreIcon,
@@ -96,7 +95,6 @@ export const roles: { id: UserRole; label: string; icon: any; desc: string }[] =
       icon: ShoppingBag,
       desc: "Shop & track orders",
     },
-    { id: "ADMIN", label: "Admin", icon: Shield, desc: "Manage inventory" },
     { id: "SHIPPER", label: "Shipper", icon: Truck, desc: "Handle deliveries" },
   ];
 
@@ -137,13 +135,8 @@ export const pathShipperSelect = [
 export const adminNavBarSelect = [
   {
     name: "Dashboard",
-    icon: Home,
-    path: "/admin/dashboard",
-  },
-  {
-    name: "Analytic",
     icon: ChartColumn,
-    path: "/admin/analytic",
+    path: "/admin/dashboard",
   },
   {
     name: "Account",

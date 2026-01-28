@@ -19,7 +19,7 @@ import ViewProductInformation from "./ViewProductInformation";
 
 const ProductStore = () => {
   const { products, deletingStaus, creatingStatus, editStatus } = useSelector(
-    (state: RootState) => state.product
+    (state: RootState) => state.product,
   );
   const dispatch = useDispatch<AppDispatch>();
   const [page, setPage] = useState(1);
@@ -84,14 +84,14 @@ const ProductStore = () => {
   });
 
   return (
-    <div className="w-full min-h-screen bg-slate-100 p-3 sm:p-5 relative">
+    <div className="w-full min-h-screen bg-slate-100 relative">
       {isView.option && (
         <div
-          className="absolute-center w-full h-full bg-black/70 z-2 flex justify-center items-center"
+          className="absolute w-full h-full bg-black/70 z-2 flex justify-center items-center"
           onClick={() => setIsView({ option: false, productId: "" })}
         >
           <div
-            className="relative md:size-[80%] w-[60%] md:w-[60%] bg-white rounded-lg overflow-y-auto md:top-0 -top-70"
+            className="absolute top-5 xl:w-[70%] xl:h-[80%] w-[80%] h-[60%] bg-white rounded-lg overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -106,7 +106,7 @@ const ProductStore = () => {
           </div>
         </div>
       )}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-5">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-5 px-5">
         <div className="flex flex-col">
           <h1 className="font-bold text-lg sm:text-xl md:text-2xl">
             Inventory Management
@@ -173,13 +173,10 @@ const ProductStore = () => {
           </div>
         ) : (
           <>
-            <div className="hidden lg:block overflow-x-auto">
+            <div className="hidden xl:block overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-slate-50 border-b border-slate-200">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                      Num
-                    </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                       Product
                     </th>
@@ -206,10 +203,6 @@ const ProductStore = () => {
                       key={`${product._id}+${idx}`}
                       className="hover:bg-slate-50 transition-colors"
                     >
-                      <td className="flex items-center gap-2 py-5">
-                        <p className="text-xl font-semibold">{idx}</p>
-                        <input type="checkbox" className="bg-red-700 size-6" />
-                      </td>
                       <td className="px-4 py-3">
                         <div className="flex gap-3 items-center">
                           <img
@@ -245,7 +238,7 @@ const ProductStore = () => {
                       <td className="px-4 py-3">
                         <div
                           className={`${StatusProduct(
-                            product.status || ""
+                            product.status || "",
                           )} flex items-center rounded-md font-semibold text-xs w-fit px-2 py-1`}
                         >
                           <Dot className="w-5 h-5" />
@@ -309,7 +302,7 @@ const ProductStore = () => {
             </div>
 
             {/* Mobile responsive */}
-            <div className="lg:hidden space-y-3 sm:space-y-4">
+            <div className="block xl:hidden space-y-3 sm:space-y-4">
               {products.map((product, idx) => (
                 <div
                   key={`${product._id} + ${idx}`}
@@ -323,12 +316,12 @@ const ProductStore = () => {
                         className="w-16 h-16 sm:w-20 sm:h-20 rounded-md object-cover"
                       />
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-sm sm:text-base mb-1 truncate">
+                        <h3 className="font-semibold text-sm sm:text-base mb-1">
                           {product.name}
                         </h3>
                         <div
                           className={`${StatusProduct(
-                            product.status || ""
+                            product.status || "",
                           )} flex items-center rounded-md font-semibold text-xs w-fit px-2 py-0.5`}
                         >
                           <Dot className="w-4 h-4" />
@@ -336,12 +329,7 @@ const ProductStore = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex gap-3 items-center">
-                      <p className="text-2xl font-black">{idx}</p>
-                      <input type="checkbox" className="bg-red-700 size-10" />
-                    </div>
                   </div>
-
                   {/* Product Details */}
                   <div className="space-y-2 text-xs sm:text-sm mb-3">
                     <div className="flex justify-between">

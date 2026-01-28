@@ -21,7 +21,7 @@ const CurrentPayment = () => {
   }, [dispatch]);
 
   return (
-    <div className="flex flex-col bg-white rounded-md">
+    <div className="flex flex-col bg-white rounded-t-md">
       <h1 className="p-4 font-black bg-slate-100 rounded-t-md">
         Recent Customers
       </h1>

@@ -123,7 +123,7 @@ const LoginAndRegisterPage = () => {
             <label className="text-xs font-bold text-slate-500 uppercase">
               Choose Your Role
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="flex gap-2 justify-center">
               {roles.map((r) => {
                 const Icon = r.icon;
                 const active = role === r.id;
