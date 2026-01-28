@@ -16,7 +16,9 @@ const Profile = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    dispatch(fetchUser());
+    if (status === "idle") {
+      dispatch(fetchUser());
+    }
   }, [dispatch, currentUser]);
 
   const [formData, setFormData] = useState({

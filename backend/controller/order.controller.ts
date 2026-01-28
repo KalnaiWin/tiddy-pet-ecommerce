@@ -86,10 +86,24 @@ export const dropShipperSelected = async (req: Request, res: Response) => {
   }
 };
 
-export const assignOrder = async (req: Request, res: Response) => {
-  const { id: OrderId } = req.params;
+// export const assignOrder = async (req: Request, res: Response) => {
+//   const { id: OrderId } = req.params;
+//   try {
+//   } catch (error) {
+//     return res.status(500).json({
+//       message: error instanceof Error ? error.message : "Internal Server Error",
+//     });
+//   }
+// };
+
+export const cancelOrder = async (req: Request, res: Response) => {
+  const { id: orderId } = req.params;
+  const { reason } = req.body;
+  const userId = req.user._id;
   try {
-    
+    if (!orderId) return res.status(404).json({ message: "OrderId not found" });
+    const result = await OrderService.cancelOrder(orderId, reason, userId);
+    return res.status(200).json(result);
   } catch (error) {
     return res.status(500).json({
       message: error instanceof Error ? error.message : "Internal Server Error",

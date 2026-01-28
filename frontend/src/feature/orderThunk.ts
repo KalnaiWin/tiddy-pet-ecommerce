@@ -134,3 +134,16 @@ export const getTotalRevenueOrder = createAsyncThunk<
     return rejectWithValue(error.response?.data || "Error");
   }
 });
+
+export const cancelOrder = createAsyncThunk<
+  OrderInfo,
+  { orderId: string; reason: string },
+  { rejectValue: string }
+>("order/cancelOrder", async ({ orderId, reason }, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.put(`/order/cancel/${orderId}`, { reason });
+    return res.data;
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data || "Error");
+  }
+});

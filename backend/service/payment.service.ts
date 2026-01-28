@@ -7,6 +7,7 @@ import Order from "../schema/order.schema.js";
 import { productRepository } from "../repository/product.repository.js";
 import Variant from "../schema/variant.schema.js";
 import Product from "../schema/product.schema.js";
+import User from "../schema/user.schema.js";
 
 export const PaymentService = {
   checkoutOrder: async (data: CheckOutInput, orderId: string) => {
@@ -102,7 +103,16 @@ export const PaymentService = {
         paidAt: new Date(),
       },
     });
-
+    await User.findOneAndUpdate(
+      {
+        _id: exsitingOrder.user._id,
+      },
+      {
+        $inc: {
+          totalSpend: Number(exsitingOrder.totalPrice),
+        },
+      },
+    );
     await exsitingOrder.save();
     return session.url;
   },

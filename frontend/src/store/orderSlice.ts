@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { initialOrder } from "../types/InterfaceOrder";
 import {
+  cancelOrder,
   dropShipperSelected,
   getAllOrders,
   getSpecificOrderForAdmin,
@@ -27,6 +28,25 @@ export const orderSlice = createSlice({
   reducers: {},
 
   extraReducers(builder) {
+    // ============ CANCEL ORDERS  ============
+    builder
+      .addCase(cancelOrder.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(cancelOrder.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const updatedOrder = action.payload;
+        const index = state.orders.findIndex(
+          (order) => order._id === updatedOrder._id,
+        );
+        if (index !== -1) {
+          state.orders[index] = updatedOrder;
+        }
+      })
+      .addCase(cancelOrder.rejected, (state) => {
+        state.status = "failed";
+      });
+
     // ============ GET TOTAL ORDER REVENUE  ============
     builder
       .addCase(getTotalRevenueOrder.pending, (state) => {

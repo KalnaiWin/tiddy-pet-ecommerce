@@ -174,7 +174,7 @@ export const AnalyticRepository = {
         },
       },
       {
-        $limit: 5,
+        $limit: 6,
       },
     ]);
   },

@@ -9,7 +9,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store";
 import { useEffect, useState } from "react";
-import { getAllOrders } from "../../feature/orderThunk";
+import { cancelOrder, getAllOrders } from "../../feature/orderThunk";
 import {
   formatVND,
   generateOrderCode,
@@ -26,9 +26,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { checkoutCart } from "../../feature/paymentThunk";
 import { getAllItemsFromCart } from "../../feature/cartThunk";
 import { resetStatusCart } from "../../store/cartSlice";
+import toast from "react-hot-toast";
 
 const HistoryOrder = () => {
-  const { orders } = useSelector((state: RootState) => state.order);
+  const { orders, status } = useSelector((state: RootState) => state.order);
   const { currentUser } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -47,6 +48,8 @@ const HistoryOrder = () => {
     status: "",
     payment: "",
   });
+
+  const [reason, setReason] = useState("");
 
   useEffect(() => {
     dispatch(getAllItemsFromCart());
@@ -200,6 +203,8 @@ const HistoryOrder = () => {
       </div>
       {orders && orders.length > 0 ? (
         orders.map((order) => {
+          if (status === "loading") return <p>Loading ...</p>;
+
           return (
             <div
               key={order._id}
@@ -213,7 +218,9 @@ const HistoryOrder = () => {
                       Order ID
                     </p>
                     <p className="text-sm font-bold text-gray-900">
-                      {generateOrderCode(order._id, order.user._id)}
+                      {currentUser?._id &&
+                        order._id &&
+                        generateOrderCode(order._id, currentUser._id)}
                     </p>
                   </div>
                   <div>
@@ -343,7 +350,7 @@ const HistoryOrder = () => {
                             />
                             <div>
                               <p className="text-sm font-semibold text-gray-800">
-                                {item.variant.name}
+                                {item.variant?.name}
                               </p>
                               <p className="text-xs text-gray-500">
                                 Quantity: {item.quantity}
@@ -398,7 +405,8 @@ const HistoryOrder = () => {
                           <span className="text-green-600">
                             {order.voucher?._id ? (
                               <p>
-                                -{formatVND(
+                                -
+                                {formatVND(
                                   Math.round(
                                     order.subTotal *
                                       (Number(order.voucher.discount) / 100),
@@ -417,6 +425,36 @@ const HistoryOrder = () => {
                       </div>
                     </div>
                   </div>
+                  {order.status !== "CANCELLED" && (
+                    <div className="flex flex-col gap-2">
+                      <div className="w-full p-2 bg-slate-100 mt-5 rounded-md flex flex-col gap-2">
+                        <h1 className="text-sm text-red-500 font-bold uppercase">
+                          Cancel Reason
+                        </h1>
+                        <textarea
+                          className="bg-white p-2 rounded-md border border-slate-500"
+                          value={reason}
+                          onChange={(e) => setReason(e.target.value)}
+                        />
+                      </div>
+                      <div className="w-full justify-end flex">
+                        <button
+                          className="text-red-600 bg-red-200 px-5 rounded-lg py-1 hover:bg-red-600 hover:text-red-200"
+                          onClick={async () => {
+                            const res = await dispatch(
+                              cancelOrder({
+                                orderId: order._id,
+                                reason: reason,
+                              }),
+                            );
+                            if (res) toast.success("Cancel successfuly");
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

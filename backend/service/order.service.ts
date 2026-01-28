@@ -154,4 +154,87 @@ export const OrderService = {
     );
     return updatedOrder;
   },
+
+  cancelOrder: async (orderId: string, reason: string, userId: string) => {
+    const existingUser = await User.findById(userId);
+    if (!existingUser) throw new Error("User not found");
+    const existingOrder = await Order.findById(orderId);
+    if (!existingOrder) throw new Error("Order not found");
+    if (
+      existingOrder.status === "SHIPPING" ||
+      existingOrder.status === "DELIVERED"
+    )
+      throw new Error("Can not cancel this order");
+
+    for (const item of existingOrder.items) {
+      const productExisiting = await productRepository.findSpecificProductById(
+        String(item.productId._id),
+      );
+      if (!productExisiting) throw new Error("ProductId not found");
+      const variantExisiting = await Variant.findById(item.variantId);
+      if (!variantExisiting) throw new Error("VariantId not found");
+      await Product.updateOne(
+        { _id: item.productId },
+        { $inc: { sold: -Number(item.quantity) } },
+      );
+      await Variant.findOneAndUpdate(
+        {
+          _id: variantExisiting._id,
+        },
+        {
+          $inc: { stock: Number(item.quantity) },
+        },
+        { new: true },
+      );
+
+      if (variantExisiting.stock > 0) {
+        await Variant.updateOne(
+          { _id: item.variantId },
+          { $set: { status: "Available" } },
+        );
+      }
+      let totalVariantAvailable = 0;
+
+      for (const child of productExisiting.childProduct) {
+        const variant = await Variant.findById(child);
+        if (variant && variant.stock < 0) {
+          totalVariantAvailable++;
+        }
+      }
+
+      if (totalVariantAvailable === 0) {
+        productExisiting.status = "Available";
+        await productExisiting.save();
+      }
+    }
+
+    const order = await Order.findByIdAndUpdate(orderId, {
+      status: "CANCELLED",
+      payment: {
+        status:
+          existingOrder.payment?.status === "PAID" ? "REFUNDED" : "UNPAID",
+      },
+      cancel: {
+        reason: reason,
+        cancellBy: existingUser.name,
+        cancelledAt: new Date(),
+      },
+    });
+
+    await User.findOneAndUpdate(
+      {
+        _id: userId,
+      },
+      {
+        $inc: {
+          totalSpend: -Number(existingOrder.totalPrice),
+        },
+      },
+    );
+
+    if (!order) throw new Error("Update failed");
+    await order.save();
+
+    return order;
+  },
 };
