@@ -28,9 +28,9 @@ export const ProductInformation = ({ product }: ProductInformationProps) => {
   } = product;
 
   return (
-    <div className="w-full bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition h-full hover:-translate-y-1">
+    <div className="w-full bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition h-full hover:-translate-y-1 ">
       {/* Image */}
-      <div className="relative h-56 w-full">
+      <div className="relative md:h-56 h-32 w-full">
         <img
           src={imageProduct[0] || "/src/assets/Empty.webp"}
           alt={name}
@@ -47,10 +47,12 @@ export const ProductInformation = ({ product }: ProductInformationProps) => {
       {/* Content */}
       <div className=" p-2 flex flex-col gap-1 justify-between">
         {/* Name */}
-        <h3 className="text-lg font-semibold line-clamp-2">{name}</h3>
+        <h3 className="md:text-lg text-sm md:font-semibold font-medium line-clamp-2">
+          {name}
+        </h3>
 
         {/* Brand & Category */}
-        <div className="flex flex-wrap gap-2 text-sm">
+        <div className="flex flex-wrap gap-2 md:text-sm text-xs">
           <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
             {brand.name}
           </span>
@@ -64,7 +66,7 @@ export const ProductInformation = ({ product }: ProductInformationProps) => {
             </span>
           ))}
           {/* Status */}
-          <div className="text-sm">
+          <div className="md:text-sm text-xs">
             <span
               className={`px-2 py-0.5 rounded-full ${
                 status === "Available"
@@ -79,7 +81,7 @@ export const ProductInformation = ({ product }: ProductInformationProps) => {
           </div>
         </div>
 
-        <div className="flex justify-between text-sm">
+        <div className="flex md:flex-row flex-col justify-between text-sm gap-1">
           {/* Price */}
           <div className="flex items-center gap-1 font-semibold text-orange-600">
             {minPrice ? (

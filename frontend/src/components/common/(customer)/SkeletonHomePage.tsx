@@ -14,7 +14,7 @@ export const BrandSkeleton: React.FC = () => {
 export const BrandsSectionSkeleton: React.FC = () => {
   return (
     <div className="flex flex-col justify-center items-center gap-8 py-10 border-y border-gray-100 bg-white">
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-8 container mx-auto w-full">
+      <div className="grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-4 grid-cols-3 gap-4 md:gap-6">
         {Array.from({ length: 12 }).map((_, i) => (
           <BrandSkeleton key={i} />
         ))}

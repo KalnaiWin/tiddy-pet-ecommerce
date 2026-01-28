@@ -27,6 +27,7 @@ import { checkoutCart } from "../../feature/paymentThunk";
 import { getAllItemsFromCart } from "../../feature/cartThunk";
 import { resetStatusCart } from "../../store/cartSlice";
 import toast from "react-hot-toast";
+import SkeletonHistory from "../../components/common/(customer)/SkeletonHistory";
 
 const HistoryOrder = () => {
   const { orders, status } = useSelector((state: RootState) => state.order);
@@ -109,12 +110,14 @@ const HistoryOrder = () => {
     navigate(result.payload);
   };
 
+  if (status === "loading") return <SkeletonHistory />;
+
   return (
-    <div className="p-10">
+    <div className="md:p-10 p-4">
       <div className="md:flex sm:flex-1 flex-1 flex-col justify-between w-full mb-5">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 w-1/2">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:mb-8 mb-3 md:w-1/2 w-full">
+          <div className="flex w-full flex-col">
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2 w-full">
               <ShoppingBag className="w-6 h-6 text-orange-500" />
               Order History
             </h1>
@@ -124,12 +127,12 @@ const HistoryOrder = () => {
           </div>
         </div>
 
-        <div className="flex md:flex-row flex-col md:gap-10 gap-2 md:w-1/2 w-full">
-          <div className="flex gap-5 items-center">
+        <div className="flex md:flex-row flex-col md:gap-10 gap-2 w-full">
+          <div className="flex gap-5 items-center w-full">
             <h1 className="uppercase text-xs font-medium tracking-widest">
               Payment:
             </h1>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2 w-full">
               {PaymentStatusOrder.map((payment) => {
                 const isActive =
                   filter.payment.toUpperCase() === payment.name.toUpperCase();
@@ -166,7 +169,7 @@ const HistoryOrder = () => {
             <h1 className="uppercase text-xs font-medium tracking-widest">
               Status:
             </h1>
-            <div className="md:flex grid grid-cols-5 gap-1 w-full">
+            <div className="flex flex-wrap gap-1 w-full">
               {StatusOrder.map((status) => {
                 const isActive =
                   filter.status.toUpperCase() === status.name.toUpperCase();
@@ -182,16 +185,15 @@ const HistoryOrder = () => {
                             : status.name.toUpperCase(),
                       }))
                     }
-                    className={`px-2 py-0.5 rounded-md text-xs font-medium transition cursor-pointer
-                      ${
-                        isActive
-                          ? statusOrderColor(status.name.toUpperCase())
-                          : !filter.status &&
-                              status.name.toUpperCase() === "ALL"
-                            ? "bg-orange-200 text-orange-700"
-                            : "bg-slate-300 text-slate-900"
-                      }
-                    `}
+                    className={`px-2 py-0.5 rounded-md text-xs font-medium transition cursor-pointer whitespace-nowrap
+          ${
+            isActive
+              ? statusOrderColor(status.name.toUpperCase())
+              : !filter.status && status.name.toUpperCase() === "ALL"
+                ? "bg-orange-200 text-orange-700"
+                : "bg-slate-300 text-slate-900"
+          }
+        `}
                   >
                     {status.name}
                   </div>
@@ -203,8 +205,6 @@ const HistoryOrder = () => {
       </div>
       {orders && orders.length > 0 ? (
         orders.map((order) => {
-          if (status === "loading") return <p>Loading ...</p>;
-
           return (
             <div
               key={order._id}

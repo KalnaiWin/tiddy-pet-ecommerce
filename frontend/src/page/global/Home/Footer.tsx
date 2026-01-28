@@ -4,15 +4,17 @@ import { Policy } from "../../../types/InterfaceGlobal";
 const Footer = () => {
   return (
     <div className="flex flex-col w-full gap-10 mb-10">
-      <div className="grid md:grid-cols-4 grid-cols-1 md:space-y-0 space-y-10 bg-slate-900 w-full p-10">
+      <div className="grid md:grid-cols-4 grid-cols-1 md:space-y-0 space-y-10 bg-slate-900 w-full lg:p-10 md:p-7 py-5">
         {Policy.map((item) => (
           <div
             key={item.name}
-            className="flex flex-col items-center justify-center px-15 text-center gap-3"
+            className="flex flex-row md:flex-col items-center md:justify-center lg:px-15 md:px-8 sm:px-5 px-2 text-center gap-5"
           >
-            <item.icon className="size-20 bg-white/10 rounded-2xl flex items-center justify-center text-orange-500 p-5" />
-            <h1 className="font-bold text-lg text-white">{item.name}</h1>
-            <p className="text-slate-400 text-sm">{item.description}</p>
+            <item.icon className="md:size-20 size-14 bg-white/10 rounded-2xl flex items-center justify-center text-orange-500 md:p-5 p-2" />
+            <div className="flex flex-col items-start w-full">
+              <h1 className="font-bold text-lg text-white">{item.name}</h1>
+              <p className="text-slate-400 text-sm">{item.description}</p>
+            </div>
           </div>
         ))}
       </div>

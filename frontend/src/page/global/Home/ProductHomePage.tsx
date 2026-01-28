@@ -17,12 +17,12 @@ const ProductHomePage = () => {
   }, []);
 
   return (
-    <div className="px-10 w-full flex flex-col gap-10">
+    <div className="lg:px-10 md:px-5 px-4 w-full flex flex-col gap-10">
       <div className="flex flex-col justify-center items-center">
-        <h1 className="text-2xl font-black tracking-widest uppercase text-orange-600">
+        <h1 className="lg:text-2xl md:text-lg sm:text-sm font-black tracking-widest uppercase text-orange-600">
           Trusted by Top Brands
         </h1>
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-4 md:gap-6">
+        <div className="grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-4 grid-cols-3 gap-4 md:gap-6">
           {brandSupport.map((brand) => (
             <Link
               key={brand.name}
@@ -43,20 +43,24 @@ const ProductHomePage = () => {
         </div>
       </div>
 
-      <div className="flex flex-col">
-        <div className="flex justify-between items-center">
-          <div className="">
-            <h1 className="text-3xl font-black">Featured Products</h1>
-            <p className="text-slate-500 font-medium">
+      <div className="flex flex-col w-full">
+        <div className="flex md:flex-row flex-col justify-between items-center w-full">
+          <div className="flex flex-col w-full">
+            <h1 className="lg:text-3xl md:text-xl text-sm font-black w-full">
+              Featured Products
+            </h1>
+            <p className="lg:text-lg md:text-md text-xs text-slate-500 md:font-medium">
               Hand-picked bestsellers for your furry friends.
             </p>
           </div>
           <Link
             to={"/store"}
-            className="flex items-center gap-2 text-orange-600 group"
+            className="flex justify-end w-full items-center gap-2 text-orange-600 group"
           >
-            <p className="text-md font-semibold underline">View all</p>{" "}
-            <ArrowRight className="group-hover:translate-x-1 transition-all delay-100 duration-100" />{" "}
+            <p className="lg:text-lg md:text-md text-xs font-semibold underline">
+              View all
+            </p>{" "}
+            <ArrowRight className="size-4 md:size-7 group-hover:translate-x-1 transition-all delay-100 duration-100" />{" "}
           </Link>
         </div>
         {products?.length === 0 || !products ? (
@@ -93,7 +97,7 @@ const ProductHomePage = () => {
           </div>
         ) : (
           <div className="flex flex-col gap-2">
-            <div className="grid md:grid-cols-5 grid-cols-2 gap-5 mt-10">
+            <div className="grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-5 mt-10">
               {products.map((product) => (
                 <Link
                   to={`/store/${product._id}`}

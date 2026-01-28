@@ -19,7 +19,7 @@ const Profile = () => {
     if (status === "idle") {
       dispatch(fetchUser());
     }
-  }, [dispatch, currentUser]);
+  }, [dispatch, status]);
 
   const [formData, setFormData] = useState({
     name: currentUser?.name,
@@ -27,6 +27,17 @@ const Profile = () => {
     phone: currentUser?.phone,
     address: currentUser?.address,
   });
+
+  useEffect(() => {
+    if (currentUser) {
+      setFormData({
+        name: currentUser.name || "",
+        image_profile: currentUser.image_profile || "",
+        phone: currentUser.phone || "",
+        address: currentUser.address || "",
+      });
+    }
+  }, [currentUser]);
 
   const addImage = () => {
     const url = prompt("Enter Image URL:");

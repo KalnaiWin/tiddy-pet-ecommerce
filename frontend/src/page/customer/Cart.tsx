@@ -43,16 +43,6 @@ const Cart = () => {
 
   const total = subTotal - discount;
 
-  // const checkOutCart: CheckOut = {
-  //   userId: String(currentUser?._id),
-  //   items: cartArray.map((item) => ({
-  //     name: item.variantName,
-  //     image: [item.image],
-  //     price: Math.round(item.price * (1 - item.productDiscount / 100)),
-  //     quantity: item.quantity,
-  //   })),
-  // };
-
   const orderCartInput: OrderCreateInput = {
     items: cartArray.map((item) => ({
       productId: item.productId,
@@ -66,8 +56,7 @@ const Cart = () => {
   if (status === "loading") return <SkeletonCart />;
 
   return (
-    <div className="flex flex-col md:px-25 px-15 py-10 mb-5">
-      {/* Title */}
+    <div className="flex flex-col lg:px-25 md:p-10 p-5 mb-5">
       <div className="flex justify-between items-center border-b pb-4 mb-10">
         <div>
           <h1 className="text-2xl font-semibold">Your Cart</h1>

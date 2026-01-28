@@ -69,7 +69,7 @@ export const StorePage = () => {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-2 p-10">
+          <div className="flex flex-col gap-2 md:p-10 p-4">
             <div className="relative w-full col-span-2">
               <input
                 type="text"
@@ -80,7 +80,7 @@ export const StorePage = () => {
               />
               <Search className="absolute md:top-1.5 top-1 left-2 size-5 text-slate-500" />
             </div>
-            <div className="grid md:grid-cols-5 grid-cols-2 gap-5 mt-10">
+            <div className="grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-5 mt-10">
               {products.map((product) => (
                 <Link
                   to={`/store/${product._id}`}

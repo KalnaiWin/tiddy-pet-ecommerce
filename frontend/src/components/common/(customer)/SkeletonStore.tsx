@@ -11,7 +11,7 @@ export const ProductSkeleton: React.FC = () => {
 const SkeletonStore = () => {
   return (
     <div className="w-full min-h-full p-10">
-      <div className="grid md:grid-cols-5 grid-cols-2 gap-5">
+      <div className="grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-5">
         {Array.from({ length: 10 }).map((_, i) => (
           <ProductSkeleton key={i} />
         ))}
