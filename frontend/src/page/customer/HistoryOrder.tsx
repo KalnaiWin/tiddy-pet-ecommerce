@@ -28,6 +28,7 @@ import { getAllItemsFromCart } from "../../feature/cartThunk";
 import { resetStatusCart } from "../../store/cartSlice";
 import toast from "react-hot-toast";
 import SkeletonHistory from "../../components/common/(customer)/SkeletonHistory";
+import { resetOrderState } from "../../store/orderSlice";
 
 const HistoryOrder = () => {
   const { orders, status } = useSelector((state: RootState) => state.order);
@@ -57,7 +58,14 @@ const HistoryOrder = () => {
     return () => {
       dispatch(resetStatusCart());
     };
-  }, [dispatch]);
+  }, [dispatch, currentUser]);
+
+  useEffect(() => {
+    if (!currentUser) {
+      dispatch(resetOrderState());
+      navigate("/");
+    }
+  }, [currentUser, dispatch]);
 
   useEffect(() => {
     dispatch(
@@ -69,7 +77,15 @@ const HistoryOrder = () => {
         payment: filter.payment,
       }),
     );
-  }, [dispatch, page, limit, filter.search, filter.status, filter.payment]);
+  }, [
+    dispatch,
+    page,
+    limit,
+    filter.search,
+    filter.status,
+    filter.payment,
+    currentUser,
+  ]);
 
   const handleCheckOut = async (order: OrderInfo) => {
     if (!order) {
@@ -307,10 +323,11 @@ const HistoryOrder = () => {
 
                 <div className="flex flex-wrap items-center gap-3">
                   <div
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium ${order.payment.status === "UNPAID" ? "text-red-800 bg-red-300" : "text-green-800 bg-green-300"}`}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium ${order.payment.status === "UNPAID" || order.status === "CANCELLED" ? "text-red-800 bg-red-300" : "text-green-800 bg-green-300"}`}
                   >
                     <CreditCard className="w-3.5 h-3.5" />
-                    {order.payment.status === "UNPAID" ? (
+                    {order.payment.status === "UNPAID" ||
+                    order.status === "CANCELLED" ? (
                       <p>Unpaid</p>
                     ) : (
                       <p>Paid via {order.payment.method}</p>

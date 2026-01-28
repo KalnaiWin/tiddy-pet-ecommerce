@@ -13,9 +13,11 @@ import { createOrder } from "../../feature/orderThunk";
 import SkeletonCart from "../../components/common/(customer)/SkeletonCart";
 import { resetStatusCart } from "../../store/cartSlice";
 import toast from "react-hot-toast";
+import { resetOrderState } from "../../store/orderSlice";
 
 const Cart = () => {
   const { cartArray, status } = useSelector((state: RootState) => state.cart);
+  const { currentUser } = useSelector((state: RootState) => state.user);
   const { checkoutStatus } = useSelector((state: RootState) => state.payment);
   const [voucher, setVoucher] = useState("");
   const dispatch = useDispatch<AppDispatch>();
@@ -27,6 +29,13 @@ const Cart = () => {
       dispatch(resetStatusCart());
     };
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!currentUser) {
+      dispatch(resetOrderState());
+      navigate("/");
+    }
+  }, [currentUser, dispatch]);
 
   let subTotal = 0;
   cartArray.forEach((item) => {

@@ -10,16 +10,26 @@ import {
 import { Camera, UserCog } from "lucide-react";
 import type { AccountCustomerEdit } from "../../types/InterfaceUser";
 import SkeletonProfile from "../../components/common/(customer)/SkeletonProfile";
+import { resetOrderState } from "../../store/orderSlice";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const { currentUser, status } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (status === "idle") {
       dispatch(fetchUser());
     }
   }, [dispatch, status]);
+
+  useEffect(() => {
+    if (!currentUser) {
+      dispatch(resetOrderState());
+      navigate("/");
+    }
+  }, [currentUser, dispatch]);
 
   const [formData, setFormData] = useState({
     name: currentUser?.name,

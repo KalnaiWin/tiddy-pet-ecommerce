@@ -25,7 +25,7 @@ const LoginAndRegisterPage = () => {
         loginUser({
           email: formData.email,
           password: formData.password,
-        })
+        }),
       );
     } else {
       await dispatch(
@@ -34,7 +34,7 @@ const LoginAndRegisterPage = () => {
           email: formData.email,
           password: formData.password,
           role,
-        })
+        }),
       );
     }
   };

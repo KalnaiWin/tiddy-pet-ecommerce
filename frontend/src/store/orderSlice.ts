@@ -25,8 +25,9 @@ const initialState: initialOrder = {
 export const orderSlice = createSlice({
   name: "Order",
   initialState,
-  reducers: {},
-
+  reducers: {
+    resetOrderState: () => initialState,
+  },
   extraReducers(builder) {
     // ============ CANCEL ORDERS  ============
     builder
@@ -128,4 +129,5 @@ export const orderSlice = createSlice({
   },
 });
 
+export const { resetOrderState } = orderSlice.actions;
 export default orderSlice.reducer;

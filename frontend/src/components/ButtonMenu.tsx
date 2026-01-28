@@ -14,7 +14,6 @@ import {
 } from "../types/InterfaceUser";
 
 const ButtonMenu = () => {
-  const [isOpenMenu, setIsOpenMenu] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -137,11 +136,11 @@ const ButtonMenu = () => {
       <div className="md:hidden block">
         <MenuIcon
           className="cursor-pointer"
-          onClick={() => setIsOpenMenu(true)}
+          onClick={() => setIsUserMenuOpen(true)}
         />
 
         <AnimatePresence>
-          {isOpenMenu && (
+          {isUserMenuOpen && (
             <>
               <motion.div
                 initial={{ opacity: 0 }}
@@ -149,7 +148,7 @@ const ButtonMenu = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
                 className="fixed inset-0 bg-black/40 z-40"
-                onClick={() => setIsOpenMenu(false)}
+                onClick={() => setIsUserMenuOpen(false)}
               />
 
               <motion.div
@@ -171,7 +170,7 @@ const ButtonMenu = () => {
                   </div>
                   <XIcon
                     className="absolute top-8 right-8 cursor-pointer"
-                    onClick={() => setIsOpenMenu(false)}
+                    onClick={() => setIsUserMenuOpen(false)}
                   />
                 </div>
 
