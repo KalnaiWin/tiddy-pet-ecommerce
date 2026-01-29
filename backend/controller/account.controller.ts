@@ -36,7 +36,12 @@ export const getAllShippers = async (req: Request, res: Response) => {
   const email = String(req.query.email) || "";
   const verify = String(req.query.verify) || "";
   try {
-    const users = await AccountService.getAllShipper(page, limit, email, verify);
+    const users = await AccountService.getAllShipper(
+      page,
+      limit,
+      email,
+      verify,
+    );
     const allUsers = lisShipperInfo.parse(users);
     if (!allUsers)
       return res
@@ -60,6 +65,19 @@ export const getAccountDetail = async (req: Request, res: Response) => {
   try {
     if (!id) return res.status(404).json({ message: "Id not found" });
     const user = await AccountService.getSpecificAccount(id);
+    return res.status(200).json(user);
+  } catch (error) {
+    if (error instanceof Error)
+      return res.status(400).json({ message: error.message });
+    else return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const fetchUser = async (req: Request, res: Response) => {
+  const userId = req.user._id;
+  try {
+    if (!userId) return res.status(404).json("UserId not found");
+    const user = await AccountService.fetchUserAccount(userId);
     return res.status(200).json(user);
   } catch (error) {
     if (error instanceof Error)

@@ -5,6 +5,7 @@ import type {
   VerifyStatus,
 } from "../interface/account.interface.js";
 import { AccountRepository } from "../repository/account.repository.js";
+import User from "../schema/user.schema.js";
 
 export const AccountService = {
   getAllCustomer: async (page: number, limit: number, email: string) => {
@@ -48,6 +49,12 @@ export const AccountService = {
     return existingUser;
   },
 
+  fetchUserAccount: async (userId: string) => {
+    const user = await User.findById(userId).select("role");
+    if (!user) throw new Error("User not found");
+    return AccountRepository.fetchAccountDetail(userId, user.role);
+  },
+
   updateProfile: async (
     adminId: string,
     userId: string,
@@ -76,7 +83,10 @@ export const AccountService = {
     return 1;
   },
 
-  updateUserProfile: async (userId: string, data: editAccountCustomer) => {
+  updateUserProfile: async (
+    userId: string,
+    data: editAccountCustomer | updateProfileInterface,
+  ) => {
     const user = await AccountRepository.findUserById(userId);
     if (!user) throw new Error("User not found");
 

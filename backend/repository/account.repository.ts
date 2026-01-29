@@ -57,4 +57,22 @@ export const AccountRepository = {
   ) => {
     return User.findByIdAndUpdate(userId, data);
   },
+
+  fetchAccountDetail: async (userId: string, role: string) => {
+    if (role === "CUSTOMER") {
+      return await User.findById(userId)
+        .select("_id name email image_profile role address phone totalSpend")
+        .lean();
+    } else if (role === "SHIPPER") {
+      return await User.findById(userId)
+        .select("_id name email image_profile role address phone shipper_info")
+        .lean();
+    } else if (role === "ADMIN") {
+      return await User.findById(userId)
+        .select("_id name email image_profile role")
+        .lean();
+    } else {
+      throw new Error("Invalid role");
+    }
+  },
 };
