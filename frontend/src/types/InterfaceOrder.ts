@@ -143,6 +143,26 @@ export interface OrderDetailsForAdmin {
   createdAt: Date;
 }
 
+export interface AvailableOrder {
+  _id: string;
+  totalPrice: number;
+  items: [
+    {
+      productName: string;
+      quantity: number;
+    },
+  ];
+  customerName: string;
+  customerId: string;
+  shipping: {
+    address: string;
+    phone: string;
+    note: string;
+    assignedAt: Date;
+  };
+  predictedDayShipping: Date;
+}
+
 export interface initialOrder {
   orders: OrderInfo[] | [];
   ordersDetailAdmin: OrderDetailsForAdmin | null;
@@ -151,6 +171,9 @@ export interface initialOrder {
   distributionStatus: "idle" | "loading" | "succeeded" | "failed";
   revenue: RevenueTime[] | [];
   revenueStatus: "idle" | "loading" | "succeeded" | "failed";
+  availableOrder: AvailableOrder[] | [];
+  availableStatus: "idle" | "loading" | "succeeded" | "failed";
+  changeStatus: "idle" | "loading" | "succeeded" | "failed";
 }
 
 export interface CheckOut {

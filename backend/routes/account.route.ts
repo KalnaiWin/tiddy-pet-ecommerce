@@ -17,7 +17,7 @@ router.get("/user", authorizeJWT, fetchUser);
 
 router.use(authorizeJWT, arcjetProtection);
 
-router.get("/user", authorizeRole("ADMIN"), getAllUsers);
+router.get("/customer", authorizeRole("ADMIN"), getAllUsers);
 router.get("/shipper", authorizeRole("ADMIN"), getAllShippers);
 router.get("/:id", authorizeRole("ADMIN"), getAccountDetail);
 

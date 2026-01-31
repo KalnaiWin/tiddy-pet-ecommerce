@@ -1,8 +1,10 @@
 import { getRedis } from "../config/redis.js";
-import type {
-  OrderItem,
-  QueryOrderManagement,
-  SourceOrderCreatedInput,
+import {
+  ORDER_STATUSES,
+  type OrderItem,
+  type OrderStatus,
+  type QueryOrderManagement,
+  type SourceOrderCreatedInput,
 } from "../interface/order.interface.js";
 import { OrderReposioty } from "../repository/order.repository.js";
 import { productRepository } from "../repository/product.repository.js";
@@ -236,5 +238,34 @@ export const OrderService = {
     await order.save();
 
     return order;
+  },
+
+  getOrderForShipper: async (
+    shipperId: string,
+    page: number,
+    status: string,
+  ) => {
+    const existingShipper = await User.findById(shipperId).select("_id role");
+    if (!existingShipper || existingShipper.role !== "SHIPPER")
+      throw new Error("Shipper not found");
+    const result = await OrderReposioty.findOrderForShipper(
+      String(existingShipper._id),
+      page,
+      status,
+    );
+    return result;
+  },
+
+  changeStatusOrder: async (
+    userId: string,
+    orderId: string,
+    status: string,
+  ) => {
+    const existingUser = await User.findById(userId).select("_id role");
+    if (!existingUser || existingUser.role === "CUSTOMER")
+      throw new Error("User not found");
+    if (!ORDER_STATUSES.includes(status as OrderStatus))
+      throw new Error("Invalid Status");
+    return await OrderReposioty.changeStatusOrder(orderId, status);
   },
 };

@@ -2,8 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { initialOrder } from "../types/InterfaceOrder";
 import {
   cancelOrder,
+  changeStatusOrder,
   dropShipperSelected,
   getAllOrders,
+  getAvailableOrderForShipper,
   getSpecificOrderForAdmin,
   getStatusOrderDistribution,
   getTotalRevenueOrder,
@@ -20,6 +22,10 @@ const initialState: initialOrder = {
 
   revenue: [],
   revenueStatus: "idle",
+
+  availableOrder: [],
+  availableStatus: "idle",
+  changeStatus: "idle",
 };
 
 export const orderSlice = createSlice({
@@ -29,6 +35,34 @@ export const orderSlice = createSlice({
     resetOrderState: () => initialState,
   },
   extraReducers(builder) {
+    // ============ CHANGE STATUS ORDERS  ============
+    builder
+      .addCase(changeStatusOrder.pending, (state) => {
+        state.changeStatus = "loading";
+      })
+      .addCase(changeStatusOrder.fulfilled, (state, action) => {
+        state.changeStatus = "succeeded";
+        state.availableOrder.filter(
+          (order) => order._id === action.payload._id,
+        );
+      })
+      .addCase(changeStatusOrder.rejected, (state) => {
+        state.changeStatus = "failed";
+      });
+
+    // ============ GET AVAILABLE ORDERS  ============
+    builder
+      .addCase(getAvailableOrderForShipper.pending, (state) => {
+        state.availableStatus = "loading";
+      })
+      .addCase(getAvailableOrderForShipper.fulfilled, (state, action) => {
+        state.availableStatus = "succeeded";
+        state.availableOrder = action.payload;
+      })
+      .addCase(getAvailableOrderForShipper.rejected, (state) => {
+        state.availableStatus = "failed";
+      });
+
     // ============ CANCEL ORDERS  ============
     builder
       .addCase(cancelOrder.pending, (state) => {

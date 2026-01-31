@@ -280,12 +280,96 @@ export const OrderReposioty = {
           },
         },
       },
-
       { $sort: { createdAt: -1 } },
       { $skip: skip },
       { $limit: query.limit },
     ]);
 
     return res;
+  },
+
+  findOrderForShipper: async (
+    shipperId: string,
+    page: number,
+    status: string,
+  ) => {
+    return await Order.aggregate([
+      { $unwind: "$items" },
+      {
+        $match: {
+          "shipping.shipper": new mongoose.Types.ObjectId(shipperId),
+          status: status,
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      { $unwind: "$user" },
+      {
+        $lookup: {
+          from: "products",
+          localField: "items.productId",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      { $unwind: "$product" },
+      {
+        $lookup: {
+          from: "variants",
+          localField: "items.variantId",
+          foreignField: "_id",
+          as: "variant",
+        },
+      },
+      { $unwind: "$variant" },
+      {
+        $addFields: {
+          productName: {
+            $cond: [
+              { $eq: ["$product.name", "$variant.name"] },
+              "$product.name",
+              {
+                $concat: ["$product.name", " ", "$variant.name"],
+              },
+            ],
+          },
+          customerName: "$user.name",
+          customerId: "$user._id",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          totalPrice: 1,
+          items: [
+            {
+              productName: "$productName",
+              quantity: "$items.quantity",
+            },
+          ],
+          customerName: 1,
+          customerId: 1,
+          shipping: {
+            address: 1,
+            phone: 1,
+            note: 1,
+            assignedAt: 1,
+          },
+          predictedDayShipping: 1,
+        },
+      },
+      { $skip: (page - 1) * 10 },
+      { $limit: 10 },
+    ]);
+  },
+
+  changeStatusOrder: async (orderId: string, status: string) => {
+    return await Order.findByIdAndUpdate(orderId, { status }, { new: true });
   },
 };

@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store";
 import { useEffect, useState } from "react";
-import { deleteAccount, getAllUsers } from "../../feature/userThunk";
+import { deleteAccount, getAllCustomers } from "../../feature/userThunk";
 import { User, Eye, Edit, Trash2, Dot, Search } from "lucide-react";
 import { StatusColor } from "../../types/HelperFunction";
 import toast from "react-hot-toast";
@@ -24,14 +24,14 @@ type Props = {
 
 const TableListCustomer = ({ email, setIsView, setIsEdit }: Props) => {
   const { users, error, usersStatus, updatingStatus } = useSelector(
-    (state: RootState) => state.user
+    (state: RootState) => state.user,
   );
   const dispatch = useDispatch<AppDispatch>();
   const [page, setPage] = useState(1);
   const limit = 10;
 
   useEffect(() => {
-    dispatch(getAllUsers({ page, limit, email }));
+    dispatch(getAllCustomers({ page, limit, email }));
   }, [dispatch, page, limit, email, updatingStatus === "succeeded"]);
 
   if (usersStatus === "loading") {
@@ -109,7 +109,7 @@ const TableListCustomer = ({ email, setIsView, setIsEdit }: Props) => {
                   <td className="px-6 py-4">
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${StatusColor(
-                        user.status
+                        user.status,
                       )}`}
                     >
                       <Dot />

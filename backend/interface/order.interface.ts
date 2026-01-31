@@ -34,3 +34,16 @@ export interface CheckOutInput {
     quantity: number;
   }>;
 }
+
+export const ORDER_STATUSES = [
+  "PENDING",
+  "CONFIRMED",
+  "ASSIGNED",
+  "PICKING",
+  "SHIPPING",
+  "DELIVERED",
+  "FAILED",
+  "CANCELLED",
+] as const;
+
+export type OrderStatus = (typeof ORDER_STATUSES)[number];

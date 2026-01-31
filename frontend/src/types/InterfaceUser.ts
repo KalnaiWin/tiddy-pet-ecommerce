@@ -1,20 +1,19 @@
 import {
-  BadgeCheck,
   ChartColumn,
-  ChartLine,
-  ClipboardList,
-  Heart,
   History,
   Home,
   Layers,
   LucideUser2,
+  Map,
   Package,
   PackageCheck,
   ShoppingBag,
   ShoppingCart,
   StoreIcon,
   Truck,
+  User2,
   UserCogIcon,
+  Van,
 } from "lucide-react";
 
 export type UserRole = "CUSTOMER" | "ADMIN" | "SHIPPER";
@@ -76,7 +75,7 @@ export interface UserInfo {
 }
 
 export interface UserState {
-  currentUser: User | null;
+  currentUser: UserInfo | null;
   users: UserInfo[];
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
@@ -97,40 +96,6 @@ export const roles: { id: UserRole; label: string; icon: any; desc: string }[] =
     },
     { id: "SHIPPER", label: "Shipper", icon: Truck, desc: "Handle deliveries" },
   ];
-
-export const pathUserSelect = [
-  {
-    name: "Order History",
-    icon: History,
-    path: "/history",
-  },
-  {
-    name: "Wishlist",
-    icon: Heart,
-    path: "/wishlist",
-  },
-];
-
-export const pathAdminSelect = [
-  {
-    name: "Dashboard",
-    icon: BadgeCheck,
-    path: "/admin/dashboard",
-  },
-];
-
-export const pathShipperSelect = [
-  {
-    name: "Orders",
-    icon: ClipboardList,
-    path: "/shipper",
-  },
-  {
-    name: "Static",
-    icon: ChartLine,
-    path: "/shipper/static",
-  },
-];
 
 export const adminNavBarSelect = [
   {
@@ -185,8 +150,29 @@ export const customerNavbarSelect = [
 
 export const shipperNavbarSelect = [
   {
-    icon: Home,
-    name: "",
-    path: "",
+    icon: User2,
+    name: "Profile",
+    path: "/shipper/profile",
+  },
+  {
+    icon: PackageCheck,
+    name: "Orders",
+    path: "/shipper/order",
+  },
+  {
+    icon: Van,
+    name: "Available",
+    path: "/shipper/available",
+  },
+
+  {
+    icon: History,
+    name: "History",
+    path: "/shipper/history",
+  },
+  {
+    icon: Map,
+    name: "Location",
+    path: "/shipper/location",
   },
 ];

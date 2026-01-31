@@ -12,7 +12,7 @@ export const fetchUser = createAsyncThunk(
   "user/fetchUser",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get("/auth");
+      const res = await axiosInstance.get("/account/user");
       return res.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Error");
@@ -63,7 +63,7 @@ export const logoutUser = createAsyncThunk<void, void, { rejectValue: string }>(
   },
 );
 
-export const getAllUsers = createAsyncThunk<
+export const getAllCustomers = createAsyncThunk<
   UserInfo[],
   { page: number; limit: number; email?: string },
   { rejectValue: string }
@@ -71,7 +71,7 @@ export const getAllUsers = createAsyncThunk<
   "account/getAllUsers",
   async ({ page, limit, email }, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get(`/account/user`, {
+      const res = await axiosInstance.get(`/account/customer`, {
         params: {
           page,
           limit,

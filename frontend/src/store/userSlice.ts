@@ -10,7 +10,7 @@ import {
   fetchUser,
   getAccountDetail,
   getAllShippers,
-  getAllUsers,
+  getAllCustomers,
   loginUser,
   logoutUser,
   registerUser,
@@ -41,8 +41,6 @@ export const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-
-
     builder
       .addCase(updateProfileAccount.pending, (state) => {
         state.updatingStatus = "loading";
@@ -52,7 +50,7 @@ export const userSlice = createSlice({
       })
       .addCase(updateProfileAccount.rejected, (state) => {
         state.updatingStatus = "failed";
-      })
+      });
 
     builder
       .addCase(deleteAccount.pending, (state) => {
@@ -90,19 +88,25 @@ export const userSlice = createSlice({
       })
 
       // Load Account
-      .addMatcher(isPending(getAllShippers, getAllUsers), (state) => {
+      .addMatcher(isPending(getAllShippers, getAllCustomers), (state) => {
         state.usersStatus = "loading";
         state.error = null;
       })
-      .addMatcher(isFulfilled(getAllShippers, getAllUsers), (state, action) => {
-        state.users = action.payload;
-        state.usersStatus = "succeeded";
-        state.error = null;
-      })
-      .addMatcher(isRejected(getAllShippers, getAllUsers), (state, action) => {
-        state.usersStatus = "failed";
-        state.error = action.payload as string;
-      })
+      .addMatcher(
+        isFulfilled(getAllShippers, getAllCustomers),
+        (state, action) => {
+          state.users = action.payload;
+          state.usersStatus = "succeeded";
+          state.error = null;
+        },
+      )
+      .addMatcher(
+        isRejected(getAllShippers, getAllCustomers),
+        (state, action) => {
+          state.usersStatus = "failed";
+          state.error = action.payload as string;
+        },
+      )
 
       // Authenticate
       .addMatcher(
@@ -110,21 +114,21 @@ export const userSlice = createSlice({
         (state, action) => {
           state.currentUser = action.payload;
           state.status = "succeeded";
-        }
+        },
       )
       .addMatcher(
         isPending(fetchUser, loginUser, registerUser, logoutUser),
         (state) => {
           state.status = "loading";
           state.error = null;
-        }
+        },
       )
       .addMatcher(
         isRejected(fetchUser, loginUser, registerUser, logoutUser),
         (state, action) => {
           state.status = "failed";
           state.error = action.payload as string;
-        }
+        },
       );
   },
 });

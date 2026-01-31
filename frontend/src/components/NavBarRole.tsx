@@ -4,7 +4,7 @@ import { adminNavBarSelect } from "../types/InterfaceUser";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-const AdminNavBar = () => {
+const NavBarRole = () => {
   const [isOpenMenu, setIsOpenMenu] = useState(false);
 
   const menuRef = useRef<HTMLDivElement>(null);
@@ -112,4 +112,4 @@ const AdminNavBar = () => {
   );
 };
 
-export default AdminNavBar;
+export default NavBarRole;

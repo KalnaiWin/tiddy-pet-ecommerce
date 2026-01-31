@@ -61,15 +61,19 @@ export const AccountRepository = {
   fetchAccountDetail: async (userId: string, role: string) => {
     if (role === "CUSTOMER") {
       return await User.findById(userId)
-        .select("_id name email image_profile role address phone totalSpend")
+        .select(
+          "_id name email image_profile role address phone totalSpend status",
+        )
         .lean();
     } else if (role === "SHIPPER") {
       return await User.findById(userId)
-        .select("_id name email image_profile role address phone shipper_info")
+        .select(
+          "_id name email image_profile role address phone shipper_info status",
+        )
         .lean();
     } else if (role === "ADMIN") {
       return await User.findById(userId)
-        .select("_id name email image_profile role")
+        .select("_id name email image_profile role status")
         .lean();
     } else {
       throw new Error("Invalid role");

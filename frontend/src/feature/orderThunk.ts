@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../lib/axios";
 import type {
+  AvailableOrder,
   OrderCreateInput,
   OrderCreateOutput,
   OrderDetailsForAdmin,
@@ -147,3 +148,44 @@ export const cancelOrder = createAsyncThunk<
     return rejectWithValue(error.response?.data || "Error");
   }
 });
+
+export const getAvailableOrderForShipper = createAsyncThunk<
+  AvailableOrder[],
+  { page: number; status: string },
+  { rejectValue: string }
+>(
+  "order/getAvailableOrderForShipper",
+  async ({ page, status }, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get("order/assign", {
+        params: {
+          page,
+          status,
+        },
+      });
+      return res.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || "Error");
+    }
+  },
+);
+
+export const changeStatusOrder = createAsyncThunk<
+  AvailableOrder,
+  { status: string; orderId: string },
+  { rejectValue: string }
+>(
+  "order/changeStatusOrder",
+  async ({ status, orderId }, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.post(`order/status/${orderId}`, {
+        status,
+      });
+      toast.success("Pick up successfully");
+      return res.data;
+    } catch (error: any) {
+      toast.error("Pick up failed");
+      return rejectWithValue(error.response?.data || "Error");
+    }
+  },
+);

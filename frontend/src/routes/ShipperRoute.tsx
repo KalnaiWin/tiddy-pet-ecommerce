@@ -1,6 +1,24 @@
+import { Route, Routes } from "react-router-dom";
+import ShipperProtect from "../layout/ShipperProtect";
+import ProfileShipper from "../page/shipper/ProfileShipper";
+import { MainLayout } from "../layout/MainLayout";
+import HistoryOrder from "../page/shipper/HistoryOrder";
+import LocationOrder from "../page/shipper/LocationOrder";
+import OrderAssigned from "../page/shipper/OrderAssigned";
+import AvailableOrder from "../page/shipper/AvailableOrder";
 
 export const ShipperRoute = () => {
   return (
-    <div>ShipperRoute</div>
-  )
-}
+    <Routes>
+      <Route element={<MainLayout />}>
+        <Route element={<ShipperProtect />}>
+          <Route path="profile" element={<ProfileShipper />} />
+          <Route path="order" element={<OrderAssigned />} />
+          <Route path="history" element={<HistoryOrder />} />
+          <Route path="location" element={<LocationOrder />} />
+          <Route path="available" element={<AvailableOrder />} />
+        </Route>
+      </Route>
+    </Routes>
+  );
+};

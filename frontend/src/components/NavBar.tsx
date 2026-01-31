@@ -27,13 +27,15 @@ const NavBar = () => {
         </span>
       </Link>
       <div className="flex items-center gap-3 justify-end">
-        <Link
-          to={"/store"}
-          className="md:block hidden hover:text-orange-600"
-          title="Store"
-        >
-          <Store />
-        </Link>
+        {currentUser?.role !== "SHIPPER" && (
+          <Link
+            to={"/store"}
+            className="md:block hidden hover:text-orange-600"
+            title="Store"
+          >
+            <Store />
+          </Link>
+        )}
         <button className="hover:text-orange-600">
           <Bell />
         </button>

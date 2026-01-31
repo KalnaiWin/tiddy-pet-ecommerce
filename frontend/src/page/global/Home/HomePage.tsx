@@ -125,8 +125,12 @@ export const HomePage = () => {
           )}
         </div>
       </div>
-      <ProductHomePage />
-      <Footer />
+      {currentUser?.role !== "SHIPPER" && (
+        <>
+          <ProductHomePage />
+          <Footer />
+        </>
+      )}
     </div>
   );
 };
