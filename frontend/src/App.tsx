@@ -16,7 +16,7 @@ export const App = () => {
     if (status === "idle") {
       dispatch(fetchUser());
     }
-  }, [dispatch, currentUser]);
+  }, [dispatch, status]);
 
   useEffect(() => {
     if (currentUser && currentUser.role === "CUSTOMER") {
