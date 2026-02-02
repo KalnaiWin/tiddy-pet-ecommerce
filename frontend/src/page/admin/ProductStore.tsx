@@ -16,11 +16,11 @@ import { StatusProduct } from "../../types/HelperFunction";
 import toast from "react-hot-toast";
 import { resetProductCRUDstatus } from "../../store/productSlice";
 import ViewProductInformation from "./ViewProductInformation";
+import SkeletonProductManagement from "../../components/common/(admin)/SkeletonProductManagement";
 
 const ProductStore = () => {
-  const { products, deletingStaus, creatingStatus, editStatus } = useSelector(
-    (state: RootState) => state.product,
-  );
+  const { products, deletingStaus, creatingStatus, editStatus, status } =
+    useSelector((state: RootState) => state.product);
   const dispatch = useDispatch<AppDispatch>();
   const [page, setPage] = useState(1);
   const limit = 10;
@@ -198,105 +198,107 @@ const ProductStore = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
-                  {products.map((product, idx) => (
-                    <tr
-                      key={`${product._id}+${idx}`}
-                      className="hover:bg-slate-50 transition-colors"
-                    >
-                      <td className="px-4 py-3">
-                        <div className="flex gap-3 items-center">
-                          <img
-                            src={`${
-                              product.imageProduct[0] || "/src/asset/Empty.webp"
-                            }`}
-                            alt={product.name}
-                            className="w-12 h-12 rounded-md object-cover"
-                          />
-                          <p className="text-sm font-semibold">
-                            {product.name}
-                          </p>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex md:flex-row flex-col gap-4">
-                          <div className="flex flex-wrap gap-1">
-                            {product.category?.length > 0 &&
-                              product.category?.map((cate, idx) => (
-                                <span
-                                  key={`${cate._id}+${idx}`}
-                                  className="text-xs font-medium text-blue-700 underline"
-                                >
-                                  {cate.name}
-                                </span>
-                              ))}
-                          </div>
-                          <span className="text-xs font-medium text-pink-700 underline">
-                            {product.brand?.name}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div
-                          className={`${StatusProduct(
-                            product.status || "",
-                          )} flex items-center rounded-md font-semibold text-xs w-fit px-2 py-1`}
+                  {status === "loading"
+                    ? Array.from({ length: 6 }).map((_, idx) => (
+                        <SkeletonProductManagement key={`skeleton-${idx}`} />
+                      ))
+                    : products.map((product, idx) => (
+                        <tr
+                          key={`${product._id}+${idx}`}
+                          className="hover:bg-slate-50 transition-colors"
                         >
-                          <Dot className="w-5 h-5" />
-                          {product.status}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-lg font-medium">
-                        {product.total}
-                      </td>
-                      <td className="px-4 py-3">
-                        {product.minPrice !== 0 ? (
-                          <div className="flex gap-1 text-sm font-medium">
-                            <span>{product.minPrice}</span>
-                            <span>-</span>
-                            <span>{product.maxPrice}</span>
-                          </div>
-                        ) : (
-                          <div className="text-sm font-medium">
-                            {product.maxPrice}
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex justify-end">
-                          <button
-                            onClick={() => {
-                              setIsView({
-                                option: true,
-                                productId: product._id,
-                              });
-                            }}
-                            className="text-slate-600 hover:bg-slate-200 p-1.5 rounded-md transition-colors"
-                          >
-                            <View className="w-4 h-4" />
-                          </button>
-                          <Link
-                            to={`/admin/edit/${product._id}`}
-                            className="text-blue-600 hover:bg-blue-200 p-1.5 rounded-md transition-colors"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Link>
-                          <button
-                            onClick={() =>
-                              dispatch(deleteProduct({ id: product._id }))
-                            }
-                            className={`p-1.5 rounded-md transition-colors ${
-                              deletingStaus === "loading"
-                                ? "text-red-300 cursor-not-allowed"
-                                : "text-red-600 hover:bg-red-200"
-                            }`}
-                            disabled={deletingStaus === "loading"}
-                          >
-                            <Trash className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                          <td className="px-4 py-3">
+                            <div className="flex gap-3 items-center">
+                              <img
+                                src={`${product.imageProduct[0]}`}
+                                alt={product.name}
+                                className="w-12 h-12 rounded-md object-cover"
+                              />
+                              <p className="text-sm font-semibold">
+                                {product.name}
+                              </p>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex md:flex-row flex-col gap-4">
+                              <div className="flex flex-wrap gap-1">
+                                {product.category?.length > 0 &&
+                                  product.category?.map((cate, idx) => (
+                                    <span
+                                      key={`${cate._id}+${idx}`}
+                                      className="text-xs font-medium text-blue-700 underline"
+                                    >
+                                      {cate.name}
+                                    </span>
+                                  ))}
+                              </div>
+                              <span className="text-xs font-medium text-pink-700 underline">
+                                {product.brand?.name}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div
+                              className={`${StatusProduct(
+                                product.status || "",
+                              )} flex items-center rounded-md font-semibold text-xs w-fit px-2 py-1`}
+                            >
+                              <Dot className="w-5 h-5" />
+                              {product.status}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-lg font-medium">
+                            {product.total}
+                          </td>
+                          <td className="px-4 py-3">
+                            {product.minPrice !== 0 ? (
+                              <div className="flex gap-1 text-sm font-medium">
+                                <span>{product.minPrice}</span>
+                                <span>-</span>
+                                <span>{product.maxPrice}</span>
+                              </div>
+                            ) : (
+                              <div className="text-sm font-medium">
+                                {product.maxPrice}
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex justify-end">
+                              <button
+                                onClick={() => {
+                                  setIsView({
+                                    option: true,
+                                    productId: product._id,
+                                  });
+                                }}
+                                className="text-slate-600 hover:bg-slate-200 p-1.5 rounded-md transition-colors"
+                              >
+                                <View className="w-4 h-4" />
+                              </button>
+                              <Link
+                                to={`/admin/edit/${product._id}`}
+                                className="text-blue-600 hover:bg-blue-200 p-1.5 rounded-md transition-colors"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Link>
+                              <button
+                                onClick={() =>
+                                  dispatch(deleteProduct({ id: product._id }))
+                                }
+                                className={`p-1.5 rounded-md transition-colors ${
+                                  deletingStaus === "loading"
+                                    ? "text-red-300 cursor-not-allowed"
+                                    : "text-red-600 hover:bg-red-200"
+                                }`}
+                                disabled={deletingStaus === "loading"}
+                              >
+                                <Trash className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
                 </tbody>
               </table>
             </div>

@@ -21,7 +21,7 @@ const FormCreateVoucher = () => {
   };
 
   return (
-    <div className="p-5 bg-white rounded-xl h-full w-full">
+    <div className="p-5 bg-white rounded-xl h-full w-full md:text-sm text-xs">
       <div className="flex flex-col">
         <h1 className="text-xl font-bold">Create New Voucher</h1>
         <p className="">Define your discount campaign details</p>

@@ -5,6 +5,7 @@ import { deleteAccount, getAllCustomers } from "../../feature/userThunk";
 import { User, Eye, Edit, Trash2, Dot, Search } from "lucide-react";
 import { StatusColor } from "../../types/HelperFunction";
 import toast from "react-hot-toast";
+import SkeletonLoadAccounts from "../../components/common/(admin)/SkeletonLoadAccounts";
 
 type Props = {
   email: string;
@@ -23,7 +24,7 @@ type Props = {
 };
 
 const TableListCustomer = ({ email, setIsView, setIsEdit }: Props) => {
-  const { users, error, usersStatus, updatingStatus } = useSelector(
+  const { users, usersStatus, updatingStatus } = useSelector(
     (state: RootState) => state.user,
   );
   const dispatch = useDispatch<AppDispatch>();
@@ -33,14 +34,6 @@ const TableListCustomer = ({ email, setIsView, setIsEdit }: Props) => {
   useEffect(() => {
     dispatch(getAllCustomers({ page, limit, email }));
   }, [dispatch, page, limit, email, updatingStatus === "succeeded"]);
-
-  if (usersStatus === "loading") {
-    return <div>Loading...</div>;
-  }
-
-  if (usersStatus === "failed") {
-    return <div>Error: {error}</div>;
-  }
 
   return (
     <div className="overflow-x-auto rounded-lg border pb-5 border-slate-200">
@@ -66,7 +59,11 @@ const TableListCustomer = ({ email, setIsView, setIsEdit }: Props) => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-slate-200">
-            {users.length === 0 ? (
+            {usersStatus === "loading" ? (
+              Array.from({ length: 5 }).map((_, idx) => (
+                <SkeletonLoadAccounts key={idx} />
+              ))
+            ) : users.length === 0 ? (
               <tr key="empty">
                 <td
                   colSpan={4}

@@ -24,9 +24,8 @@ const ProductHomePage = () => {
         </h1>
         <div className="grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-4 grid-cols-3 gap-4 md:gap-6">
           {brandSupport.map((brand) => (
-            <Link
+            <div
               key={brand.name}
-              to={brand.path}
               className="group flex flex-col md:flex-row items-center gap-2 md:gap-3"
             >
               <img
@@ -38,7 +37,7 @@ const ProductHomePage = () => {
               <p className="text-sm md:text-lg font-semibold text-slate-600 text-center md:text-left">
                 {brand.name}
               </p>
-            </Link>
+            </div>
           ))}
         </div>
       </div>

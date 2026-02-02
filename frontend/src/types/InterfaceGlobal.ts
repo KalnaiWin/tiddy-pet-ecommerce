@@ -3,62 +3,62 @@ import { Clock, HeartPulse, ShieldCheck, Van } from "lucide-react";
 export const brandSupport = [
   {
     name: "Bio Pharmercy",
-    image: "/image/bio.png",
+    image: "/images/bio.png",
     path: "/store",
   },
   {
     name: "Catchy",
-    image: "/image/catchy.png",
+    image: "/images/catchy.png",
     path: "/store",
   },
   {
     name: "Dr kyan",
-    image: "/image/drkyan.png",
+    image: "/images/drkyan.png",
     path: "/store",
   },
   {
     name: "Ecopets",
-    image: "/image/ecopets.png",
+    image: "/images/ecopets.png",
     path: "/store",
   },
   {
     name: "Ganador",
-    image: "/image/ganador.png",
+    image: "/images/ganador.png",
     path: "/store",
   },
   {
     name: "Hanvet",
-    image: "/image/hanvet.png",
+    image: "/images/hanvet.png",
     path: "/store",
   },
   {
     name: "Meow Cat",
-    image: "/image/meowcat.png",
+    image: "/images/meowcat.png",
     path: "/store",
   },
   {
     name: "Minino",
-    image: "/image/minino.png",
+    image: "/images/minino.png",
     path: "/store",
   },
   {
     name: "Moochie",
-    image: "/image/moochie.png",
+    image: "/images/moochie.png",
     path: "/store",
   },
   {
     name: "Orgo",
-    image: "/image/orgo.png",
+    image: "/images/orgo.png",
     path: "/store",
   },
   {
     name: "Vemedim",
-    image: "/image/vemedim.png",
+    image: "/images/vemedim.png",
     path: "/store",
   },
   {
     name: "Wanpy",
-    image: "/image/wanpy.png",
+    image: "/images/wanpy.png",
     path: "/store",
   },
 ];

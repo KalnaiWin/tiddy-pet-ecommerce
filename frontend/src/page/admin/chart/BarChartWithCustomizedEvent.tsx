@@ -7,19 +7,19 @@ const data = [
     uv: 4000,
   },
   {
-    name: "Page B",
+    name: "Visa",
     uv: 3000,
   },
   {
-    name: "Page C",
+    name: "Paypal",
     uv: 2000,
   },
   {
-    name: "Page D",
+    name: "Momo",
     uv: 2780,
   },
   {
-    name: "Page E",
+    name: "Zalo Pay",
     uv: 1890,
   },
 ];

@@ -10,9 +10,10 @@ import {
   statusOrderColor,
 } from "../../types/HelperFunction";
 import { Link } from "react-router-dom";
+import SkeletonOrderManagement from "../../components/common/(admin)/SkeletonOrderManagement";
 
 const OrderInformation = () => {
-  const { orders } = useSelector((state: RootState) => state.order);
+  const { orders, status } = useSelector((state: RootState) => state.order);
   const dispatch = useDispatch<AppDispatch>();
 
   const [page, setPage] = useState(1);
@@ -128,77 +129,85 @@ const OrderInformation = () => {
           </thead>
 
           <tbody className="divide-y divide-slate-200">
-            {orders.map((order, idx) => (
-              <tr
-                key={order._id}
-                className={`hover:bg-orange-50 transition-colors ${idx % 2 ? "bg-white" : "bg-white/40"} `}
-              >
-                <td className="px-6 py-4 text-sm text-slate-700">
-                  <div className="flex flex-col">
-                    <p className="font-extrabold uppercase">
-                      #{generateOrderCode(order._id, order.user._id)}
-                    </p>
-                    <p>
-                      {new Date(order.createdAt).toLocaleDateString("vi-VN")}
-                    </p>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={order.user?.image_profile || "/src/asset/Empty.webp"}
-                      alt={order.user?.name || "Customer avatar"}
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                    <div>
-                      <p className="font-semibold text-slate-800">
-                        {order.user?.name || "Unknown"}
-                      </p>
-                      <p className="text-sm text-slate-500">
-                        {order.user?.email || "—"}
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 font-medium text-slate-800">
-                  {formatVND(order.totalPrice)}
-                </td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`pr-3 py-1 rounded-full text-xs font-medium ${statusOrderColor(order.status)} flex items-center w-fit`}
+            {status === "loading"
+              ? Array.from({ length: 7 }).map((_, idx) => (
+                  <SkeletonOrderManagement key={`skeleton-order-${idx}`} />
+                ))
+              : orders.map((order, idx) => (
+                  <tr
+                    key={order._id}
+                    className={`hover:bg-orange-50 transition-colors ${idx % 2 ? "bg-white" : "bg-white/40"} `}
                   >
-                    <Dot />
-                    {order.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex flex-col text-sm">
-                    <span
-                      className={`font-medium flex items-center w-fit pr-3 py-1 rounded-full text-xs ${paymentStatusColor(order.payment.status)}`}
-                    >
-                      <Dot />
+                    <td className="px-6 py-4 text-sm text-slate-700">
+                      <div className="flex flex-col">
+                        <p className="font-extrabold uppercase">
+                          #{generateOrderCode(order._id, order.user._id)}
+                        </p>
+                        <p>
+                          {new Date(order.createdAt).toLocaleDateString(
+                            "vi-VN",
+                          )}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={
+                            order.user?.image_profile || "/src/asset/Empty.webp"
+                          }
+                          alt={order.user?.name || "Customer avatar"}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                        <div>
+                          <p className="font-semibold text-slate-800">
+                            {order.user?.name || "Unknown"}
+                          </p>
+                          <p className="text-sm text-slate-500">
+                            {order.user?.email || "—"}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 font-medium text-slate-800">
+                      {formatVND(order.totalPrice)}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`pr-3 py-1 rounded-full text-xs font-medium ${statusOrderColor(order.status)} flex items-center w-fit`}
+                      >
+                        <Dot />
+                        {order.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col text-sm">
+                        <span
+                          className={`font-medium flex items-center w-fit pr-3 py-1 rounded-full text-xs ${paymentStatusColor(order.payment.status)}`}
+                        >
+                          <Dot />
 
-                      {order.payment?.status}
-                    </span>
-                    <span className="text-slate-500">
-                      {order.payment?.status === "UNPAID"
-                        ? ""
-                        : order.payment?.method}
-                    </span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <Link
-                    to={`/admin/order/${order._id}`}
-                    className="p-2 rounded hover:bg-slate-700 justify-center transition flex items-center gap-2 w-full bg-slate-950 text-white"
-                    title="View order"
-                  >
-                    <Eye size={18} />
-                    <p>View</p>
-                  </Link>
-                </td>
-              </tr>
-            ))}
+                          {order.payment?.status}
+                        </span>
+                        <span className="text-slate-500">
+                          {order.payment?.status === "UNPAID"
+                            ? ""
+                            : order.payment?.method}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <Link
+                        to={`/admin/order/${order._id}`}
+                        className="p-2 rounded hover:bg-slate-700 justify-center transition flex items-center gap-2 w-full bg-slate-950 text-white"
+                        title="View order"
+                      >
+                        <Eye size={18} />
+                        <p>View</p>
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
           </tbody>
         </table>
       ) : (

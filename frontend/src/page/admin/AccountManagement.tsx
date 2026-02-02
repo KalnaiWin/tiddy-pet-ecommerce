@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
 import ViewUserInformation from "./ViewUserInformation";
 import EditProfileAccount from "./EditProfileAccount";
+import { formatVND } from "../../types/HelperFunction";
 
 const AccountManagement = () => {
   const { users } = useSelector((state: RootState) => state.user);
@@ -70,7 +71,7 @@ const AccountManagement = () => {
           } flex-col col-span-2 md:col-span-1 gap-1 bg-white items-center justify-center py-2 rounded-md`}
         >
           <p className="tracking-widest text-slate-500 font-semibold">AMOUNT</p>
-          <p className="font-bold ">{amountSpend} VND</p>
+          <p className="font-bold ">{formatVND(amountSpend)}</p>
         </div>
         <div
           className={`${
