@@ -12,4 +12,11 @@ export const ENV = {
   REDIS_PASSWORD: String(process.env.REDIS_PASSWORD),
   SOCKET_HOST: String(process.env.SOCKET_HOST),
   SOCKET_PORT: Number(process.env.SOCKET_PORT),
+  CLOUNDINARY_NAME: String(process.env.CLOUNDINARY_NAME),
+  CLOUNDINARY_API_KEY: String(process.env.CLOUNDINARY_API_KEY),
+  CLOUNDINARY_API_SECRET: String(process.env.CLOUNDINARY_API_SECRET),
+  STRIPE_PUBLISHABLE_KEY: String(process.env.STRIPE_PUBLISHABLE_KEY),
+  STRIPE_SECRET_KEY: String(process.env.STRIPE_SECRET_KEY),
+  STRIPE_WEBHOOK_SECRET: String(process.env.STRIPE_WEBHOOK_SECRET),
+  EMAIL_ADMIN: String(process.env.EMAIL_ADMIN),
 };

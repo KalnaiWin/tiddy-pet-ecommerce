@@ -54,7 +54,7 @@ const HistoryOrder = () => {
 
   return (
     <div className="px-10 py-5">
-      <div className="w-full flex justify-between">
+      <div className="w-full flex md:flex-row flex-col justify-between">
         <div className="flex flex-col">
           <h1 className="text-2xl font-bold">History Orders</h1>
           <p className="text-sm text-slate-600">
@@ -71,7 +71,7 @@ const HistoryOrder = () => {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-4 w-1/2 p-2 border border-slate-500 rounded-md">
+          <div className="grid xl:grid-cols-4 grid-cols-3 xl:w-1/2 w-full p-2 border border-slate-500 rounded-md my-2">
             <div className="flex flex-col items-center">
               <label className="uppercase text-xs font-bold text-slate-400">
                 Total Orders
@@ -86,7 +86,7 @@ const HistoryOrder = () => {
                 {totalOrderDelivered}
               </p>
             </div>
-            <div className="flex flex-col items-center col-span-2">
+            <div className="flex flex-col items-center xl:col-span-2">
               <label className="uppercase text-xs font-bold text-slate-400">
                 Earnings
               </label>
@@ -121,7 +121,7 @@ const HistoryOrder = () => {
       </div>
       <div className="mt-5">
         {availableStatus === "loading" ? (
-          <div className="grid xl:grid-cols-5 gap-2">
+          <div className="grid xl:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-2">
             {Array.from({ length: 8 }).map((_, idx) => (
               <div key={idx}>
                 <SkeletonHistoryOrder />
@@ -131,7 +131,7 @@ const HistoryOrder = () => {
         ) : (
           <>
             {availableOrder && availableOrder.length > 0 ? (
-              <div className="grid xl:grid-cols-5 gap-2">
+              <div className="grid xl:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-2">
                 {availableOrder.map((order) => {
                   return (
                     <div key={order._id}>

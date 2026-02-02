@@ -14,6 +14,7 @@
   "devDependencies": {
     "@arcjet/inspect": "^1.0.0-beta.15",
     "@arcjet/node": "^1.0.0-beta.15",
+    "@types/multer": "^2.0.0",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.8.0",
     "cookie-parser": "^1.4.7",
@@ -34,8 +35,11 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.0.3",
+    "body-parser": "^2.2.2",
     "crypto": "^1.0.1",
+    "multer": "^2.0.2",
     "redis": "^5.10.0",
+    "stripe": "^20.2.0",
     "zod": "^4.2.1"
   }
 }

@@ -5,7 +5,6 @@ import {
   Home,
   Layers,
   LucideUser2,
-  Map,
   Package,
   PackageCheck,
   ShoppingBag,
@@ -179,10 +178,5 @@ export const shipperNavbarSelect = [
     icon: History,
     name: "History",
     path: "/shipper/history",
-  },
-  {
-    icon: Map,
-    name: "Location",
-    path: "/shipper/location",
   },
 ];

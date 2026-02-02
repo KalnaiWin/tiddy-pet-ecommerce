@@ -45,7 +45,7 @@ const DeliveryOrder = () => {
       </div>
       <div className="mt-5">
         {availableStatus === "loading" ? (
-          <div className="grid xl:grid-cols-5 gap-2">
+          <div className="grid xl:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-2">
             {Array.from({ length: 8 }).map((_, idx) => (
               <div key={idx}>
                 <SkeletonDeliveryOrder />
@@ -55,7 +55,7 @@ const DeliveryOrder = () => {
         ) : (
           <>
             {availableOrder && availableOrder.length > 0 ? (
-              <div className="grid xl:grid-cols-5 gap-2">
+              <div className="grid xl:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-2">
                 {availableOrder.map((order) => {
                   return (
                     <div key={order._id}>

@@ -153,7 +153,7 @@ const ProfileShipper = () => {
         <div className="lg:col-span-2">
           <div className="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm">
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid xl:grid-cols-2 grid-cols-1 gap-6">
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-gray-500 uppercase">
                     Full Name

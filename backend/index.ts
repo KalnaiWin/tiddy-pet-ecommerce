@@ -8,6 +8,11 @@ import { connectDB } from "./config/db.js";
 import authRoute from "./routes/auth.route.js";
 import productRoute from "./routes/product.route.js";
 import accountRoute from "./routes/account.route.js";
+import orderRoute from "./routes/order.route.js";
+import cartRoute from "./routes/cart.route.js";
+import paymentRoute from "./routes/payment.route.js";
+import analyticRoute from "./routes/analytic.route.js";
+import voucherRoute from "./routes/voucher.route.js";
 import { initRedis } from "./config/redis.js";
 
 const app = express();
@@ -20,6 +25,11 @@ app.use(cookieParser());
 app.use("/api/auth", authRoute);
 app.use("/api/product", productRoute);
 app.use("/api/account", accountRoute);
+app.use("/api/order", orderRoute);
+app.use("/api/cart", cartRoute);
+app.use("/api/payment", paymentRoute);
+app.use("/api/analytic", analyticRoute);
+app.use("/api/voucher", voucherRoute);
 
 if (ENV.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
@@ -28,10 +38,10 @@ if (ENV.NODE_ENV === "production") {
   });
 }
 
-
+// exception error handler global
 
 connectDB()
-  .then( async () => {
+  .then(async () => {
     await initRedis();
     app.listen(ENV.PORT, () => {
       console.log("Server running on port: ", ENV.PORT);
