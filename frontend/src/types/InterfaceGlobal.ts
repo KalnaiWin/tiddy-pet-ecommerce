@@ -13,7 +13,7 @@ export const brandSupport = [
   },
   {
     name: "Dr kyan",
-    image: "/image/image/drkyan.png",
+    image: "/image/drkyan.png",
     path: "/store",
   },
   {
