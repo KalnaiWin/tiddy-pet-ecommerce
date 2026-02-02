@@ -152,6 +152,7 @@ export interface AvailableOrder {
       quantity: number;
     },
   ];
+  status: string;
   customerName: string;
   customerId: string;
   shipping: {
@@ -244,5 +245,20 @@ export const PaymentStatusOrder = [
   },
   {
     name: "Refunded",
+  },
+];
+
+export const orderStatusShipping = [
+  {
+    name: "Delivered",
+    value: "DELIVERED",
+  },
+  {
+    name: "Cancelled",
+    value: "CANCELLED",
+  },
+  {
+    name: "Failed",
+    value: "FAILED",
   },
 ];

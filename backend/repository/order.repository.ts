@@ -293,13 +293,18 @@ export const OrderReposioty = {
     page: number,
     status: string,
   ) => {
+    const matchStage: any = {
+      "shipping.shipper": new mongoose.Types.ObjectId(shipperId),
+    };
+
+    if (status && status.trim() !== "") {
+      matchStage.status = status;
+    }
+
     return await Order.aggregate([
       { $unwind: "$items" },
       {
-        $match: {
-          "shipping.shipper": new mongoose.Types.ObjectId(shipperId),
-          status: status,
-        },
+        $match: matchStage,
       },
       {
         $lookup: {
@@ -344,28 +349,24 @@ export const OrderReposioty = {
         },
       },
       {
-        $project: {
-          _id: 1,
-          totalPrice: 1,
-          items: [
-            {
+        $group: {
+          _id: "$_id",
+          totalPrice: { $first: "$totalPrice" },
+          status: { $first: "$status" },
+          customerName: { $first: "$customerName" },
+          customerId: { $first: "$customerId" },
+          shipping: { $first: "$shipping" },
+          predictedDayShipping: { $first: "$predictedDayShipping" },
+          items: {
+            $push: {
               productName: "$productName",
               quantity: "$items.quantity",
             },
-          ],
-          customerName: 1,
-          customerId: 1,
-          shipping: {
-            address: 1,
-            phone: 1,
-            note: 1,
-            assignedAt: 1,
           },
-          predictedDayShipping: 1,
         },
       },
-      { $skip: (page - 1) * 10 },
-      { $limit: 10 },
+      { $skip: (page - 1) * 20 },
+      { $limit: 20 },
     ]);
   },
 

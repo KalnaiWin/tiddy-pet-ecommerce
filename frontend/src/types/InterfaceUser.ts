@@ -1,4 +1,5 @@
 import {
+  Blocks,
   ChartColumn,
   History,
   Home,
@@ -150,21 +151,30 @@ export const customerNavbarSelect = [
 
 export const shipperNavbarSelect = [
   {
+    icon: Home,
+    name: "Home",
+    path: "/",
+  },
+  {
     icon: User2,
     name: "Profile",
     path: "/shipper/profile",
   },
   {
-    icon: PackageCheck,
+    icon: Blocks,
     name: "Orders",
     path: "/shipper/order",
   },
   {
-    icon: Van,
+    icon: PackageCheck,
     name: "Available",
     path: "/shipper/available",
   },
-
+  {
+    icon: Van,
+    name: "Delivery",
+    path: "/shipper/delivery",
+  },
   {
     icon: History,
     name: "History",

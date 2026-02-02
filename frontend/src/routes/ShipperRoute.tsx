@@ -6,6 +6,7 @@ import HistoryOrder from "../page/shipper/HistoryOrder";
 import LocationOrder from "../page/shipper/LocationOrder";
 import OrderAssigned from "../page/shipper/OrderAssigned";
 import AvailableOrder from "../page/shipper/AvailableOrder";
+import DeliveryOrder from "../page/shipper/DeliveryOrder";
 
 export const ShipperRoute = () => {
   return (
@@ -17,6 +18,7 @@ export const ShipperRoute = () => {
           <Route path="history" element={<HistoryOrder />} />
           <Route path="location" element={<LocationOrder />} />
           <Route path="available" element={<AvailableOrder />} />
+          <Route path="delivery" element={<DeliveryOrder />} />
         </Route>
       </Route>
     </Routes>

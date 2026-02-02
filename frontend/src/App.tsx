@@ -6,6 +6,7 @@ import { fetchUser } from "./feature/userThunk";
 import { AdminRoute } from "./routes/AdminRoute";
 import { Route, Routes } from "react-router-dom";
 import { getAllItemsFromCart } from "./feature/cartThunk";
+import { ShipperRoute } from "./routes/ShipperRoute";
 
 export const App = () => {
   const { currentUser, status } = useSelector((state: RootState) => state.user);
@@ -15,7 +16,7 @@ export const App = () => {
     if (status === "idle") {
       dispatch(fetchUser());
     }
-  }, [dispatch]);
+  }, [dispatch, currentUser]);
 
   useEffect(() => {
     if (currentUser && currentUser.role === "CUSTOMER") {
@@ -27,6 +28,7 @@ export const App = () => {
     <Routes>
       <Route path="/*" element={<MainRoute />} />
       <Route path="/admin/*" element={<AdminRoute />} />
+      <Route path="/shipper/*" element={<ShipperRoute />} />
     </Routes>
   );
 };
