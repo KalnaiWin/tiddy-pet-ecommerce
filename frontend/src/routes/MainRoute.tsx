@@ -19,8 +19,8 @@ export const MainRoute = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/history" element={<HistoryOrder />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/success" element={<SuccessPage />} />
-        <Route path="/cancel" element={<CancelPage />} />
+        <Route path="success" element={<SuccessPage />} />
+        <Route path="cancel" element={<CancelPage />} />
       </Route>
     </Routes>
   );

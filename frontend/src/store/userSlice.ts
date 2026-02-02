@@ -80,7 +80,6 @@ export const userSlice = createSlice({
       });
 
     builder
-
       //  Log out
       .addCase(logoutUser.fulfilled, (state) => {
         state.currentUser = null;
