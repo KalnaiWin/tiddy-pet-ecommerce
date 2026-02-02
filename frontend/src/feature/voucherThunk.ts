@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../lib/axios";
-import type { Vouchers } from "../types/InterfaceVoucher";
+import type { InputVoucher, Vouchers } from "../types/InterfaceVoucher";
 import toast from "react-hot-toast";
 
 export const getAllVouchers = createAsyncThunk<
@@ -20,7 +20,7 @@ export const getAllVouchers = createAsyncThunk<
 
 export const createVoucher = createAsyncThunk<
   Vouchers,
-  Vouchers,
+  InputVoucher,
   { rejectValue: string }
 >("voucher/createVoucher", async (data, { rejectWithValue }) => {
   try {
