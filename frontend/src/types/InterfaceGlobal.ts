@@ -1,56 +1,31 @@
 import { Clock, HeartPulse, ShieldCheck, Van } from "lucide-react";
+import bio from "../../public/images/bio.png";
+import catchy from "../../public/images/catchy.png";
+import drkyan from "../../public/images/drkyan.png";
+import ecopets from "../../public/images/ecopets.png";
+import ganador from "../../public/images/ganador.png";
+import hanvet from "../../public/images/hanvet.png";
+import meowcat from "../../public/images/meowcat.png";
+import minino from "../../public/images/minino.png";
+import moochie from "../../public/images/moochie.png";
+import orgo from "../../public/images/orgo.png";
+import vemedim from "../../public/images/vemedim.png";
+import wanpy from "../../public/images/wanpy.png";
 
 export const brandSupport = [
-  {
-    name: "Bio Pharmercy",
-    image: "/images/bio.png",
-  },
-  {
-    name: "Catchy",
-    image: "/images/catchy.png",
-  },
-  {
-    name: "Dr kyan",
-    image: "/images/drkyan.png",
-  },
-  {
-    name: "Ecopets",
-    image: "/images/ecopets.png",
-  },
-  {
-    name: "Ganador",
-    image: "/images/ganador.png",
-  },
-  {
-    name: "Hanvet",
-    image: "/images/hanvet.png",
-  },
-  {
-    name: "Meow Cat",
-    image: "/images/meowcat.png",
-  },
-  {
-    name: "Minino",
-    image: "/images/minino.png",
-  },
-  {
-    name: "Moochie",
-    image: "/images/moochie.png",
-  },
-  {
-    name: "Orgo",
-    image: "/images/orgo.png",
-  },
-  {
-    name: "Vemedim",
-    image: "/images/vemedim.png",
-  },
-  {
-    name: "Wanpy",
-    image: "/images/wanpy.png",
-  },
+  { name: "Bio Pharmercy", image: bio },
+  { name: "Catchy", image: catchy },
+  { name: "Dr kyan", image: drkyan },
+  { name: "Ecopets", image: ecopets },
+  { name: "Ganador", image: ganador },
+  { name: "Hanvet", image: hanvet },
+  { name: "Meow Cat", image: meowcat },
+  { name: "Minino", image: minino },
+  { name: "Moochie", image: moochie },
+  { name: "Orgo", image: orgo },
+  { name: "Vemedim", image: vemedim },
+  { name: "Wanpy", image: wanpy },
 ];
-
 export const Policy = [
   {
     name: "Fast Delivery",
