@@ -3,6 +3,7 @@ import type { initialOrder } from "../types/InterfaceOrder";
 import {
   cancelOrder,
   changeStatusOrder,
+  createOrder,
   dropShipperSelected,
   getAllOrders,
   getAvailableOrderForShipper,
@@ -26,6 +27,7 @@ const initialState: initialOrder = {
   availableOrder: [],
   availableStatus: "idle",
   changeStatus: "idle",
+  createStatus: "idle",
 };
 
 export const orderSlice = createSlice({
@@ -35,6 +37,18 @@ export const orderSlice = createSlice({
     resetOrderState: () => initialState,
   },
   extraReducers(builder) {
+    // ============ CHANGE STATUS ORDERS  ============
+    builder
+      .addCase(createOrder.pending, (state) => {
+        state.createStatus = "loading";
+      })
+      .addCase(createOrder.fulfilled, (state) => {
+        state.createStatus = "succeeded";
+      })
+      .addCase(createOrder.rejected, (state) => {
+        state.createStatus = "failed";
+      });
+
     // ============ CHANGE STATUS ORDERS  ============
     builder
       .addCase(changeStatusOrder.pending, (state) => {

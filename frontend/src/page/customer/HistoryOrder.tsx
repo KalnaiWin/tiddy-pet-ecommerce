@@ -5,6 +5,7 @@ import {
   Calendar,
   ArrowRight,
   ShoppingBag,
+  Loader,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store";
@@ -33,6 +34,7 @@ import { resetOrderState } from "../../store/orderSlice";
 const HistoryOrder = () => {
   const { orders, status } = useSelector((state: RootState) => state.order);
   const { currentUser } = useSelector((state: RootState) => state.user);
+  const { checkoutStatus } = useSelector((state: RootState) => state.payment);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
@@ -111,7 +113,6 @@ const HistoryOrder = () => {
         quantity: item.quantity,
       })),
     };
-    console.log(checkOutCart);
 
     const result = await dispatch(
       checkoutCart({
@@ -335,11 +336,21 @@ const HistoryOrder = () => {
                   </div>
                   {order.payment.status.toUpperCase() === "UNPAID" && (
                     <button
-                      className="flex-1 sm:flex-none px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2 hover:opacity-80 cursor-pointer"
+                      className={`flex-1 sm:flex-none px-4 py-2 ${checkoutStatus === "loading" ? "cursor-not-allowed opacity-70" : "hover:bg-orange-600 hover:opacity-80 cursor-pointer"} bg-orange-500 text-white text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2 `}
                       onClick={() => handleCheckOut(order)}
+                      disabled={checkoutStatus === "loading"}
                     >
-                      Track Order
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      {checkoutStatus === "loading" ? (
+                        <div className="flex gap-2 items-center">
+                          <Loader className="animate-spin" />
+                          <p>Creating...</p>
+                        </div>
+                      ) : (
+                        <div className="flex gap-2">
+                          Track Order
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </div>
+                      )}
                     </button>
                   )}
                 </div>

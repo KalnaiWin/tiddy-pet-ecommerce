@@ -18,7 +18,7 @@ import { resetOrderState } from "../../store/orderSlice";
 const Cart = () => {
   const { cartArray, status } = useSelector((state: RootState) => state.cart);
   const { currentUser } = useSelector((state: RootState) => state.user);
-  const { checkoutStatus } = useSelector((state: RootState) => state.payment);
+  const { createStatus } = useSelector((state: RootState) => state.order);
   const [voucher, setVoucher] = useState("");
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -216,10 +216,10 @@ const Cart = () => {
                   navigate("/history");
                 }
               }}
-              className={`${checkoutStatus === "loading" ? "cursor-not-allowed bg-orange-300" : "hover:bg-orange-300 hover:text-orange-500 cursor-pointer bg-orange-500"} w-full py-5 rounded-md font-black text-white flex items-center justify-center`}
-              disabled={checkoutStatus === "loading"}
+              className={`${createStatus === "loading" ? "cursor-not-allowed bg-orange-300" : "hover:bg-orange-300 hover:text-orange-500 cursor-pointer bg-orange-500"} w-full py-5 rounded-md font-black text-white flex items-center justify-center`}
+              disabled={createStatus === "loading"}
             >
-              {checkoutStatus === "loading" ? (
+              {createStatus === "loading" ? (
                 <div className="flex gap-2">
                   <Loader className="animate-spin" />
                   <p>Creating...</p>

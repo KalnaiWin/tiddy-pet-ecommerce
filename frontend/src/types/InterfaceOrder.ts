@@ -175,6 +175,7 @@ export interface initialOrder {
   availableOrder: AvailableOrder[] | [];
   availableStatus: "idle" | "loading" | "succeeded" | "failed";
   changeStatus: "idle" | "loading" | "succeeded" | "failed";
+  createStatus: "idle" | "loading" | "succeeded" | "failed";
 }
 
 export interface CheckOut {
