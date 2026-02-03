@@ -5,6 +5,9 @@ import { NavLink } from "react-router-dom";
 import ProductHomePage from "./ProductHomePage";
 import Footer from "./Footer";
 import SkeletonHomePage from "../../../components/common/(customer)/SkeletonHomePage";
+import adminSvg from "../../../asset/admin.svg";
+import customerSvg from "../../../asset/customer.svg";
+import shipperSvg from "../../../asset/shipper.svg";
 
 export const HomePage = () => {
   const { currentUser, status } = useSelector((state: RootState) => state.user);
@@ -106,19 +109,19 @@ export const HomePage = () => {
         <div className="hidden md:block lg:block">
           {currentUser?.role === "SHIPPER" ? (
             <img
-              src="/src/asset/shipper.svg"
+              src={shipperSvg}
               alt={currentUser.name}
               className="absolute z-20 -right-1 md:-top-18 -top-11 md:size-90 size-60"
             />
           ) : currentUser?.role === "ADMIN" ? (
             <img
-              src="/src/asset/admin.svg"
+              src={adminSvg}
               alt={currentUser.name}
               className="absolute z-20 -right-1 md:-top-18 -top-11 md:size-90 size-60"
             />
           ) : (
             <img
-              src="/src/asset/customer.svg"
+              src={customerSvg}
               alt={currentUser?.name || "Guest"}
               className="absolute z-20 -right-1 md:-top-18 -top-11 md:size-90 size-60"
             />
