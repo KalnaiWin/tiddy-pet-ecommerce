@@ -106,19 +106,19 @@ export const HomePage = () => {
         <div className="hidden md:block lg:block">
           {currentUser?.role === "SHIPPER" ? (
             <img
-              src="src/asset/shipper.svg"
+              src="/src/asset/shipper.svg"
               alt={currentUser.name}
               className="absolute z-20 -right-1 md:-top-18 -top-11 md:size-90 size-60"
             />
           ) : currentUser?.role === "ADMIN" ? (
             <img
-              src="src/asset/admin.svg"
+              src="/src/asset/admin.svg"
               alt={currentUser.name}
               className="absolute z-20 -right-1 md:-top-18 -top-11 md:size-90 size-60"
             />
           ) : (
             <img
-              src="src/asset/customer.svg"
+              src="/src/asset/customer.svg"
               alt={currentUser?.name || "Guest"}
               className="absolute z-20 -right-1 md:-top-18 -top-11 md:size-90 size-60"
             />
