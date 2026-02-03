@@ -31,7 +31,9 @@ const ViewUserInformation = ({ userId }: Props) => {
         <div className="absolute -bottom-12 left-8">
           <div className="relative">
             <img
-              src={`/src/asset/Empty.webp`}
+              src={
+                detailAccount?.image_profile || `/src/asset/images/Empty.webp`
+              }
               alt={detailAccount?.name}
               className="w-24 h-24 rounded-2xl border-4 border-white shadow-lg object-cover"
             />
@@ -56,7 +58,7 @@ const ViewUserInformation = ({ userId }: Props) => {
           </div>
           <div
             className={`px-4 py-1.5 rounded-full text-sm font-semibold border ${StatusColor(
-              detailAccount?.status as string
+              detailAccount?.status as string,
             )}`}
           >
             {detailAccount?.status}
@@ -125,7 +127,7 @@ const ViewUserInformation = ({ userId }: Props) => {
                 <p className="text-slate-700 font-medium">
                   {detailAccount?.createdAt
                     ? new Date(detailAccount.createdAt).toLocaleDateString(
-                        "vi-VN"
+                        "vi-VN",
                       )
                     : "Did not create"}
                 </p>
@@ -165,7 +167,7 @@ const ViewUserInformation = ({ userId }: Props) => {
                 </p>
                 <span
                   className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold uppercase ${VerifyStatus(
-                    detailAccount?.shipper_info.verification_status
+                    detailAccount?.shipper_info.verification_status,
                   )}`}
                 >
                   {detailAccount?.shipper_info.verification_status}

@@ -313,7 +313,7 @@ const ProductStore = () => {
                   <div className="flex justify-between gap-3 mb-3">
                     <div className="flex gap-3">
                       <img
-                        src={"/src/asset/Empty.webp"}
+                        src={product.imageProduct[0] || "/src/asset/images/Empty.webp"}
                         alt={product.name}
                         className="w-16 h-16 sm:w-20 sm:h-20 rounded-md object-cover"
                       />

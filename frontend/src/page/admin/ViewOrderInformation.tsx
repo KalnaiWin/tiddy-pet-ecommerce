@@ -233,7 +233,10 @@ const ViewOrderInformation = () => {
               <div className="absolute flex flex-col items-center justify-center w-full -bottom-30">
                 <div className="bg-white p-2 rounded-xl">
                   <img
-                    src={ordersDetailAdmin?.user?.image_profile}
+                    src={
+                      ordersDetailAdmin?.user?.image_profile ||
+                      `/src/asset/images/Empty.webp`
+                    }
                     alt=""
                     className="object-cover size-24 rounded-md"
                   />

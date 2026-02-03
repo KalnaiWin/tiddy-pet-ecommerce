@@ -24,7 +24,7 @@ const ViewProductInformation = ({ productId }: Props) => {
           <div className="flex justify-start">
             <div className="flex gap-2">
               <img
-                src={`${"/src/asset/Empty.webp"}`}
+                src={detail.imageProduct[0] || `/src/asset/images/Empty.webp`}
                 alt={detail._id}
                 className="w-16 h-16 sm:w-20 sm:h-20 rounded-md object-cover"
               />

@@ -156,7 +156,7 @@ const OrderInformation = () => {
                           <img
                             src={
                               order.user?.image_profile ||
-                              "/src/asset/Empty.webp"
+                              `/src/asset/images/Empty.webp`
                             }
                             alt={order.user?.name || "Customer avatar"}
                             className="w-10 h-10 rounded-full object-cover"

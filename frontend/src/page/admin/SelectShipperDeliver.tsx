@@ -90,7 +90,7 @@ const SelectShipperDeliver = ({ orderId }: Props) => {
               >
                 <div className="flex gap-2 p-2">
                   <img
-                    src={user?.image_profile || "/images/Empty.webp"}
+                    src={user?.image_profile || `/src/asset/images/Empty.webp`}
                     alt={user?._id}
                     className="size-8 object-conver rounded-md"
                   />

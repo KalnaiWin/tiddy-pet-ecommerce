@@ -1,16 +1,16 @@
 import { Clock, HeartPulse, ShieldCheck, Van } from "lucide-react";
-import bio from "../../public/images/bio.png";
-import catchy from "../../public/images/catchy.png";
-import drkyan from "../../public/images/drkyan.png";
-import ecopets from "../../public/images/ecopets.png";
-import ganador from "../../public/images/ganador.png";
-import hanvet from "../../public/images/hanvet.png";
-import meowcat from "../../public/images/meowcat.png";
-import minino from "../../public/images/minino.png";
-import moochie from "../../public/images/moochie.png";
-import orgo from "../../public/images/orgo.png";
-import vemedim from "../../public/images/vemedim.png";
-import wanpy from "../../public/images/wanpy.png";
+import bio from "../asset/images/bio.png";
+import catchy from "../asset/images/catchy.png";
+import drkyan from "../asset/images/drkyan.png";
+import ecopets from "../asset/images/ecopets.png";
+import ganador from "../asset/images/ganador.png";
+import hanvet from "../asset/images/hanvet.png";
+import meowcat from "../asset/images/meowcat.png";
+import minino from "../asset/images/minino.png";
+import moochie from "../asset/images/moochie.png";
+import orgo from "../asset/images/orgo.png";
+import vemedim from "../asset/images/vemedim.png";
+import wanpy from "../asset/images/wanpy.png";
 
 export const brandSupport = [
   { name: "Bio Pharmercy", image: bio },
