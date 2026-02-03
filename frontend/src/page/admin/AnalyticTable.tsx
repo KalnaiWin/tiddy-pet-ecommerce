@@ -138,7 +138,11 @@ const AnalyticTable = () => {
               <h1 className="uppercase text-slate-700">Total Revenue</h1>
               <div className="flex items-center gap-2 mb-2">
                 <p className="text-xl font-semibold">
-                  {formatVND(orderStatic.todayRevenue)}
+                  {formatVND(
+                    orderStatic.todayRevenue === 0
+                      ? orderStatic.previousRevenue
+                      : orderStatic.todayRevenue,
+                  )}
                 </p>
                 <p className="flex bg-green-100 text-green-600 py-0.5 px-1 text-xs rounded-md items-center">
                   <ArrowUp className="size-4" /> {orderStatic.percentageRevenue}
@@ -151,7 +155,11 @@ const AnalyticTable = () => {
               <h1 className="uppercase text-slate-700">Total Order</h1>
               <div className="flex items-center gap-2 mb-2">
                 <p className="text-xl font-semibold">
-                  {formatVND(orderStatic.todayOrder)}
+                  {formatVND(
+                    orderStatic.todayOrder === 0
+                      ? orderStatic.previousOrder
+                      : orderStatic.todayOrder,
+                  )}
                 </p>
                 <p className="flex bg-green-100 text-green-600 py-0.5 px-1 text-xs rounded-md items-center">
                   <ArrowUp className="size-4" /> {orderStatic.percentageOrder}%

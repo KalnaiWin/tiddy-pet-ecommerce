@@ -29,7 +29,7 @@ const ProductHomePage = () => {
               className="group flex flex-col md:flex-row items-center gap-2 md:gap-3"
             >
               <img
-                src={brand.image}
+                src={`${brand.image || `/images/Empty.webp`}`}
                 alt={brand.name}
                 className="size-14 md:size-20 grayscale transition-all duration-200 group-hover:grayscale-0"
               />

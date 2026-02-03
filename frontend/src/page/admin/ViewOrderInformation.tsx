@@ -50,8 +50,8 @@ const ViewOrderInformation = () => {
         Back to Order List
       </Link>
       {/* Header */}
-      <div className="flex w-full justify-between pt-8 pb-5">
-        <div className="flex flex-col gap-1">
+      <div className="flex md:flex-row flex-col w-full justify-between pt-8 pb-5">
+        <div className="flex md:flex-col flex-row gap-1">
           <div className="flex gap-3 items-center">
             <h1 className="font-extrabold text-xl">
               Order #
@@ -74,7 +74,7 @@ const ViewOrderInformation = () => {
             {new Date(ordersDetailAdmin?.createdAt).toLocaleDateString("vi-VN")}
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-sm">
           <button className="flex items-center px-2 py-1.5 rounded-md shadow-2xl border gap-2 hover:bg-slate-200 cursor-pointer">
             <Printer />
             Invoice
@@ -85,7 +85,7 @@ const ViewOrderInformation = () => {
         </div>
       </div>
       {/* General information */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid xl:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-4">
         <div className="flex flex-col gap-1 bg-white shadow-2xs border border-slate-300 rounded-md py-1 px-2">
           <h1 className="uppercase font-semibold text-sm text-slate-400 tracking-widest">
             Total Amount
@@ -122,9 +122,9 @@ const ViewOrderInformation = () => {
         </div>
       </div>
       {/* Specific information */}
-      <div className="grid grid-cols-6 grid-rows-7 gap-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-6 xl:grid-rows-7">
         {/* Product */}
-        <div className="col-span-4 row-span-4 w-full mt-5 bg-white">
+        <div className="w-full mt-5 bg-white rounded-md shadow-xl md:col-span-2 xl:col-span-4 xl:row-span-4">
           <div className="border-2 border-slate-100 rounded-md shadow-md">
             <h1 className="flex items-center font-bold text-xl gap-2 px-5 py-5">
               <Package className="text-orange-500" /> Product Details
@@ -226,7 +226,7 @@ const ViewOrderInformation = () => {
           <div className="col-span-2"></div>
         </div>
         {/* User */}
-        <div className="col-span-2 row-span-3 mt-5 bg-white">
+        <div className="w-full mt-5 bg-white rounded-md shadow-xl md:col-span-2 xl:col-span-2 xl:row-span-3 min-h-80">
           <div className="border border-slate-100 rounded-md shadow-2xl relative min-h-full">
             {/* Image profile */}
             <div className="relative w-full h-24 bg-linear-to-r from-orange-300 to-orange-600 py-10 rounded-t-md">
@@ -263,11 +263,18 @@ const ViewOrderInformation = () => {
           </div>
         </div>
         {/* Choose shipper */}
-        <div className="col-span-2 row-span-5 bg-white rounded-md p-2 shadow-xl">
-          <SelectShipperDeliver orderId={ordersDetailAdmin?._id} />
+        <div className="bg-white rounded-md p-2 shadow-xl md:col-span-2 xl:col-span-2 xl:row-span-5">
+          {ordersDetailAdmin.status !== "CONFIRMED" &&
+          ordersDetailAdmin.status !== "ASSIGNED" ? (
+            <div className="text-red-500 font-bold text-center flex min-h-full items-center justify-center">
+              Can not choose shipper for orders are not confirmed or assigned 😔
+            </div>
+          ) : (
+            <SelectShipperDeliver orderId={ordersDetailAdmin?._id} />
+          )}
         </div>
         {/* Shipping */}
-        <div className="col-span-4 row-span-3 bg-white rounded-md shadow-xl">
+        <div className="bg-white rounded-md shadow-xl md:col-span-2 xl:col-span-4 xl:row-span-3">
           <h1 className="flex items-center font-bold text-xl gap-2 px-5 py-5">
             <Truck className="text-blue-500" />
             Shipping & Logistics
@@ -321,9 +328,8 @@ const ViewOrderInformation = () => {
             </div>
           </div>
         </div>
-
         {/* Payment */}
-        <div className="col-span-4 row-span-1 bg-white shadow-xl rounded-md">
+        <div className="bg-white shadow-xl rounded-md md:col-span-2 xl:col-span-4 xl:row-span-1">
           <h1 className="flex items-center font-bold text-xl gap-2 py-5 px-5">
             <CreditCard className="text-green-500" />
             Payment Status

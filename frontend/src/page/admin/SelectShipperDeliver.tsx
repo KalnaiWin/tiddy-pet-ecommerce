@@ -7,15 +7,14 @@ import {
   dropShipperSelected,
   selectShipperForOrder,
 } from "../../feature/orderThunk";
+import SkeletonSelectShipper from "../../components/common/(admin)/SkeletonSelectShipper";
 
 interface Props {
   orderId: string;
 }
 
 const SelectShipperDeliver = ({ orderId }: Props) => {
-  const { users, error, usersStatus } = useSelector(
-    (state: RootState) => state.user,
-  );
+  const { users, usersStatus } = useSelector((state: RootState) => state.user);
   const { ordersDetailAdmin } = useSelector((state: RootState) => state.order);
   const dispatch = useDispatch<AppDispatch>();
   const [shipperId, setShipperId] = useState({
@@ -28,14 +27,6 @@ const SelectShipperDeliver = ({ orderId }: Props) => {
   useEffect(() => {
     dispatch(getAllShippers({ page, limit, email: "", verify: "APPROVED" }));
   }, [dispatch, page, limit]);
-
-  if (usersStatus === "loading") {
-    return <div>Loading...</div>;
-  }
-
-  if (usersStatus === "failed") {
-    return <div>Error: {error}</div>;
-  }
 
   return (
     <div className="flex flex-col gap-2 min-h-screen relative">
@@ -78,8 +69,12 @@ const SelectShipperDeliver = ({ orderId }: Props) => {
         )}
       </div>
       <div>
-        {users && users.length > 0 ? (
-          <div className="flex flex-col gap-2">
+        {usersStatus === "loading" ? (
+          Array.from({ length: 6 }).map((_, idx) => (
+            <SkeletonSelectShipper key={idx} />
+          ))
+        ) : users && users.length > 0 ? (
+          <div className="flex flex-col gap-2 cursor-pointer">
             {users.map((user) => (
               <div
                 key={user._id}
@@ -95,7 +90,7 @@ const SelectShipperDeliver = ({ orderId }: Props) => {
               >
                 <div className="flex gap-2 p-2">
                   <img
-                    src={user?.image_profile || "/src/asset/Empty.webp"}
+                    src={user?.image_profile || "/images/Empty.webp"}
                     alt={user?._id}
                     className="size-8 object-conver rounded-md"
                   />
@@ -110,7 +105,7 @@ const SelectShipperDeliver = ({ orderId }: Props) => {
                   <Check />
                 </button>
                 <p className="absolute bottom-0 text-orange-500 bg-orange-100 w-full p-1 border-l-8 border-orange-600 text-sm">
-                  "Just me bro, I can handle this"
+                  "Trust me bro, I can handle this"
                 </p>
               </div>
             ))}
