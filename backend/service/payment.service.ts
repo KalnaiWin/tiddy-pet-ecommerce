@@ -33,7 +33,8 @@ export const PaymentService = {
         enabled: true,
       },
       line_items: lineItems,
-      success_url: `${ENV.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      // success_url: `${ENV.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${ENV.CLIENT_URL}/success`,
       cancel_url: `${ENV.CLIENT_URL}/cancel`,
       metadata: {
         orderId: orderId,
