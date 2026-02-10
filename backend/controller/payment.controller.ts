@@ -8,7 +8,7 @@ export const checkoutOrder = async (req: Request, res: Response) => {
     if (!orderId)
       return res.status(404).json({ message: "Order Id not found" });
     const result = await PaymentService.checkoutOrder(items, orderId);
-    if (result) res.redirect(result);
+    if (result) res.status(200).json(result);
     else res.status(400).json({ message: "Paid failed" });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
