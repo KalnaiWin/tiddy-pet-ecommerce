@@ -2,7 +2,6 @@ import type Stripe from "stripe";
 import type { CheckOutInput } from "../interface/order.interface.js";
 import { ENV } from "../config/env.js";
 import { stripe } from "../config/stripe.js";
-import { getRedis } from "../config/redis.js";
 import Order from "../schema/order.schema.js";
 import { productRepository } from "../repository/product.repository.js";
 import Variant from "../schema/variant.schema.js";
@@ -33,8 +32,7 @@ export const PaymentService = {
         enabled: true,
       },
       line_items: lineItems,
-      // success_url: `${ENV.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      success_url: `${ENV.CLIENT_URL}/success`,
+      success_url: `${process.env.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${ENV.CLIENT_URL}/cancel`,
       metadata: {
         orderId: orderId,

@@ -17,6 +17,7 @@ import {
 import { formatVND } from "../../types/HelperFunction";
 
 const SuccessPage = () => {
+  console.log("Payment successfully");
   const [params] = useSearchParams();
   const sessionId = params.get("session_id");
   const { infoPayment } = useSelector((state: RootState) => state.payment);
@@ -26,6 +27,7 @@ const SuccessPage = () => {
 
   useEffect(() => {
     if (!sessionId) {
+      console.log("Invali sessionId: ", sessionId);
       navigate("/");
       return;
     }
