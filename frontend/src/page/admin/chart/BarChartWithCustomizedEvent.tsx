@@ -1,4 +1,4 @@
-import { Bar, BarChart, XAxis, type BarRectangleItem } from "recharts";
+import { Bar, BarChart, XAxis } from "recharts";
 import { RechartsDevtools } from "@recharts/devtools";
 
 const data = [
