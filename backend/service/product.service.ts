@@ -111,7 +111,6 @@ export const productService = {
     if (keys.length > 0) {
       await redis.del(keys);
     }
-    console.log(product);
     return product;
   },
 

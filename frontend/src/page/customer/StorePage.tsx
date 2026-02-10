@@ -18,9 +18,6 @@ export const StorePage = () => {
   const [search, setSearch] = useState("");
   const [debouncedName, setDebouncedName] = useState("");
 
-  console.log("Store customer");
-  
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedName(search.trim());

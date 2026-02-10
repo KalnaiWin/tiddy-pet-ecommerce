@@ -38,14 +38,7 @@ const BarChartWithCustomizedEvent = () => {
         data={data}
       >
         <XAxis dataKey={"name"} />
-        <Bar
-          dataKey="uv"
-          onClick={(bri: BarRectangleItem, index, event) => {
-            console.log("clicked on", bri, index, event);
-          }}
-          fill="#ff7300"
-          className="bg-[#ff7300]"
-        />
+        <Bar dataKey="uv" fill="#ff7300" className="bg-[#ff7300]" />
         <RechartsDevtools />
       </BarChart>
     </>

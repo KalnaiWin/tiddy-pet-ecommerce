@@ -26,7 +26,6 @@ const OrderAssigned = () => {
     dispatch(getAvailableOrderForShipper({ page, status: "ASSIGNED" }));
   }, [dispatch, page]);
 
-  console.log(availableOrder);
 
   useEffect(() => {
     if (changeStatus === "succeeded") {

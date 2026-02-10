@@ -30,7 +30,7 @@ export const App = () => {
     <Routes>
       <Route path="/*" element={<MainRoute />} />
       <Route path="/success" element={<SuccessPage />} />
-      <Route path="cancel" element={<CancelPage />} />
+      <Route path="/cancel" element={<CancelPage />} />
       <Route path="/admin/*" element={<AdminRoute />} />
       <Route path="/shipper/*" element={<ShipperRoute />} />
     </Routes>

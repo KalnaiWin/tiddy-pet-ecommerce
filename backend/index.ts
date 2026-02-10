@@ -43,9 +43,7 @@ if (ENV.NODE_ENV === "production") {
 connectDB()
   .then(async () => {
     await initRedis();
-    app.listen(ENV.PORT, () => {
-      console.log("Server running on port: ", ENV.PORT);
-    });
+    app.listen(ENV.PORT);
   })
   .catch((err) => {
     console.error("Failed to connect to the database", err);

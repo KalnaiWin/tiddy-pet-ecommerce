@@ -284,7 +284,6 @@ const AnalyticTable = () => {
                                       voucherId: voucher._id,
                                     }),
                                   );
-                                  console.log(voucher._id);
                                 }}
                               />
                             </td>
