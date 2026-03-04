@@ -4,7 +4,7 @@ A MERN stack pet e-commerce platform with role-based access (Admin, Shipper, Cus
 <img width="3800" height="5164" alt="Group 2 (2)" src="https://github.com/user-attachments/assets/f7ae1a78-f18b-46bd-992b-82949797c397" />
 
 ## 🌍 Live Demo
-Frontend: https://tiddy-pet-ecommerce-frontend.onrender.com
+Deploy: https://tiddy-pet-ecommerce-frontend.onrender.com
 
 Video Demo: ...
 
