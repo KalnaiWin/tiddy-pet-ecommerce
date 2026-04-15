@@ -14,20 +14,19 @@ import {
   Share2,
   ShoppingCart,
 } from "lucide-react";
-import { formatVND } from "../../types/HelperFunction";
+import { formatVND, generateOrderCode } from "../../types/HelperFunction";
 
 const SuccessPage = () => {
-  console.log("Payment successfully");
   const [params] = useSearchParams();
   const sessionId = params.get("session_id");
   const { infoPayment } = useSelector((state: RootState) => state.payment);
+  const { currentUser } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
 
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!sessionId) {
-      console.log("Invali sessionId: ", sessionId);
       navigate("/");
       return;
     }
@@ -96,7 +95,10 @@ const SuccessPage = () => {
                   Order Number
                 </p>
                 <p className="text-gray-900 font-medium">
-                  {infoPayment?.sessionId}
+                  {generateOrderCode(
+                    String(infoPayment?.sessionId),
+                    String(currentUser?._id),
+                  )}
                 </p>
               </div>
               <div>
