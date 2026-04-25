@@ -145,6 +145,13 @@ npm run dev
 
 <img width="3794" height="1931" alt="image" src="https://github.com/user-attachments/assets/88317504-3167-4baa-a28c-7aa2f6aa71a2" />
 
+# Payment by Stripe
+
+<img width="3839" height="1952" alt="image" src="https://github.com/user-attachments/assets/fa1383d4-e1f4-4923-9a72-a7aff1d4a0d6" />
+
+<img width="3838" height="1935" alt="image" src="https://github.com/user-attachments/assets/e77f26d4-d065-4c20-94af-163112372fd3" />
+
+
 
 ## 🚚 Shipper Role
 
