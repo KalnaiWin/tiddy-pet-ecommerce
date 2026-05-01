@@ -9,7 +9,9 @@ Deploy: https://tiddy-pet-ecommerce-frontend.onrender.com
 Video Demo: ...
 
 Customer account: customer@gmail.com - passw: testme
+
 Admin account: admin@gmail.com - passw: testme
+
 Customer account: shipper@gmail.com - passw: testme
 
 ## 🧠 Challenges & What I Learned
